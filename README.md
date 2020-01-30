@@ -1,7 +1,7 @@
 # Synergy Wholesale WHMCS Domains Module
 
 ![Tests](https://github.com/synergywholesale/whmcs-domains-module/workflows/Tests/badge.svg?branch=master&event=push)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 [![Contributors welcome](https://img.shields.io/badge/Contributors-welcome-brightgreen.svg)](https://github.com/synergywholesale/whmcs-domains-module/blob/master/CONTRIBUTING.md)
 
 This repository contains the source code for the [Synergy Wholsale](https://synergywholesale.com/) WHMCS domains module.
@@ -44,7 +44,7 @@ This module utilises the **PHP SOAP** module. In order to connect to use our API
   
 
 # Contributing
-If you need some help getting started, please see our [contribution guide](CONTRIBUTING.md).
+If you are interested in contributing, and need some help getting started; please see our [contribution guide](CONTRIBUTING.md).
 
 # License
 This project is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for further information.

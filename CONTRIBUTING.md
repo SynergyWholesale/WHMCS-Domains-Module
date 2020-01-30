@@ -1,4 +1,4 @@
-# Contributing Guideline
+# Contributing
 ---
 
 Please note that the following requirements are only required if you wish to contribute to the module and develop locally. If you wish to only use the module, please refer to the [installation section](README.md#installation).
