@@ -1,0 +1,65 @@
+/**
+ * Synergy Wholesale Registrar Module
+ *
+ * @copyright Copyright (c) Synergy Wholesale Pty Ltd 2020
+ * @license https://github.com/synergywholesale/whmcs-domains-module/LICENSE
+ */
+.ellipis {
+    overflow: hidden;
+    -ms-text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    display: block;
+    white-space: nowrap;
+}
+
+.no-margin {
+    margin: unset;
+}
+
+.inline {
+    display:inline-block;
+}
+.insertRow {
+    margin: 20px 0 10px 0;
+}
+
+.row select[name=type] {
+    width:100%;
+}
+
+.row input[type=text], .row select {
+    height:33px;
+}
+
+.row-table .row:not(#divHeading) {
+    padding:5px 0 5px 0;
+}
+
+.row-table .row:not(#divHeading):nth-child(even) {
+    background-color:#F0F0F5;
+}
+
+.row-table .row:not(#divHeading):nth-child(odd) {
+    background-color:#F2F7FC;
+}
+
+.loader {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1.5s linear infinite;
+    margin: auto;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

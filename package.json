@@ -1,0 +1,19 @@
+{
+  "name": "synergy-wholesale-whmcs-domains-module",
+  "description": "This repository contains the source code for the [Synergy Wholsale](https://synergywholesale.com/) WHMCS domains module.",
+  "dependencies": {
+    "minify": "^5.0.0",
+    "uglify-es": "^3.3.9"
+  },
+  "scripts": {
+    "build-css": "minify modules/registrars/synergywholesaledomains/css/synergywholesaledomains.css > modules/registrars/synergywholesaledomains/css/synergywholesaledomains.min.css",
+    "build-js": "uglifyjs modules/registrars/synergywholesaledomains/js/functions.js -c -o modules/registrars/synergywholesaledomains/js/functions.min.js",
+    "build": "npm run-script build-css && npm run-script build-js",
+    "check-syntax": "node --check modules/registrars/synergywholesaledomains/js/functions.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@development.ventraip.com.au:7999/ws/whmcs-domain-module.git"
+  },
+  "license": "GPL-3.0"
+}

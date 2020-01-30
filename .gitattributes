@@ -1,0 +1,21 @@
+# Documentation
+LICENSE           text
+*.md              text
+*.txt 			  text
+
+# Config
+.gitignore		  text
+*.json            text
+*.yml             text
+*.xml             text
+
+# Package managers
+package-lock.json text -diff
+*.lock            text -diff
+
+# Source Code
+Makefile          text
+*.css             text
+*.js.             text
+*.php             text diff=php
+*.tpl             text diff=html

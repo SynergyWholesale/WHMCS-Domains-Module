@@ -1,0 +1,29 @@
+on: 
+  push:
+    branches:
+      - master
+    tags-ignore:
+      - 'v*'
+    paths-ignore:
+      - '**.css'
+      - '**.tpl'
+      - '**.txt'
+      - '**.yml'
+      - '**.md'
+  pull_request:
+    paths-ignore:
+      - '**.css'
+      - '**.tpl'
+      - '**.md'
+      - '**.txt'
+      - '**.yml'
+      
+name: Tests
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run tests
+      run: make test

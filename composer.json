@@ -1,0 +1,10 @@
+{
+    "name": "synergywholesale/whmcs-domains-module",
+    "description": "Synergy Wholesale Registrar Module for WHMCS Billing Automation Platform",
+    "type": "project",
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.5",
+        "phpunit/phpunit": "@stable"
+    },
+    "license": "GPL-3.0"
+}

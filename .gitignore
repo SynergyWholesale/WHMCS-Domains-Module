@@ -1,0 +1,21 @@
+# IDE Files
+*.sublime-project
+*.sublime-workspace
+.phpintel/*
+.idea/
+
+# Mac
+.DS_Store
+
+# Node
+node_modules
+
+# Composer
+/vendor/
+
+# Misc
+*.cache
+
+# Minified source
+*.min.css
+*.min.js
