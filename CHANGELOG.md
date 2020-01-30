@@ -21,7 +21,7 @@ Synergy Wholesale WHMCS Domains Module
 - Premium detection to the domain sync
 - Domain "Push" button to admin panel. Allows approval of outbound transfers from within WHMCS.
 - WHMCS Module Version, WHMCS Version, and PHP Version to each API request for analytics.
-- Domain sync will sync the status of ID Protection
+- Domain sync will update the status of ID Protection in WHMCS
 
 ### Changed
 - Completed a refactor of the module

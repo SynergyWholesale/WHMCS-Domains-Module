@@ -6,7 +6,7 @@
     cacheTokens="false"
 >
     <testsuites>
-        <testsuite name="Synergy Wholesale WHMCS Domain Module Tests">
+        <testsuite name="Synergy Wholesale WHMCS Domain/Registrar Module Tests">
             <directory suffix=".php">./tests/</directory>
         </testsuite>
     </testsuites>
