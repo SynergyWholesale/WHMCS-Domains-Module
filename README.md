@@ -1,6 +1,6 @@
 # Synergy Wholesale WHMCS Domains Module
 
-![Tests](https://github.com/synergywholesale/whmcs-domains-module/workflows/Tests/badge.svg?branch=master)
+![Tests](https://github.com/synergywholesale/whmcs-domains-module/workflows/Tests/badge.svg?branch=master&event=push)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Contributors welcome](https://img.shields.io/badge/Contributors-welcome-brightgreen.svg)](https://github.com/synergywholesale/whmcs-domains-module/blob/master/CONTRIBUTING.md)
 
