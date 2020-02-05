@@ -1,5 +1,5 @@
 =============================================================
-    Synergy Wholesale WHMCS Domains Module v{{VERSION}}
+    Synergy Wholesale WHMCS Domains Module {{VERSION}}
     Released: {{RELEASE_DATE}}
 =============================================================
 

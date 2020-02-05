@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Synergy Wholesale Registrar Module
  *
