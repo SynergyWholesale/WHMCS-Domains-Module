@@ -8,7 +8,6 @@ on:
       - '**.css'
       - '**.tpl'
       - '**.txt'
-      - '**.yml'
       - '**.md'
   pull_request:
     paths-ignore:
@@ -21,9 +20,26 @@ on:
 name: Tests
 
 jobs:
-  build:
+  run:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php-versions: ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4']
+    name: PHP ${{ matrix.php-versions }} Test
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v1
+      with:
+        php-version: ${{ matrix.php-versions }}
+        coverage: none
+        extensions: soap
+        tools: composer, phpcs, phpunit:5.7.27
+   
+    - name: Check style/syntax
+      run: phpcs
+
     - name: Run tests
-      run: make test
+      run: phpunit
