@@ -20,7 +20,17 @@ on:
 name: Tests
 
 jobs:
-  run:
+  main_test:
+    name: Main Test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    
+    - name: Run main tests
+      run: make test
+
+  php_specific_tests:
     runs-on: ubuntu-latest
     strategy:
       matrix:
