@@ -15,6 +15,10 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.0.1 [Updated 07/02/2020]
+### Fixed
+- Fixed support for PHP 7.2 and below. Fixes [#1](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/1)
+
 ## 2.0.0 [Updated 21/02/2020]
 ### Added
 - Premium domain support for registration, transfers and renewal

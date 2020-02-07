@@ -797,7 +797,7 @@ function synergywholesaledomains_Sync(array $params)
                     ],
                     [
                         'value' => $check['costPrice'],
-                    ],
+                    ]
                 );
             Capsule::table('tbldomains_extra')
                 ->updateOrInsert(
