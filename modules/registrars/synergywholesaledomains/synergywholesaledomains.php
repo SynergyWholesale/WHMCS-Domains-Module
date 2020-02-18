@@ -83,7 +83,7 @@ function synergywholesaledomains_apiRequest($command, array $params = [], array 
      * backwards compatability across WHMCS versions and PHP support.
      */
     $analytics = [
-        'php_ver' => phpversion(),
+        'php_ver' => str_replace(PHP_EXTRA_VERSION, '', PHP_VERSION),
         'whmcs_ver' => $params['whmcsVersion'],
         'whmcs_mod_ver' => SW_MODULE_VERSION,
     ];
@@ -2250,6 +2250,8 @@ function synergywholesaledomains_sync_adhoc(array $params)
  */
 function synergywholesaledomains_adhocTransferSync(array $params, $domainInfo)
 {
+    global $_LANG, $CONFIG;
+
     $response = synergywholesaledomains_TransferSync($params);
     $update = $syncMessages = [];
     if (isset($response['error'])) {
@@ -2270,11 +2272,11 @@ function synergywholesaledomains_adhocTransferSync(array $params, $domainInfo)
         if ($response['expirydate']) {
             $newBillDate = $update['expirydate'] = $response['expirydate'];
             if ($CONFIG['DomainSyncNextDueDate'] && $CONFIG['DomainSyncNextDueDateDays']) {
-                $timeCalculation = strtotime($response['expirydate']) - strtotime($CONFIG['DomainSyncNextDueDateDays'] . ' days');
-                $newBillDate = date('Y-m-d', $timeCalculation);
+                $unix_expiry = strtotime($response['expirydate']);
+                $newBillDate = date('Y-m-d', strtotime(sprintf('-%d days', $CONFIG['DomainSyncNextDueDateDays']), $unix_expiry));
             }
 
-            $update['nextinvoicedate'] =  $update['nextduedate'] = $newBillDate;
+            $update['nextinvoicedate'] = $update['nextduedate'] = $newBillDate;
         }
     }
 
@@ -2354,6 +2356,8 @@ function synergywholesaledomains_adhocTransferSync(array $params, $domainInfo)
  */
 function synergywholesaledomains_adhocSync(array $params, $domainInfo)
 {
+    global $CONFIG;
+
     $response = synergywholesaledomains_Sync($params);
     $syncMessages = $update = [];
     if (isset($response['error'])) {
@@ -2391,8 +2395,8 @@ function synergywholesaledomains_adhocSync(array $params, $domainInfo)
     if ($response['expirydate']) {
         $newBillDate = $update['expirydate'] = $response['expirydate'];
         if ($CONFIG['DomainSyncNextDueDate'] && $CONFIG['DomainSyncNextDueDateDays']) {
-            $timeCalculation = strtotime($response['expirydate']) - strtotime($CONFIG['DomainSyncNextDueDateDays'] . ' days');
-            $newBillDate = date('Y-m-d', $timeCalculation);
+            $unix_expiry = strtotime($response['expirydate']);
+            $newBillDate = date('Y-m-d', strtotime(sprintf('-%d days', $CONFIG['DomainSyncNextDueDateDays']), $unix_expiry));
         }
 
         if ($newBillDate != $domainInfo->nextinvoicedate) {
