@@ -83,7 +83,7 @@ function synergywholesaledomains_apiRequest($command, array $params = [], array 
      * backwards compatability across WHMCS versions and PHP support.
      */
     $analytics = [
-        'php_ver' => phpversion(),
+        'php_ver' => str_replace(PHP_EXTRA_VERSION, '', PHP_VERSION),
         'whmcs_ver' => $params['whmcsVersion'],
         'whmcs_mod_ver' => SW_MODULE_VERSION,
     ];
