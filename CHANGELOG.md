@@ -15,6 +15,10 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.0.2 [Updated 18/02/2020]
+### Fixed
+- Fixed "Next Due Date" not accounting for `Sync Next Due Date` setting on domain sync. Fixes [#1](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/2)
+
 ## 2.0.1 [Updated 07/02/2020]
 ### Fixed
 - Fixed support for PHP 7.2 and below. Fixes [#1](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/1)
