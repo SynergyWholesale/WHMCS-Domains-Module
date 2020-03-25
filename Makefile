@@ -38,7 +38,7 @@ revert:
 
 package:
 	zip -r "synergy-wholesale-domains-$(VERSION).zip" . -x  \
-	'.DS_Store' '*.cache' '.git*' '*.md' 'Makefile' 'package.json' 'package-lock.json' \
+	'.DS_Store' '**/.DS_Store' '*.cache' '.git*' '*.md' 'Makefile' 'package.json' 'package-lock.json' \
 	'composer.json' 'composer.lock' '*.xml'  '**/synergywholesaledomains.css' '**/functions.js' \
 	'vendor/*' 'node_modules/*' '.git/*' 'tests/*'
 

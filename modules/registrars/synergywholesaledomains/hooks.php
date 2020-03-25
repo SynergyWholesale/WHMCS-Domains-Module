@@ -92,11 +92,12 @@ add_hook('ClientAreaPageDomainEmailForwarding', 1, function (array $vars) {
     }
 });
 
+// https://support.cloudflare.com/hc/en-us/articles/200169436-How-can-I-have-Rocket-Loader-ignore-specific-JavaScripts-
 add_hook('ClientAreaHeadOutput', 1, function (array $vars) {
     return str_replace('{WEB_ROOT}', $vars['WEB_ROOT'], '
-        <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js" async></script>
+        <script data-cfasync="false" src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
         <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
-        <script src="{WEB_ROOT}/modules/registrars/synergywholesaledomains/js/functions.min.js" async></script>
+        <script data-cfasync="false" src="{WEB_ROOT}/modules/registrars/synergywholesaledomains/js/functions.min.js"></script>
         <link rel="stylesheet" type="text/css" href="{WEB_ROOT}/modules/registrars/synergywholesaledomains/css/synergywholesaledomains.min.css" />
     ');
 });
