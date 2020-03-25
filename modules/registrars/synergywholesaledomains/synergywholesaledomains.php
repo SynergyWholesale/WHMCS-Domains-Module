@@ -2635,7 +2635,7 @@ if (class_exists('\WHMCS\Domain\TopLevel\ImportItem') && class_exists('\WHMCS\Re
     }
 }
 
-if (class_exists('\WHMCS\Domain\Registrar\Domain') && class_exists('\WHMCS\Carbon')) {
+if (class_exists('\WHMCS\Domain\Registrar\Domain') && class_exists('\Carbon\Carbon')) {
     function synergywholesaledomains_GetDomainInformation(array $params)
     {
         try {
@@ -2651,38 +2651,38 @@ if (class_exists('\WHMCS\Domain\Registrar\Domain') && class_exists('\WHMCS\Carbo
             $nameservers['ns' . ($index + 1)] = strtolower($value);
         }
 
-        $status = constant('WHMCS\Domain\Registrar\Domain::STATUS_ACTIVE');
+        $status = constant('\WHMCS\Domain\Registrar\Domain::STATUS_ACTIVE');
         switch (strtolower($response['domain_status'])) {
             case 'expired':
             case 'clienthold':
             case 'redemption':
-                $status = constant('WHMCS\Domain\Registrar\Domain::STATUS_EXPIRED');
+                $status = constant('\WHMCS\Domain\Registrar\Domain::STATUS_EXPIRED');
                 break;
             case 'deleted':
             case 'dropped':
             case 'policydelete':
-                $status = constant('WHMCS\Domain\Registrar\Domain::STATUS_DELETED');
+                $status = constant('\WHMCS\Domain\Registrar\Domain::STATUS_DELETED');
                 break;
             case 'outbound':
             case 'transferaway':
             case 'transferredaway':
             case 'outbound_approved':
-                $status = constant('WHMCS\Domain\Registrar\Domain::STATUS_INACTIVE');
+                $status = constant('\WHMCS\Domain\Registrar\Domain::STATUS_INACTIVE');
                 break;
             case 'domain does not exist':
-                $status = constant('WHMCS\Domain\Registrar\Domain::STATUS_ARCHIVED');
+                $status = constant('\WHMCS\Domain\Registrar\Domain::STATUS_ARCHIVED');
                 break;
         }
 
         if ('Suspended' === $response['icannStatus']) {
-            $status = constant('WHMCS\Domain\Registrar\Domain::STATUS_SUSPENDED');
+            $status = constant('\WHMCS\Domain\Registrar\Domain::STATUS_SUSPENDED');
         }
 
         return (new WHMCS\Domain\Registrar\Domain())
             ->setDomain($response['domainName'])
             ->setNameservers($nameservers)
             ->setTransferLock('clientTransferProhibited' === $response['domain_status'])
-            ->setExpiryDate(WHMCS\Carbon::createFromFormat('Y-m-d H:i:s', $response['domain_expiry']))
+            ->setExpiryDate(Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $response['domain_expiry']))
             ->setIdProtectionStatus('Enabled' === $response['idProtect'])
             ->setRegistrationStatus($status)
         ;

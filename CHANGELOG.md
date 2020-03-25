@@ -15,7 +15,7 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
-## 2.1.0 [Updated xx/03/2020]
+## 2.1.0 [Updated 25/03/2020]
 ### Added
 - Added support for [GetDomainInformation](https://developers.whmcs.com/domain-registrars/domain-information/) method for newer WHMCS 7.6+. This should improve load times by reducing the number of required API calls required.
 - Added support for [GetTldPricing](https://developers.whmcs.com/domain-registrars/tld-pricing-sync/) to enable the syncing of TLD pricing and settings. This feature is available in WHMCS 7.10+ Fixes [#4](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/4).
