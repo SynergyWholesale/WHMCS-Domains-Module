@@ -15,6 +15,11 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+
+## 2.1.2 [Updated 30/03/2020]
+### Fixed
+- Fix introduced type error: Carbon\Carbon provided, expected WHMCS\Carbon
+
 ## 2.1.1 [Updated 30/03/2020]
 ### Fixed
 - Fixed "Get EPP Code" not displaying the EPP Code on screen. Fixes [#6](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/6)

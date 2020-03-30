@@ -2635,7 +2635,7 @@ if (class_exists('\WHMCS\Domain\TopLevel\ImportItem') && class_exists('\WHMCS\Re
     }
 }
 
-if (class_exists('\WHMCS\Domain\Registrar\Domain') && class_exists('\Carbon\Carbon')) {
+if (class_exists('\WHMCS\Domain\Registrar\Domain') && class_exists('\WHMCS\Carbon')) {
     function synergywholesaledomains_GetDomainInformation(array $params)
     {
         try {
@@ -2682,7 +2682,7 @@ if (class_exists('\WHMCS\Domain\Registrar\Domain') && class_exists('\Carbon\Carb
             ->setDomain($response['domainName'])
             ->setNameservers($nameservers)
             ->setTransferLock('clientTransferProhibited' === $response['domain_status'])
-            ->setExpiryDate(Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $response['domain_expiry']))
+            ->setExpiryDate(WHMCS\Carbon::createFromFormat('Y-m-d H:i:s', $response['domain_expiry']))
             ->setIdProtectionStatus('Enabled' === $response['idProtect'])
             ->setRegistrationStatus($status)
         ;
