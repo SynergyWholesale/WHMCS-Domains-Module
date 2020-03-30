@@ -15,6 +15,11 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.1.1 [Updated 30/03/2020]
+### Fixed
+- Fixed "Get EPP Code" not displaying the EPP Code on screen. Fixes [#6](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/6)
+
+
 ## 2.1.0 [Updated 25/03/2020]
 ### Added
 - Added support for [GetDomainInformation](https://developers.whmcs.com/domain-registrars/domain-information/) method for newer WHMCS 7.6+. This should improve load times by reducing the number of required API calls required.

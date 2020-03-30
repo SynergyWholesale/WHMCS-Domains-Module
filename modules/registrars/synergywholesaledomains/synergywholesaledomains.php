@@ -1150,7 +1150,7 @@ function synergywholesaledomains_GetEPPCode(array $params)
     try {
         $eppCode = synergywholesaledomains_apiRequest('domainInfo', $params);
         return [
-            'eppcode' => $eppCode['eppCode'],
+            'eppcode' => $eppCode['domainPassword'],
         ];
     } catch (\Exception $e) {
         return [
