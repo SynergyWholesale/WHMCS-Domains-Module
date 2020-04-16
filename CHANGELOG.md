@@ -15,6 +15,27 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+
+## 2.1.2 [Updated 30/03/2020]
+### Fixed
+- Fix introduced type error: Carbon\Carbon provided, expected WHMCS\Carbon
+
+## 2.1.1 [Updated 30/03/2020]
+### Fixed
+- Fixed "Get EPP Code" not displaying the EPP Code on screen. Fixes [#6](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/6)
+
+
+## 2.1.0 [Updated 25/03/2020]
+### Added
+- Added support for [GetDomainInformation](https://developers.whmcs.com/domain-registrars/domain-information/) method for newer WHMCS 7.6+. This should improve load times by reducing the number of required API calls required.
+- Added support for [GetTldPricing](https://developers.whmcs.com/domain-registrars/tld-pricing-sync/) to enable the syncing of TLD pricing and settings. This feature is available in WHMCS 7.10+ Fixes [#4](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/4).
+
+## Fixed
+- Fixed DNS Management page not loading properly when Cloudflare Rocket Loader is active.
+
+## Changed
+- Replaced the Synergy Wholesale logo to a higher resolution and white background instead
+
 ## 2.0.2 [Updated 18/02/2020]
 ### Changed
 - PHP Version sent in API requests no longer include the `[extra]` version details

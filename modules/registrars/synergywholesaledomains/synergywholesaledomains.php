@@ -1150,7 +1150,7 @@ function synergywholesaledomains_GetEPPCode(array $params)
     try {
         $eppCode = synergywholesaledomains_apiRequest('domainInfo', $params);
         return [
-            'eppcode' => $eppCode['eppCode'],
+            'eppcode' => $eppCode['domainPassword'],
         ];
     } catch (\Exception $e) {
         return [
@@ -2600,5 +2600,91 @@ if (
                 'error' => $e->getMessage(),
             ];
         }
+    }
+}
+
+if (class_exists('\WHMCS\Domain\TopLevel\ImportItem') && class_exists('\WHMCS\Results\ResultsList')) {
+    function synergywholesaledomains_GetTldPricing(array $params)
+    {
+        try {
+            $response = synergywholesaledomains_apiRequest('getDomainPricing', $params);
+        } catch (\Exception $e) {
+            return [
+                'error' => $e->getMessage(),
+            ];
+        }
+
+        $results = new WHMCS\Results\ResultsList();
+
+        foreach ($response['pricing'] as $extension) {
+            $tld = '.' . $extension->tld;
+            $results[] = (new WHMCS\Domain\TopLevel\ImportItem())
+                ->setExtension($tld)
+                ->setMinYears($extension->minPeriod)
+                ->setMaxYears($extension->maxPeriod)
+                ->setRegisterPrice($extension->register_1_year)
+                ->setRenewPrice($extension->renew)
+                ->setTransferPrice($extension->transfer)
+                ->setRedemptionFeePrice($extension->redemption)
+                ->setCurrency('AUD')
+                ->setEppRequired(!preg_match('/\.uk$/', $tld))
+            ;
+        }
+
+        return $results;
+    }
+}
+
+if (class_exists('\WHMCS\Domain\Registrar\Domain') && class_exists('\WHMCS\Carbon')) {
+    function synergywholesaledomains_GetDomainInformation(array $params)
+    {
+        try {
+            $response = synergywholesaledomains_apiRequest('domainInfo', $params);
+        } catch (\Exception $e) {
+            return [
+                'error' => $e->getMessage(),
+            ];
+        }
+
+        $nameservers = [];
+        foreach ($response['nameServers'] as $index => $value) {
+            $nameservers['ns' . ($index + 1)] = strtolower($value);
+        }
+
+        $status = constant('\WHMCS\Domain\Registrar\Domain::STATUS_ACTIVE');
+        switch (strtolower($response['domain_status'])) {
+            case 'expired':
+            case 'clienthold':
+            case 'redemption':
+                $status = constant('\WHMCS\Domain\Registrar\Domain::STATUS_EXPIRED');
+                break;
+            case 'deleted':
+            case 'dropped':
+            case 'policydelete':
+                $status = constant('\WHMCS\Domain\Registrar\Domain::STATUS_DELETED');
+                break;
+            case 'outbound':
+            case 'transferaway':
+            case 'transferredaway':
+            case 'outbound_approved':
+                $status = constant('\WHMCS\Domain\Registrar\Domain::STATUS_INACTIVE');
+                break;
+            case 'domain does not exist':
+                $status = constant('\WHMCS\Domain\Registrar\Domain::STATUS_ARCHIVED');
+                break;
+        }
+
+        if ('Suspended' === $response['icannStatus']) {
+            $status = constant('\WHMCS\Domain\Registrar\Domain::STATUS_SUSPENDED');
+        }
+
+        return (new WHMCS\Domain\Registrar\Domain())
+            ->setDomain($response['domainName'])
+            ->setNameservers($nameservers)
+            ->setTransferLock('clientTransferProhibited' === $response['domain_status'])
+            ->setExpiryDate(WHMCS\Carbon::createFromFormat('Y-m-d H:i:s', $response['domain_expiry']))
+            ->setIdProtectionStatus('Enabled' === $response['idProtect'])
+            ->setRegistrationStatus($status)
+        ;
     }
 }
