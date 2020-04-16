@@ -2646,12 +2646,20 @@ if (class_exists('\WHMCS\Domain\Registrar\Domain') && class_exists('\WHMCS\Carbo
             ];
         }
 
+        $status = constant('\WHMCS\Domain\Registrar\Domain::STATUS_ACTIVE');
+
+        if (isset($response['transfer_status'])) {
+            return (new WHMCS\Domain\Registrar\Domain())
+                ->setDomain($response['domainName'])
+                ->setRegistrationStatus($status)
+            ;
+        }
+
         $nameservers = [];
         foreach ($response['nameServers'] as $index => $value) {
             $nameservers['ns' . ($index + 1)] = strtolower($value);
         }
 
-        $status = constant('\WHMCS\Domain\Registrar\Domain::STATUS_ACTIVE');
         switch (strtolower($response['domain_status'])) {
             case 'expired':
             case 'clienthold':
