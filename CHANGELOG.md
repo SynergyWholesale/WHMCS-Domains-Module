@@ -22,6 +22,9 @@ Synergy Wholesale WHMCS Domains Module
 - Fixed transfer price for .au domains on pricing import. The transfer price will be set to "0.00" for all .au domains. Fixes [#9](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/9)
 - Fixed style sheet rules conflicting with themes by prefixing any CSS rules with `sw-`. Fixes [#7](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/7)
 
+### Changed
+- Updated `Makefile` and `hooks.php` to insert module version as a parameter to prevent browsers loading cached assets after new releases.
+
 ## 2.1.2 [Updated 30/03/2020]
 ### Fixed
 - Fix introduced type error: Carbon\Carbon provided, expected WHMCS\Carbon
