@@ -2615,12 +2615,11 @@ if (class_exists('\WHMCS\Domain\TopLevel\ImportItem') && class_exists('\WHMCS\Re
         }
 
         $results = new WHMCS\Results\ResultsList();
-        $renew_au = isset($params['doRenewal']) && 'on' === $params['doRenewal'];
 
         foreach ($response['pricing'] as $extension) {
             $tld = '.' . $extension->tld;
             $transfer_price = $extension->transfer;
-            if (preg_match('/\.au$/', $tld) && !$renew_au) {
+            if (preg_match('/\.au$/', $tld)) {
                 $transfer_price = 0.00;
             }
 
