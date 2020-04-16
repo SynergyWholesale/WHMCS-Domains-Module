@@ -4,7 +4,7 @@
  * @copyright Copyright (c) Synergy Wholesale Pty Ltd 2020
  * @license https://github.com/synergywholesale/whmcs-domains-module/LICENSE
  */
-.ellipis {
+.sw-ellipis {
     overflow: hidden;
     -ms-text-overflow: ellipsis;
     -o-text-overflow: ellipsis;
@@ -13,49 +13,49 @@
     white-space: nowrap;
 }
 
-.no-margin {
+.sw-no-margin {
     margin: unset;
 }
 
-.inline {
+.sw-inline {
     display:inline-block;
 }
-.insertRow {
+.sw-insert-row {
     margin: 20px 0 10px 0;
 }
 
-.row select[name=type] {
+.sw-table-form select[name=type] {
     width:100%;
 }
 
-.row input[type=text], .row select {
+.sw-table-form input[type=text], .sw-table-form select {
     height:33px;
 }
 
-.row-table .row:not(#divHeading) {
+.sw-row-table .row:not(#sw-heading) {
     padding:5px 0 5px 0;
 }
 
-.row-table .row:not(#divHeading):nth-child(even) {
+.sw-row-table .row:not(#sw-heading):nth-child(even) {
     background-color:#F0F0F5;
 }
 
-.row-table .row:not(#divHeading):nth-child(odd) {
+.sw-row-table .row:not(#sw-heading):nth-child(odd) {
     background-color:#F2F7FC;
 }
 
-.loader {
+.sw-loader {
     border: 8px solid #f3f3f3;
     border-top: 8px solid #3498db;
     border-radius: 50%;
     width: 60px;
     height: 60px;
-    animation: spin 1.5s linear infinite;
+    animation: sw-spin 1.5s linear infinite;
     margin: auto;
     margin-bottom: 20px;
 }
 
-@keyframes spin {
+@keyframes sw-spin {
     0% {
         transform: rotate(0deg);
     }

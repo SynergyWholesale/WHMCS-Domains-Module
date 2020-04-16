@@ -48,7 +48,7 @@ function listMailRecords(domain_id) {
             return;
         }
         
-        $('.loader').fadeOut('fast');
+        $('.sw-loader').fadeOut('fast');
         for (i = 0; i < data.length; i++) {
             populateEmailRow(data[i].record_id, data[i].prefix, data[i].forward_to);
         }
@@ -124,7 +124,7 @@ function saveEmailRecord(domain_id, record_id, formdata) {
 // Populate the email row
 function populateEmailRow(record_id, prefix, forward_to) {
     $('#emailforwards').append(`
-        <div class="row" id="emailrow-${record_id}">
+        <div class="row sw-table-form" id="emailrow-${record_id}">
             <form id="emailform-${record_id}">
                 <input type="hidden" name="record_id" id="emailrecord_id-${record_id}" value="${record_id}">
                 <div class="col-lg-4">
@@ -159,7 +159,7 @@ function listRecords(domain_id) {
             return;
         }
 
-        $('.loader').fadeOut('fast');
+        $('.sw-loader').fadeOut('fast');
         data.forEach(function(record) {
             if ('URL' === record.type || 'FRAME' === record.type) {
                 populateURLRow(record.record_id, record.hostname, record.type, record.address);
@@ -327,7 +327,7 @@ function populateDNSRow(record_id, domain, hostname, type, ttl, address, priorit
         </div>`;
     }
 
-    let template = `<div class="row" id="row-${record_id}">
+    let template = `<div class="row sw-table-form" id="row-${record_id}">
         <form id="form-${record_id}">
             <input type="hidden" name="record_id" id="record_id-${record_id}" value="${record_id}">
             <div class="col-lg-3">
@@ -369,7 +369,7 @@ function populateURLRow(record_id, hostname, type, address) {
     }
 
     $('#urlforwards').append(`
-        <div class="row" id="urlrow-${record_id}">
+        <div class="row sw-table-form" id="urlrow-${record_id}">
             <form id="urlform-${record_id}">
                 <input type="hidden" name="record_id" id="urlrecord_id-${record_id}" value="${record_id}">
                 <div class="col-lg-3">
@@ -443,14 +443,14 @@ function EmailForwardPageReady(domain_id) {
     // Retrieve a list of all currently configured records
     listMailRecords(domain_id);
     
-    // If we get a click on the class insertRow do the following
-    $(document).on('click', '.insertRow', function() {
+    // If we get a click on the class sw-insert-row do the following
+    $(document).on('click', '.sw-insert-row', function() {
         // Count the number of div's in the emailforwards div
         let row_count = $('#emailforwards > div').length + 1;
 
         // Append the following html to the emailforwards div
         $('#emailforwards').append(`
-            <div class="row" id="emailrow-${row_count}">
+            <div class="row sw-table-form" id="emailrow-${row_count}">
                 <form id="emailform-${row_count}">
                     <input type="hidden" name="record_id" id="newemailrecord_id-${row_count}" value="${row_count}" />
                     <div class="col-lg-4">
@@ -534,8 +534,8 @@ function DnsUrlPageReady(domain_id) {
     });
     // Retrieve a list of all currently configured records
     listRecords(domain_id);
-    // If we get a click on the class insertRow do the following
-    $(document).on('click', '.insertRow', function() {
+    // If we get a click on the class sw-insert-row do the following
+    $(document).on('click', '.sw-insert-row', function() {
         // Work out which div element we should be adding to
         let section = $(this).attr('data-append');
         let row_count = 0;
@@ -545,7 +545,7 @@ function DnsUrlPageReady(domain_id) {
                 row_count = $('#dnsrecords > div').length + 1;
                 // Append the following html to the dnsrecords div
                 $('#dnsrecords').append(`
-                    <div class="row" id="row-${row_count}">
+                    <div class="row sw-table-form" id="row-${row_count}">
                         <form id="form-${row_count}">
                             <input type="hidden" name="record_id" id="newrecord_id-${row_count}" value="${row_count}">
                             <div class="col-lg-3">
@@ -585,7 +585,7 @@ function DnsUrlPageReady(domain_id) {
                 row_count = $('#urlforwards > div').length + 1;
 
                 $('#urlforwards').append(`
-                    <div class="row" id="urlrow-${row_count}">
+                    <div class="row sw-table-form" id="urlrow-${row_count}">
                         <form id="urlform-${row_count}">
                             <input type="hidden" name="record_id" id="urlnewrecord_id-${row_count}" value="${row_count}">
                             <div class="col-lg-3">
