@@ -2615,16 +2615,22 @@ if (class_exists('\WHMCS\Domain\TopLevel\ImportItem') && class_exists('\WHMCS\Re
         }
 
         $results = new WHMCS\Results\ResultsList();
+        $renew_au = isset($params['doRenewal']) && 'on' === $params['doRenewal'];
 
         foreach ($response['pricing'] as $extension) {
             $tld = '.' . $extension->tld;
+            $transfer_price = $extension->transfer;
+            if (preg_match('/\.au$/', $tld) && !$renew_au) {
+                $transfer_price = 0.00;
+            }
+
             $results[] = (new WHMCS\Domain\TopLevel\ImportItem())
                 ->setExtension($tld)
                 ->setMinYears($extension->minPeriod)
                 ->setMaxYears($extension->maxPeriod)
                 ->setRegisterPrice($extension->register_1_year)
                 ->setRenewPrice($extension->renew)
-                ->setTransferPrice($extension->transfer)
+                ->setTransferPrice($transfer_price)
                 ->setRedemptionFeePrice($extension->redemption)
                 ->setCurrency('AUD')
                 ->setEppRequired(!preg_match('/\.uk$/', $tld))
