@@ -7,14 +7,14 @@
 
 <input id="domainid" type="hidden" name="domainid" value="{$domainid}" />
 
-<div class="row no-margin">
-    <h3 class="inline">DNS records</h3>
-    <button type="button" class="btn btn-success insertRow pull-right" data-append="dnsrecords">
+<div class="row sw-no-margin">
+    <h3 class="sw-inline">DNS records</h3>
+    <button type="button" class="btn btn-success sw-insert-row pull-right" data-append="dnsrecords">
         <span class="glyphicon glyphicon-plus"></span>
     </button>
 </div>
-<div class="container col-lg-12 row-table" id="dnsrecords">
-    <div class="row no-margin" id="divHeading">
+<div class="container col-lg-12 sw-row-table" id="dnsrecords">
+    <div class="row sw-no-margin" id="sw-heading">
         <div class="col-lg-3">Host Name</div>
         <div class="col-lg-3">Address / Content</div>
         <div class="col-lg-2">Type</div>
@@ -25,16 +25,16 @@
     <hr>
 </div>
 <div>&nbsp;</div>
-<div class="loader"></div>
+<div class="sw-loader"></div>
 
-<div class="row no-margin">
-    <h3 class="inline">URL forwards</h3>
-    <button type="button" class="btn btn-success insertRow pull-right" data-append="urlforwards">
+<div class="row sw-no-margin">
+    <h3 class="sw-inline">URL forwards</h3>
+    <button type="button" class="btn btn-success sw-insert-row pull-right" data-append="urlforwards">
         <span class="glyphicon glyphicon-plus"></span>
     </button>
 </div>
-<div class="container col-lg-12 row-table" id="urlforwards">
-    <div class="row no-margin" id="divHeading">
+<div class="container col-lg-12 sw-row-table" id="urlforwards">
+    <div class="row sw-no-margin" id="sw-heading">
         <div class="col-lg-3">Host Name</div>
         <div class="col-lg-3">Address</div>
         <div class="col-lg-3">Type</div>
@@ -43,4 +43,4 @@
     <hr>
 </div>
 <div>&nbsp;</div>
-<div class="loader"></div>
+<div class="sw-loader"></div>

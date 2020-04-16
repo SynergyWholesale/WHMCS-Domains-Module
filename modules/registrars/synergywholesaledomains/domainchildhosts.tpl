@@ -35,8 +35,8 @@
                             {assign var="count" value=$ipArray|@count}
                             {foreach $ipArray as $ipRecord}
                                 <tr>
-                                    <td><div class="ellipis">{$key}</div></td>
-                                    <td><div class="ellipis">{$ipRecord}</div></td>
+                                    <td><div class="sw-ellipis">{$key}</div></td>
+                                    <td><div class="sw-ellipis">{$ipRecord}</div></td>
                                     <td class="text-right">
                                         <form class="form-horizontal" role="form" method="post" action="clientarea.php?action=domaindetails&id={$domainid}&modop=custom&a=manageChildHosts">
                                             <input type="hidden" name="ipHost" value="{$key}"/>
@@ -88,7 +88,7 @@
             <tbody>
                 {foreach $records as $key => $ipArray}
                     <tr>
-                        <td><div class="ellipis">{$key}</div></td>
+                        <td><div class="sw-ellipis">{$key}</div></td>
                         <td class="text-right">
                             <form class="form-horizontal" role="form" method="post" action="clientarea.php?action=domaindetails&id={$domainid}&modop=custom&a=manageChildHosts">
                                 <input type="hidden" name="ipHost" value="{$key}"/>

@@ -2618,13 +2618,18 @@ if (class_exists('\WHMCS\Domain\TopLevel\ImportItem') && class_exists('\WHMCS\Re
 
         foreach ($response['pricing'] as $extension) {
             $tld = '.' . $extension->tld;
+            $transfer_price = $extension->transfer;
+            if (preg_match('/\.au$/', $tld)) {
+                $transfer_price = 0.00;
+            }
+
             $results[] = (new WHMCS\Domain\TopLevel\ImportItem())
                 ->setExtension($tld)
                 ->setMinYears($extension->minPeriod)
                 ->setMaxYears($extension->maxPeriod)
                 ->setRegisterPrice($extension->register_1_year)
                 ->setRenewPrice($extension->renew)
-                ->setTransferPrice($extension->transfer)
+                ->setTransferPrice($transfer_price)
                 ->setRedemptionFeePrice($extension->redemption)
                 ->setCurrency('AUD')
                 ->setEppRequired(!preg_match('/\.uk$/', $tld))
@@ -2646,12 +2651,20 @@ if (class_exists('\WHMCS\Domain\Registrar\Domain') && class_exists('\WHMCS\Carbo
             ];
         }
 
+        $status = constant('\WHMCS\Domain\Registrar\Domain::STATUS_ACTIVE');
+
+        if (isset($response['transfer_status'])) {
+            return (new WHMCS\Domain\Registrar\Domain())
+                ->setDomain($response['domainName'])
+                ->setRegistrationStatus($status)
+            ;
+        }
+
         $nameservers = [];
         foreach ($response['nameServers'] as $index => $value) {
             $nameservers['ns' . ($index + 1)] = strtolower($value);
         }
 
-        $status = constant('\WHMCS\Domain\Registrar\Domain::STATUS_ACTIVE');
         switch (strtolower($response['domain_status'])) {
             case 'expired':
             case 'clienthold':

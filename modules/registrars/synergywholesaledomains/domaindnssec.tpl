@@ -38,10 +38,10 @@
                         {foreach $records as $record}
                         <tr>
                             {foreach $record as $key => $value}
-                            {if $key eq "keyTag"} <td><div class="ellipis">{$value}</div></td>{/if}
-                            {if $key eq "algorithm"} <td><div class="ellipis">{$value}</div></td>{/if}
-                            {if $key eq "digest"} <td><div class="ellipis">{$value}</div></td>{/if}
-                            {if $key eq "digestType"} <td><div class="ellipis">{$value}</div></td>{/if}
+                            {if $key eq "keyTag"} <td><div class="sw-ellipis">{$value}</div></td>{/if}
+                            {if $key eq "algorithm"} <td><div class="sw-ellipis">{$value}</div></td>{/if}
+                            {if $key eq "digest"} <td><div class="sw-ellipis">{$value}</div></td>{/if}
+                            {if $key eq "digestType"} <td><div class="sw-ellipis">{$value}</div></td>{/if}
                             {if $key eq "UUID"} {$uuid = $value}{/if}
                             {/foreach}
                             <td>
@@ -75,7 +75,7 @@
             <label class="control-label col-sm-2" for="algorithm">Algorithm:</label>
             <div class="col-xs-5">
                 <select name="algorithm" class="form-control" id="algorithm" form="form">
-                <optgroup label="DNSSEC Algorithms"></optgroup>
+                    <optgroup label="DNSSEC Algorithms"></optgroup>
                     <option value="1">[1] RSA/MD5</option>
                     <option value="2">[2] Diffie-Hellman</option>
                     <option value="3">[3] DSA/SHA-1</option>
