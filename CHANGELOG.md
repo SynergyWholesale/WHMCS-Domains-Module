@@ -15,6 +15,11 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.1.4 [Updated 20/04/2020]
+
+### Fixed
+- Fixed Registrar Lock option displaying for .au domain names. Fixes [#8](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/8)
+
 ## 2.1.3 [Updated 16/04/2020]
 
 ### Fixed
