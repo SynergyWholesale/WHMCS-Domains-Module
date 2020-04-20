@@ -84,8 +84,8 @@ add_hook('ClientAreaHeadOutput', 1, function (array $vars) {
     return str_replace('{WEB_ROOT}', $vars['WEB_ROOT'], '
         <script data-cfasync="false" src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
         <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
-        <script data-cfasync="false" src="{WEB_ROOT}/modules/registrars/synergywholesaledomains/js/functions.min.js?v=2.1.3"></script>
-        <link rel="stylesheet" type="text/css" href="{WEB_ROOT}/modules/registrars/synergywholesaledomains/css/synergywholesaledomains.min.css?v=2.1.3" />
+        <script data-cfasync="false" src="{WEB_ROOT}/modules/registrars/synergywholesaledomains/js/functions.min.js?v={{VERSION}}></script>
+        <link rel="stylesheet" type="text/css" href="{WEB_ROOT}/modules/registrars/synergywholesaledomains/css/synergywholesaledomains.min.css?v={{VERSION}}" />
     ');
 });
 
