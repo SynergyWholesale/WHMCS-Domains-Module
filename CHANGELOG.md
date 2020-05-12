@@ -15,6 +15,11 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.1.5 [Updated 13/05/2020]
+
+### Fixed
+- Fixed domain sync not working on transferred away domains. Fixes [#14](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/14)
+
 ## 2.1.4 [Updated 20/04/2020]
 
 ### Fixed

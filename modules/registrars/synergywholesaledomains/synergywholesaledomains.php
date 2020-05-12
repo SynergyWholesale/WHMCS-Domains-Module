@@ -739,7 +739,7 @@ function synergywholesaledomains_Sync(array $params)
 {
     // Run the sync command on the domain specified
     try {
-         $response = synergywholesaledomains_apiRequest('domainInfo', $params);
+         $response = synergywholesaledomains_apiRequest('domainInfo', $params, [], false);
     } catch (\Exception $e) {
         return [
             'error' => $e->getMessage(),
@@ -2350,7 +2350,7 @@ function synergywholesaledomains_adhocTransferSync(array $params, $domainInfo)
  * because the interface has the data fetched prior to this function running.
  *
  * @param      array   $params      The parameters
- * @param      object  $domainInfo  The domain information
+ * @param      object  $domainInfo  The domain information from the DB
  *
  * @return     array   Returns a message containing the updated information.
  */
