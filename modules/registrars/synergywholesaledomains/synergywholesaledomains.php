@@ -45,7 +45,7 @@ function synergywholesaledomains_helper_getDomain(array $params)
 
 function synergywholesaledomains_helper_getNameservers(array $params)
 {
-    $namesevers = [];
+    $nameservers = [];
     for ($i = 1; $i < 6; $i++) {
         if (empty($params["ns$i"])) {
             continue;
