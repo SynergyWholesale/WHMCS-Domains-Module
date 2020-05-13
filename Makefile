@@ -33,16 +33,18 @@ replace:
 revert:
 	sed -i${SED_PARAM} "s/${VERSION}/{{VERSION}}/g" "README.txt"
 	sed -i${SED_PARAM} "s/${RELEASE_DATE}/{{RELEASE_DATE}}/g" "README.txt"
-	sed -i${SED_PARAM} "s/{{VERSION}}/${VERSION:v%=%}/g" "modules/registrars/synergywholesaledomains/hooks.php"
+	sed -i${SED_PARAM} "s/${VERSION:v%=%}/{{VERSION}}/g" "modules/registrars/synergywholesaledomains/hooks.php"
 	sed -i${SED_PARAM} "s/${VERSION:v%=%}/{{VERSION}}/g" "modules/registrars/synergywholesaledomains/synergywholesaledomains.php"
 	sed -i${SED_PARAM} "s/${SW_API_HOSTNAME}/{{API}}/g" "modules/registrars/synergywholesaledomains/synergywholesaledomains.php"
 	sed -i${SED_PARAM} "s/${SW_FRONTEND_HOSTNAME}/{{FRONTEND}}/g" "modules/registrars/synergywholesaledomains/synergywholesaledomains.php"
 
 package:
+	make replace
 	zip -r "synergy-wholesale-domains-$(VERSION).zip" . -x  \
 	'.DS_Store' '**/.DS_Store' '*.cache' '.git*' '*.md' 'Makefile' 'package.json' 'package-lock.json' \
 	'composer.json' 'composer.lock' '*.xml'  '**/synergywholesaledomains.css' '**/functions.js' \
 	'vendor/*' 'node_modules/*' '.git/*' 'tests/*'
+	make revert
 
 build:
 	make test
