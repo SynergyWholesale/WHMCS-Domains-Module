@@ -15,6 +15,11 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.1.6 [Updated 14/05/2020]
+
+### Fixed
+- Fixed an unclosed quote in the header when importing a JS asset. Fixes [#16](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/16)
+
 ## 2.1.5 [Updated 13/05/2020]
 
 ### Fixed
