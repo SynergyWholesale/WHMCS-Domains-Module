@@ -10,94 +10,98 @@
 // http://docs.whmcs.com/Editing_Client_Area_Menus
 use WHMCS\View\Menu\Item as MenuItem;
 
-// We use this hook to override the WHMCS default manage private nameservers page
-// As well as email forwarding and dns modification pages as well
+/**
+ * We have our own custom ones, so remove the default;
+ *  - Manage Private Nameservers
+ *  - Manage DNS Host Records
+ *  - Manage Email Forwarding
+ *  - Registrar Lock Status (for unsupported TLDs)
+ */
 add_hook('ClientAreaPrimarySidebar', 1, function (MenuItem $primarySidebar) {
 
-    // Get the domain being visited and grab the id of it
-    // http://docs.whmcs.com/classes/classes/WHMCS.Domain.Domain.html
-    $domain              = Menu::context('domain');
-    $hasEmailForwarding  = $domain->hasEmailForwarding;
-    $hasDNSManagement    = $domain->hasDnsManagement;
-    $hasIdProtection     = $domain->hasIdProtection;
-    $registrarModuleName = $domain->registrarModuleName;
+    $context = Menu::context('domain');
+    $menu = $primarySidebar->getChild('Domain Details Management');
 
-    // Make sure the domain belongs to the Synergy Wholesale Domains module before we go forth
-    // and hide the default pages
-    if ("synergywholesaledomains" == $registrarModuleName) {
-        // If the Manage Private Nameservers page is defined, rid ourselves of it
-        if (!is_null($primarySidebar->getChild('Domain Details Management')) && !is_null($primarySidebar->getChild('Domain Details Management')->getChild('Manage Private Nameservers'))) {
-            $primarySidebar->getChild('Domain Details Management')->removeChild('Manage Private Nameservers');
+    // Make sure the domain belongs to the Synergy Wholesale Domains module
+    if (!is_null($menu) && 'synergywholesaledomains' === $context->registrarModuleName) {
+        if (!is_null($menu->getChild('Manage Private Nameservers'))) {
+            $menu->removeChild('Manage Private Nameservers');
         }
 
-        // If we can find the user has dns management addon enabled, we hide WHMCS default page
-        if ($hasDNSManagement) {
-            if (!is_null($primarySidebar->getChild('Domain Details Management')) && !is_null($primarySidebar->getChild('Domain Details Management')->getChild('Manage DNS Host Records'))) {
-                $primarySidebar->getChild('Domain Details Management')->removeChild('Manage DNS Host Records');
-            }
+        if ($context->hasDnsManagement && !is_null($menu->getChild('Manage DNS Host Records'))) {
+            $menu->removeChild('Manage DNS Host Records');
         }
 
-        // If we can find the user has email forwarding addon enabled, we hide the WHMCS default page
-        if ($hasEmailForwarding) {
-            if (!is_null($primarySidebar->getChild('Domain Details Management')) && !is_null($primarySidebar->getChild('Domain Details Management')->getChild('Manage Email Forwarding'))) {
-                $primarySidebar->getChild('Domain Details Management')->removeChild('Manage Email Forwarding');
-            }
+        if ($context->hasEmailForwarding && !is_null($menu->getChild('Manage Email Forwarding'))) {
+            $menu->removeChild('Manage Email Forwarding');
+        }
+
+        if (preg_match('/\.au$/', $context->domain) && !is_null($menu->getChild('Registrar Lock Status'))) {
+            $menu->removeChild('Registrar Lock Status');
         }
     }
 });
 
-// We use this hook to override the WHMCS default domain dns management page
-// We want to go to our custom page, as long as the registrarModuleName is set and
-// is pointing to our custom module
+/**
+ * Override the DNS Management page to link to our custom one
+ */
 add_hook('ClientAreaPageDomainDNSManagement', 1, function (array $vars) {
 
-    // Map the domain id
-    $domainid = $vars['domainid'];
+    $domain_id = $vars['domainid'];
+    $registrarModuleName = null;
 
-    // If the registarModule under dnsrecords -> vars is set then assign it
-    // Otherwise is null
     if (isset($vars['dnsrecords']['vars']['registrarModule'])) {
         $registrarModuleName = $vars['dnsrecords']['vars']['registrarModule'];
-    } else {
-        $registrarModuleName = null;
     }
 
-    // If the registrarModuleName is not null and equals synergywholesaledomains
-    if (!is_null($registrarModuleName) && "synergywholesaledomains" == $registrarModuleName) {
-        // Redirect to our custom page
-        header("Location: clientarea.php?action=domaindetails&id=" . $domainid . "&modop=custom&a=manageDNSURLForwarding");
+    if ('synergywholesaledomains' === $registrarModuleName) {
+        header('Location: clientarea.php?action=domaindetails&id=' . $domain_id . '&modop=custom&a=manageDNSURLForwarding');
     }
 });
 
-// We use this hook to override the WHMCS default domain email forwarding page
-// We want to go to our custom page, as long as the registrarModuleName is set and
-// is pointing to our custom module
+/**
+ * Override the Email Forwarding page to link to our custom one
+ */
 add_hook('ClientAreaPageDomainEmailForwarding', 1, function (array $vars) {
 
-    // Map the domain id
-    $domainid = $vars['domainid'];
+    $domain_id = $vars['domainid'];
+    $registrarModuleName = null;
 
-    // If the registarModule under dnsrecords -> vars is set then assign it
-    // Otherwise is null
     if (isset($vars['emailforwarders']['vars']['registrarModule'])) {
         $registrarModuleName = $vars['emailforwarders']['vars']['registrarModule'];
-    } else {
-        $registrarModuleName = null;
     }
 
-    // If the registrarModuleName is not null and equals synergywholesaledomains
-    if (!is_null($registrarModuleName) && "synergywholesaledomains" == $registrarModuleName) {
-        // Redirect to our custom page
-        header("Location: clientarea.php?action=domaindetails&id=" . $domainid . "&modop=custom&a=manageEmailForwarding");
+    if ('synergywholesaledomains' === $registrarModuleName) {
+        header('Location: clientarea.php?action=domaindetails&id=' . $domain_id . '&modop=custom&a=manageEmailForwarding');
     }
 });
 
-// https://support.cloudflare.com/hc/en-us/articles/200169436-How-can-I-have-Rocket-Loader-ignore-specific-JavaScripts-
+/**
+ * We've had reports of things not working/loading properly when they're using Cloudflare Rocket Loader, so let's add an exemption.
+ * @see https://support.cloudflare.com/hc/en-us/articles/200169436-How-can-I-have-Rocket-Loader-ignore-specific-JavaScripts-
+ */
 add_hook('ClientAreaHeadOutput', 1, function (array $vars) {
     return str_replace('{WEB_ROOT}', $vars['WEB_ROOT'], '
         <script data-cfasync="false" src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
         <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
-        <script data-cfasync="false" src="{WEB_ROOT}/modules/registrars/synergywholesaledomains/js/functions.min.js?v=2.1.2"></script>
-        <link rel="stylesheet" type="text/css" href="{WEB_ROOT}/modules/registrars/synergywholesaledomains/css/synergywholesaledomains.min.css?v=2.1.2" />
+        <script data-cfasync="false" src="{WEB_ROOT}/modules/registrars/synergywholesaledomains/js/functions.min.js?v={{VERSION}}></script>
+        <link rel="stylesheet" type="text/css" href="{WEB_ROOT}/modules/registrars/synergywholesaledomains/css/synergywholesaledomains.min.css?v={{VERSION}}" />
     ');
+});
+
+
+/*
+ * Remove the "Domain Currently Unlocked!" error message on the domain overview for TLDs that don't support registrar lock (such as .au)
+ */
+add_hook('ClientAreaPageDomainDetails', 1, function (array $vars) {
+
+    $menu = Menu::context('domain');
+        
+    if (preg_match('/\.au$/', $menu->domain) && 'synergywholesaledomains' === $menu->registrar) {
+        // Required to hide the error message
+        $vars['managementoptions']['locking'] = false;
+        $vars['lockstatus'] = false;
+
+        return $vars;
+    }
 });

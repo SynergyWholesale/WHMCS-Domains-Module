@@ -739,7 +739,7 @@ function synergywholesaledomains_Sync(array $params)
 {
     // Run the sync command on the domain specified
     try {
-         $response = synergywholesaledomains_apiRequest('domainInfo', $params);
+         $response = synergywholesaledomains_apiRequest('domainInfo', $params, [], false);
     } catch (\Exception $e) {
         return [
             'error' => $e->getMessage(),
@@ -751,13 +751,15 @@ function synergywholesaledomains_Sync(array $params)
         ->first();
 
     // Sync ID Protection
-    $idProtect = $response['idProtect'] === 'Enabled';
-    if ($domain->idprotection != $idProtect) {
-        Capsule::table('tbldomains')
-            ->where('id', $params['domainid'])
-            ->update([
-                'idprotection' => (int) $idProtect,
-            ]);
+    if (isset($response['idProtect'])) {
+        $idProtect = $response['idProtect'] === 'Enabled';
+        if ($domain->idprotection != $idProtect) {
+            Capsule::table('tbldomains')
+                ->where('id', $params['domainid'])
+                ->update([
+                    'idprotection' => (int) $idProtect,
+                ]);
+        }
     }
 
     try {
@@ -875,7 +877,7 @@ function synergywholesaledomains_Sync(array $params)
             ->first();
         // If the domain used to exist in this whmcs installation it's safe to say if we get these errors then
         // it has been transferred away to another reseller
-        if ('Domain Info Failed - Unable to retrieve domain id' === $response['errorMessage']) {
+        if ('Domain Info Failed - Unable to retrieve domain id' === $response['error']) {
             // If now is after the domains expiry date mark it as cancelled
             if (time() >= strtotime($selectInfo->expirydate)) {
                 $note = 'Domain has been marked as cancelled due to not being in your account and, the current date is past the expiry date';
@@ -2350,7 +2352,7 @@ function synergywholesaledomains_adhocTransferSync(array $params, $domainInfo)
  * because the interface has the data fetched prior to this function running.
  *
  * @param      array   $params      The parameters
- * @param      object  $domainInfo  The domain information
+ * @param      object  $domainInfo  The domain information from the DB
  *
  * @return     array   Returns a message containing the updated information.
  */
