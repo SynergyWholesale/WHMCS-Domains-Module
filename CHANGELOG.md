@@ -15,6 +15,11 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+
+## 2.1.7 [Updated 26/05/2020]
+### Fixed
+- Fixed an issue with updating technical contacts. Fixes [#21](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/21)
+
 ## 2.1.6 [Updated 14/05/2020]
 
 ### Fixed
