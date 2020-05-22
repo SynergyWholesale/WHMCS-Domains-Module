@@ -1025,9 +1025,14 @@ function synergywholesaledomains_TransferSync(array $params)
 function synergywholesaledomains_SaveContactDetails(array $params)
 {
     $request = [];
-
-    foreach (['registrant', 'admin', 'tech', 'billing'] as $contactType) {
-        $whmcs_contact = ucfirst($contactType);
+    $contactTypes = [
+        'registrant' => 'Registrant', 
+        'admin' => 'Admin',
+        'tech' => 'Technical',
+        'billing' => 'Billing',
+    ];
+    
+    foreach ($contactTypes as $contactType => $whmcs_contact) {
         if (!isset($params['contactdetails'][$whmcs_contact])) {
             continue;
         }
