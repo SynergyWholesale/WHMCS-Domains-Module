@@ -1031,7 +1031,7 @@ function synergywholesaledomains_SaveContactDetails(array $params)
         'technical' => 'Tech',
         'billing' => 'Billing',
     ];
-    
+
     foreach ($contactTypes as $contactType => $whmcs_contact) {
         if (!isset($params['contactdetails'][$whmcs_contact])) {
             continue;
@@ -1046,8 +1046,6 @@ function synergywholesaledomains_SaveContactDetails(array $params)
             $params['contactdetails'][$whmcs_contact]['Address 3'],
         ];
 
-        $request["{$contactType}_address"] = array_filter($request["{$contactType}_address"]);
-
         $request["{$contactType}_email"] = $params['contactdetails'][$whmcs_contact]['Email'];
         $request["{$contactType}_suburb"] = $params['contactdetails'][$whmcs_contact]['City'];
         $request["{$contactType}_postcode"] = $params['contactdetails'][$whmcs_contact]['Postcode'];
@@ -1061,10 +1059,10 @@ function synergywholesaledomains_SaveContactDetails(array $params)
 
         $request["{$contactType}_country"] = $params['contactdetails'][$whmcs_contact]['Country'];
         // See if country is AU
-        if ('AU' == $country) {
+        if ('AU' == $request["{$contactType}_country"]) {
             // It is, so check to see if a valid AU State has been specified
             $state = synergywholesaledomains_validateAUState($params['contactdetails'][$whmcs_contact]['State']);
-            if (!$state) {
+            if (!empty($params['contactdetails'][$whmcs_contact]['State']) && !$state) {
                 return [
                     'error' => 'A Valid Australian State Name Must Be Supplied, EG. NSW, VIC',
                 ];
