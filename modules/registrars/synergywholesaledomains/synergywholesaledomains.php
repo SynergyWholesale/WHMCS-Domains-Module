@@ -1026,7 +1026,7 @@ function synergywholesaledomains_SaveContactDetails(array $params)
 {
     $request = [];
     $contactTypes = [
-        'registrant' => 'Registrant', 
+        'registrant' => 'Registrant',
         'admin' => 'Admin',
         'technical' => 'Tech',
         'billing' => 'Billing',
@@ -2636,8 +2636,11 @@ if (class_exists('\WHMCS\Domain\TopLevel\ImportItem') && class_exists('\WHMCS\Re
                 ->setRenewPrice($extension->renew)
                 ->setTransferPrice($transfer_price)
                 ->setRedemptionFeePrice($extension->redemption)
+                ->setRedemptionFeeDays($extension->cannotRenewWithin)
                 ->setCurrency('AUD')
                 ->setEppRequired(!preg_match('/\.uk$/', $tld))
+                ->setGraceFeeDays($extension->canRenewWithin)
+                ->setGraceFeePrice('0.00')
             ;
         }
 
