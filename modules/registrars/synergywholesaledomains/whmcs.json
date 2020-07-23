@@ -1,0 +1,50 @@
+{
+  "schema": "1.0",
+  "type": "whmcs-registrars",
+  "name": "Synergy Wholesale Domains",
+  "license": "proprietary",
+  "category": "registrars",
+  "description": {
+    "name": "Synergy Wholesale Domains",
+    "tagline": "Resell domain names with Australia's Favourite Wholesaler",
+    "long": "Synergy Wholesale Registrar Module for WHMCS Billing Automation Platform",
+    "features": [
+      "Full Premium Domain Support",
+      "Domain Registration",
+      "Domain Transfer",
+      "Domain Renewal",
+      "Domain Management",
+      "Update Nameservers",
+      "Configure/Manage Child hosts",
+      "Configure/Manage DNSSEC",
+      "ID Protection",
+      "Update Contacts",
+      "DNS Hosting",
+      "Supports: A, AAAA, CNAME, MX, NS, SRV, and TXT",
+      "URL Forwarding",
+      "HTTP 301 Redirect",
+      "HTML Frame (Cloaking)",
+      "Email Forwarding",
+      "Advanced Domain/Transfer Sync",
+      "Includes retrospective premium domain identification",
+      "Manual sync button in the admin area",
+      "API Connectivity Tester",
+      "WHOIS.json updater"
+    ]
+  },
+  "logo": {
+    "filename": "logo.png"
+  },
+  "support": {
+    "homepage": "https:\/\/synergywholesale.com\/",
+    "learn_more": "https:\/\/synergywholesale.com\/faq\/category\/api-whmcs-modules\/domain-registrar-module\/",
+    "support_url": "https:\/\/synergywholesale.com\/support\/",
+    "docs_url": "https:\/\/synergywholesale.com\/faq\/article\/installing-the-whmcs-domain-registrar-module\/"
+  },
+  "authors": [
+    {
+      "name": "Synergy Wholesale",
+      "homepage": "https:\/\/synergywholesale.com\/"
+    }
+  ]
+}
