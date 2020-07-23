@@ -2635,7 +2635,7 @@ if (class_exists('\WHMCS\Domain\TopLevel\ImportItem') && class_exists('\WHMCS\Re
                 ->setRegisterPrice($extension->register_1_year)
                 ->setRenewPrice($extension->renew)
                 ->setTransferPrice($transfer_price)
-                ->setRedemptionFeePrice($extension->redemption)
+                ->setRedemptionFeePrice(isset($extension->redemption) ? $extension->redemption : '0.00')
                 ->setRedemptionFeeDays($extension->cannotRenewWithin)
                 ->setCurrency('AUD')
                 ->setEppRequired(!preg_match('/\.uk$/', $tld))
