@@ -24,6 +24,7 @@ update-whois:
 
 replace:
 	sed -i${SED_PARAM} "s/{{VERSION}}/${VERSION}/g" "README.txt"
+	sed -i${SED_PARAM} "s/{{VERSION}}/${VERSION}/g" "modules/registrars/synergywholesaledomains/whmcs.json"
 	sed -i${SED_PARAM} "s/{{RELEASE_DATE}}/${RELEASE_DATE}/g" "README.txt"
 	sed -i${SED_PARAM} "s/{{VERSION}}/${VERSION:v%=%}/g" "modules/registrars/synergywholesaledomains/hooks.php"
 	sed -i${SED_PARAM} "s/{{VERSION}}/${VERSION:v%=%}/g" "modules/registrars/synergywholesaledomains/synergywholesaledomains.php"
@@ -33,6 +34,7 @@ replace:
 revert:
 	sed -i${SED_PARAM} "s/${VERSION}/{{VERSION}}/g" "README.txt"
 	sed -i${SED_PARAM} "s/${RELEASE_DATE}/{{RELEASE_DATE}}/g" "README.txt"
+	sed -i${SED_PARAM} "s/${VERSION}/{{VERSION}}/g" "modules/registrars/synergywholesaledomains/whmcs.json"
 	sed -i${SED_PARAM} "s/${VERSION:v%=%}/{{VERSION}}/g" "modules/registrars/synergywholesaledomains/hooks.php"
 	sed -i${SED_PARAM} "s/${VERSION:v%=%}/{{VERSION}}/g" "modules/registrars/synergywholesaledomains/synergywholesaledomains.php"
 	sed -i${SED_PARAM} "s/${SW_API_HOSTNAME}/{{API}}/g" "modules/registrars/synergywholesaledomains/synergywholesaledomains.php"

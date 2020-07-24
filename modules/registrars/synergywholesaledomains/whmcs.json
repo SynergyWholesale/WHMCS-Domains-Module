@@ -1,13 +1,13 @@
 {
   "schema": "1.0",
   "type": "whmcs-registrars",
-  "name": "Synergy Wholesale Domains",
-  "license": "proprietary",
-  "category": "registrars",
+  "name": "synergywholesaledomains",
+  "license": "GPLv3",
+  "category": "domains",
   "description": {
-    "name": "Synergy Wholesale Domains",
+    "name": "Synergy Wholesale Domains v{{VERSION}}",
     "tagline": "Resell domain names with Australia's Favourite Wholesaler",
-    "long": "Synergy Wholesale Registrar Module for WHMCS Billing Automation Platform",
+    "long": "Not a Synergy Wholesale partner yet? [Become one today|https://synergywholesale.com/become-a-partner/]",
     "features": [
       "Full Premium Domain Support",
       "Domain Registration",
@@ -20,7 +20,6 @@
       "ID Protection",
       "Update Contacts",
       "DNS Hosting",
-      "Supports: A, AAAA, CNAME, MX, NS, SRV, and TXT",
       "URL Forwarding",
       "HTTP 301 Redirect",
       "HTML Frame (Cloaking)",
@@ -43,8 +42,8 @@
   },
   "authors": [
     {
-      "name": "Synergy Wholesale",
-      "homepage": "https:\/\/synergywholesale.com\/"
+      "name": "Cameron Hall, Synergy Wholesale",
+      "homepage": "https:\/\/github.com\/cameronhall\/"
     }
   ]
 }
