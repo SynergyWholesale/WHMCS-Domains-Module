@@ -1026,7 +1026,7 @@ function synergywholesaledomains_SaveContactDetails(array $params)
 {
     $request = [];
     $contactTypes = [
-        'registrant' => 'Registrant',
+        'registrant' => 'Registrant', 
         'admin' => 'Admin',
         'technical' => 'Tech',
         'billing' => 'Billing',
