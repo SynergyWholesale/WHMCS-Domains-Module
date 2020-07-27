@@ -16,7 +16,7 @@ Synergy Wholesale WHMCS Domains Module
 -
 
 
-## 2.1.8 [Updated xx/xx/2020]
+## 2.1.8 [Updated 27/07/2020]
 ### Added
 - Added whmcs.json file. Fixes [#24](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/24) 
 
