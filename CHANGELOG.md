@@ -21,7 +21,6 @@ Synergy Wholesale WHMCS Domains Module
 - Added whmcs.json file. Fixes [#24](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/24) 
 
 ### Fixed
-- Fixed syncing .com.au Registrant details. Fixes [#23](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/23)
 - Fixed an issue syncing Rememption/Grace fees days. Fixes [#25](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/25) [#26](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/26)  
 
 ## 2.1.7 [Updated 26/05/2020]
