@@ -845,16 +845,16 @@ function synergywholesaledomains_Sync(array $params)
         ];
         try {
             foreach ($appMap as $apiName => $whmcsName) {
-                if (empty($apiResult[$apiName])) {
+                if (empty($response[$apiName])) {
                     continue;
                 }
                 if ('auPolicyID' === $apiName) {
-                    switch ($apiResult[$apiName]) {
+                    switch ($response[$apiName]) {
                         case 1:
-                            $apiResult[$apiName] = 'Domain name is an Exact Match Abbreviation or Acronym of your Entity or Trading Name.';
+                            $response[$apiName] = 'Domain name is an Exact Match Abbreviation or Acronym of your Entity or Trading Name.';
                             break;
                         case 2:
-                            $apiResult[$apiName] = 'Close and substantial connection between the domain name and the operations of your Entity.';
+                            $response[$apiName] = 'Close and substantial connection between the domain name and the operations of your Entity.';
                             break;
                     }
                 }
@@ -862,7 +862,7 @@ function synergywholesaledomains_Sync(array $params)
                     ->where('domainid', $params['domainid'])
                     ->where('name', $whmcsName)
                     ->update([
-                        'value' => $apiResult[$apiName],
+                        'value' => $response[$apiName],
                     ]);
             }
         } catch (\Exception $e) {
@@ -2636,8 +2636,11 @@ if (class_exists('\WHMCS\Domain\TopLevel\ImportItem') && class_exists('\WHMCS\Re
                 ->setRenewPrice($extension->renew)
                 ->setTransferPrice($transfer_price)
                 ->setRedemptionFeePrice($extension->redemption)
+                ->setRedemptionFeeDays($extension->cannotRenewWithin)
                 ->setCurrency('AUD')
                 ->setEppRequired(!preg_match('/\.uk$/', $tld))
+                ->setGraceFeeDays($extension->canRenewWithin)
+                ->setGraceFeePrice('0.00')
             ;
         }
 

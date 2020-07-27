@@ -12,7 +12,7 @@ This repository contains the source code for the [Synergy Wholsale](https://syne
 - Domain Registration
 - Domain Transfer
 - Domain Renewal
-- Domin Management
+- Domain Management
 	- Update Nameservers
 	- Configure/Manage Child hosts
 	- Configure/Manage DNSSEC
