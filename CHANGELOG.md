@@ -15,6 +15,9 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.1.9 [Updated 25/08/2020]
+### Fixed
+- Fixed internal transfers not being renewed upon transfer-in. Fixes [#33](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/33)
 
 ## 2.1.8 [Updated 27/07/2020]
 ### Added
