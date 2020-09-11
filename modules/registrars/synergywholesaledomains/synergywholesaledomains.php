@@ -638,10 +638,13 @@ function synergywholesaledomains_TransferDomain(array $params)
 
     $request = [
         'authInfo' => $params['transfersecret'],
+        'doRenewal' => 1,
     ];
 
-    $canRenew = synergywholesaledomains_apiRequest('domainRenewRequired', $params, $request, false);
-    $request['doRenewal'] = (int) ('on' === $params['doRenewal'] && 'OK_RENEW' === $canRenew['status']);
+    if (preg_match('/\.au$/', $params['sld'])) {
+        $canRenew = synergywholesaledomains_apiRequest('domainRenewRequired', $params, $request, false);
+        $request['doRenewal'] = (int) ('on' === $params['doRenewal'] && 'OK_RENEWAL' === $canRenew['status']);
+    }
     
     /**
      * We don't want to send the idProtect flag with the "can renew"
