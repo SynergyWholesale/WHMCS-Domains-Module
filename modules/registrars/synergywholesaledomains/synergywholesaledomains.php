@@ -632,7 +632,7 @@ function synergywholesaledomains_RegisterDomain(array $params)
  */
 function synergywholesaledomains_TransferDomain(array $params)
 {
-    if (preg_match('/\.uk$/', $params['sld'])) {
+    if (preg_match('/\.uk$/', $params['tld'])) {
         return synergywholesaledomains_apiRequest('transferDomain', $params);
     }
 
@@ -641,7 +641,7 @@ function synergywholesaledomains_TransferDomain(array $params)
         'doRenewal' => 1,
     ];
 
-    if (preg_match('/\.au$/', $params['sld'])) {
+    if (preg_match('/\.au$/', $params['tld'])) {
         $canRenew = synergywholesaledomains_apiRequest('domainRenewRequired', $params, $request, false);
         $request['doRenewal'] = (int) ('on' === $params['doRenewal'] && 'OK_RENEWAL' === $canRenew['status']);
     }
