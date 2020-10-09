@@ -15,6 +15,10 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.1.10 [Updated 09/10/2020]
+### Fixed
+- Fixed transfer domain conditions incorrectly testing against the SLD and not the TLD.
+
 ## 2.1.9 [Updated 25/08/2020]
 ### Fixed
 - Fixed internal transfers not being renewed upon transfer-in. Fixes [#33](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/33)
