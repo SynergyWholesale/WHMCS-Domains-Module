@@ -4,7 +4,7 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 [![Contributors welcome](https://img.shields.io/badge/Contributors-welcome-brightgreen.svg)](https://github.com/synergywholesale/whmcs-domains-module/blob/master/CONTRIBUTING.md)
 
-This repository contains the source code for the [Synergy Wholsale](https://synergywholesale.com/) WHMCS domains module.
+This repository contains the source code for the [Synergy Wholesale](https://synergywholesale.com/) WHMCS domains module.
 
 ## Features
 ---

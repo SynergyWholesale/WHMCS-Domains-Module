@@ -1118,7 +1118,6 @@ function synergywholesaledomains_GetContactDetails(array $params)
     $idProtectStatus = synergywholesaledomains_apiRequest('domainInfo', $params, [], false);
     $command = ('Enabled' === $idProtectStatus['idProtect'] ? 'listProtectedContacts' : 'listContacts');
     $contacts = synergywholesaledomains_apiRequest($command, $params, [], false);
-
     $response = [];
 
     $map = [
@@ -1135,7 +1134,14 @@ function synergywholesaledomains_GetContactDetails(array $params)
         'email' => 'Email',
     ];
 
-    foreach (['registrant', 'tech', 'billing', 'admin'] as $contact) {
+    $contactTypes = ['registrant'];
+    foreach (['admin', 'billing', 'tech'] as $otherTypes) {
+        if (isset($contacts[$otherTypes])) {
+            $contactTypes[] = $otherTypes;
+        }
+    }
+
+    foreach ($contactTypes as $contact) {
         $whmcs_contact = ucfirst($contact);
         $response[$whmcs_contact] = [];
         foreach ($map as $from => $to) {

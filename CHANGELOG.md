@@ -15,6 +15,10 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.1.11 [Updated 29/10/2020]
+### Fixed
+- Fixed admin and billing contacts not being updatable. Fixes [#45](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/45)
+
 ## 2.1.10 [Updated 09/10/2020]
 ### Fixed
 - Fixed transfer domain conditions incorrectly testing against the SLD and not the TLD.
