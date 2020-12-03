@@ -632,8 +632,11 @@ function synergywholesaledomains_RegisterDomain(array $params)
  */
 function synergywholesaledomains_TransferDomain(array $params)
 {
+     // This is a lazy way of getting the contact data in the format we need.
+    $contact = synergywholesaledomains_helper_getContacts($params, ['' => '']);
+
     if (preg_match('/\.uk$/', $params['tld'])) {
-        return synergywholesaledomains_apiRequest('transferDomain', $params);
+        return synergywholesaledomains_apiRequest('transferDomain', $params, $contact, false);
     }
 
     $request = [
@@ -645,22 +648,21 @@ function synergywholesaledomains_TransferDomain(array $params)
         $canRenew = synergywholesaledomains_apiRequest('domainRenewRequired', $params, $request, false);
         $request['doRenewal'] = (int) ('on' === $params['doRenewal'] && 'OK_RENEWAL' === $canRenew['status']);
     }
-    
+
     /**
      * We don't want to send the idProtect flag with the "can renew"
      * check. So let's append it to the request here.
      */
     $request['idProtect'] = $params['idprotection'];
-    
-    // This is a lazy way of getting the contact data in the format we need.
-    $contact = synergywholesaledomains_helper_getContacts($params, ['' => '']);
+
+    // Merge contact data into request
     $request = array_merge($request, $contact);
 
     if (isset($params['premiumEnabled']) && $params['premiumEnabled'] && !empty($params['premiumCost'])) {
         $request['costPrice'] = $params['premiumCost'];
         $request['premium'] = true;
     }
-
+    
     return synergywholesaledomains_apiRequest('transferDomain', $params, $request, false);
 }
 
