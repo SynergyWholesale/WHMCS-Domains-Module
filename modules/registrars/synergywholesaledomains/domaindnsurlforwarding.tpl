@@ -7,13 +7,13 @@
 
 <input id="domainid" type="hidden" name="domainid" value="{$domainid}" />
 
-<div class="row sw-no-margin">
+<div class="row sw-no-margin justify-content-between">
     <h3 class="sw-inline">DNS records</h3>
     <button type="button" class="btn btn-success sw-insert-row pull-right" data-append="dnsrecords">
         <span class="fas fa-plus"></span>
     </button>
 </div>
-<div class="container col-lg-12 sw-row-table" id="dnsrecords">
+<div class="container col-lg-12 sw-row-table" id="dnsrecords" style="font-size: 14px;">
     <div class="row sw-no-margin" id="sw-heading">
         <div class="col-lg-3">Host Name</div>
         <div class="col-lg-3">Address / Content</div>
@@ -27,13 +27,13 @@
 <div>&nbsp;</div>
 <div class="sw-loader"></div>
 
-<div class="row sw-no-margin">
+<div class="row sw-no-margin justify-content-between">
     <h3 class="sw-inline">URL forwards</h3>
     <button type="button" class="btn btn-success sw-insert-row pull-right" data-append="urlforwards">
         <span class="fas fa-plus"></span>
     </button>
 </div>
-<div class="container col-lg-12 sw-row-table" id="urlforwards">
+<div class="container col-lg-12 sw-row-table" id="urlforwards" style="font-size: 14px;">
     <div class="row sw-no-margin" id="sw-heading">
         <div class="col-lg-3">Host Name</div>
         <div class="col-lg-3">Address</div>
