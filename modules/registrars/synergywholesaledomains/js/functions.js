@@ -136,8 +136,8 @@ function populateEmailRow(record_id, prefix, forward_to) {
                 </div>
                 <div class="col-lg-2 text-center">
                     <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-danger delete-row"><span class="glyphicon glyphicon-trash"></span></button>
-                        <button type="button" class="btn btn-success save-row"><span class="glyphicon glyphicon-ok"></span></button>
+                        <button type="button" class="btn btn-danger delete-row"><span class="fas fa-trash-alt"></span></button>
+                        <button type="button" class="btn btn-success save-row"><span class="fas fa-check"></span></button>
                     </div>
                 </div>
             </form>
@@ -321,8 +321,8 @@ function populateDNSRow(record_id, domain, hostname, type, ttl, address, priorit
     if ('NS' !== type && hostname !== domain) {
         controls = `<div class="col-lg-2 text-center">
             <div class="btn-group" role="group">
-                <button type="button" class="btn btn-danger delete-row"><span class="glyphicon glyphicon-trash"></span></button>
-                <button type="button" class="btn btn-success save-row"><span class="glyphicon glyphicon-ok"></span></button>
+                <button type="button" class="btn btn-danger delete-row"><span class="fas fa-trash-alt"></span></button>
+                <button type="button" class="btn btn-success save-row"><span class="fas fa-check"></span></button>
             </div>
         </div>`;
     }
@@ -384,8 +384,8 @@ function populateURLRow(record_id, hostname, type, address) {
                 <div class="col-lg-2"></div>
                 <div class="col-lg-2 text-center">
                     <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-danger delete-row"><span class="glyphicon glyphicon-trash"></span></button>
-                        <button type="button" class="btn btn-success save-row"><span class="glyphicon glyphicon-ok"></span></button>
+                        <button type="button" class="btn btn-danger delete-row"><span class="fas fa-trash-alt"></span></button>
+                        <button type="button" class="btn btn-success save-row"><span class="fas fa-check"></span></button>
                     </div>
                 </div>
             </form>
@@ -464,8 +464,8 @@ function EmailForwardPageReady(domain_id) {
                     </div>
                     <div class="col-lg-2 text-center">
                         <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-danger delete-row"><span class="glyphicon glyphicon-trash"></span></button>
-                            <button type="button" class="btn btn-success save-row"><span class="glyphicon glyphicon-ok"></span></button>
+                            <button type="button" class="btn btn-danger delete-row"><span class="fas fa-trash-alt"></span></button>
+                            <button type="button" class="btn btn-success save-row"><span class="fas fa-check"></span></button>
                         </div>
                     </div>
                 </form>
@@ -573,8 +573,8 @@ function DnsUrlPageReady(domain_id) {
                             </div>
                             <div class="col-lg-2 text-center">
                                 <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-danger delete-row"><span class="glyphicon glyphicon-trash"></span></button>
-                                    <button type="button" class="btn btn-success save-row"><span class="glyphicon glyphicon-ok"></span></button>
+                                    <button type="button" class="btn btn-danger delete-row"><span class="fas fa-trash-alt"></span></button>
+                                    <button type="button" class="btn btn-success save-row"><span class="fas fa-check"></span></button>
                                 </div>
                             </div>
                         </form>
@@ -603,8 +603,8 @@ function DnsUrlPageReady(domain_id) {
                             <div class="col-lg-2"></div>
                             <div class="col-lg-2 text-center">
                                 <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-danger delete-row"><span class="glyphicon glyphicon-trash"></span></button>
-                                    <button type="button" class="btn btn-success save-row"><span class="glyphicon glyphicon-ok"></span></button>
+                                    <button type="button" class="btn btn-danger delete-row"><span class="fas fa-trash-alt"></span></button>
+                                    <button type="button" class="btn btn-success save-row"><span class="fas fa-check"></span></button>
                                 </div>
                             </div>
                         </form>

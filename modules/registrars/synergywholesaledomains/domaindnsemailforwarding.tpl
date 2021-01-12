@@ -10,7 +10,7 @@
 
 <div class="row sw-no-margin">
     <h3 class="sw-inline">Email Forwards</h3>
-    <button type="button" class="btn btn-success sw-insert-row pull-right"><span class="glyphicon glyphicon-plus"></span></button>
+    <button type="button" class="btn btn-success sw-insert-row pull-right"><span class="fas fa-plus"></span></button>
 </div>
 <div class="container col-lg-12 sw-row-table" id="emailforwards">
     <div class="row" id="sw-heading">

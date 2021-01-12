@@ -10,7 +10,7 @@
 <div class="row sw-no-margin">
     <h3 class="sw-inline">DNS records</h3>
     <button type="button" class="btn btn-success sw-insert-row pull-right" data-append="dnsrecords">
-        <span class="glyphicon glyphicon-plus"></span>
+        <span class="fas fa-plus"></span>
     </button>
 </div>
 <div class="container col-lg-12 sw-row-table" id="dnsrecords">
@@ -30,7 +30,7 @@
 <div class="row sw-no-margin">
     <h3 class="sw-inline">URL forwards</h3>
     <button type="button" class="btn btn-success sw-insert-row pull-right" data-append="urlforwards">
-        <span class="glyphicon glyphicon-plus"></span>
+        <span class="fas fa-plus"></span>
     </button>
 </div>
 <div class="container col-lg-12 sw-row-table" id="urlforwards">
