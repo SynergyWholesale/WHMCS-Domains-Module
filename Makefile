@@ -49,7 +49,7 @@ package:
 	make revert
 
 build:
-	make tools
+	test -s node_modules/.bin/minify || npm install
 	make build-assets
 	make update-whois
 	make replace
