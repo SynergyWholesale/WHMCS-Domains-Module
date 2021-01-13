@@ -49,7 +49,6 @@ package:
 	make revert
 
 build:
-	make test
 	make build-assets
 	make update-whois
 	make replace
