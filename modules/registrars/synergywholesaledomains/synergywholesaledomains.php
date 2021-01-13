@@ -1189,18 +1189,22 @@ function synergywholesaledomains_domainOptions(array $params)
         ->where('id', $params['domainid'])
         ->first();
 
+    $tldInfo = Capsule::table("tbldomainpricing")
+        ->where("extension", "=", ".{$params['tld']}")
+        ->first();
+
     $vars = [
         'dnsmanagement' => $domainInfo->dnsmanagement,
         'emailforwarding' => $domainInfo->emailforwarding,
+        'tlddnsmanagement' => $tldInfo->dnsmanagement,
+        'tldemailforwarding' => $tldInfo->emailforwarding,
         'tld' => $params['tld'],
     ];
 
     try {
         $info = synergywholesaledomains_apiRequest('domainInfo', $params);
-        $vars = [
-            'dnsConfigType' => $info['dnsConfig'],
-            'icannStatus' => $info['icannStatus'],
-        ];
+        $vars['dnsConfigType'] = $info['dnsConfig'];
+        $vars['icannStatus'] = $info['icannStatus'];
     } catch (\Exception $e) {
         $errors[] = 'An error occured retrieving the domain information: ' . $e->getMessage();
     }
@@ -1210,7 +1214,7 @@ function synergywholesaledomains_domainOptions(array $params)
             case 'dnstype':
                 $request['nameServers'] = synergywholesaledomains_helper_getNameservers($info['nameServers']);
                 // Set nameservers to DNS hosting if selected.
-                if (1 == $nameServers['dnsConfigType']) {
+                if (1 == $vars['dnsConfigType']) {
                     $request['nameServers'] = [
                         'ns1.nameserver.net.au',
                         'ns2.nameserver.net.au',
