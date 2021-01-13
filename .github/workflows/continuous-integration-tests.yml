@@ -20,17 +20,20 @@ on:
 name: Tests
 
 jobs:
-  main_test:
-    name: Main Test
+  frontend_tests:
+    name: Frontend Tests
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v2
     
-    - name: Run main tests
-      run: make test
+    - name: Install dependecies
+      run: npm install
+    
+    - name: Run tests
+      run: npm run-script check-syntax
 
-  php_specific_tests:
+  php_tests:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -41,7 +44,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Setup PHP
-      uses: shivammathur/setup-php@v1
+      uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-versions }}
         coverage: none
