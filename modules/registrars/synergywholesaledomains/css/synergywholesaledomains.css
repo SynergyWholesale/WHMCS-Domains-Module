@@ -24,8 +24,8 @@
     margin: 20px 0 10px 0;
 }
 
-.sw-table-form select[name=type] {
-    width:100%;
+.sw-table-form input, .sw-table-form select {
+    max-width: 100%;
 }
 
 .sw-table-form input[type=text], .sw-table-form select {

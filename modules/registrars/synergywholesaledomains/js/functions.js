@@ -124,8 +124,8 @@ function saveEmailRecord(domain_id, record_id, formdata) {
 // Populate the email row
 function populateEmailRow(record_id, prefix, forward_to) {
     $('#emailforwards').append(`
-        <div class="row sw-table-form" id="emailrow-${record_id}">
-            <form id="emailform-${record_id}">
+        <div class="sw-table-form" id="emailrow-${record_id}">
+            <form class="row" id="emailform-${record_id}">
                 <input type="hidden" name="record_id" id="emailrecord_id-${record_id}" value="${record_id}">
                 <div class="col-lg-4">
                     <input type="text" name="prefix" size="30" value="${prefix}" />
@@ -136,8 +136,8 @@ function populateEmailRow(record_id, prefix, forward_to) {
                 </div>
                 <div class="col-lg-2 text-center">
                     <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-danger delete-row"><span class="glyphicon glyphicon-trash"></span></button>
-                        <button type="button" class="btn btn-success save-row"><span class="glyphicon glyphicon-ok"></span></button>
+                        <button type="button" class="btn btn-danger delete-row"><span class="fas fa-trash-alt"></span></button>
+                        <button type="button" class="btn btn-success save-row"><span class="fas fa-check"></span></button>
                     </div>
                 </div>
             </form>
@@ -321,14 +321,14 @@ function populateDNSRow(record_id, domain, hostname, type, ttl, address, priorit
     if ('NS' !== type && hostname !== domain) {
         controls = `<div class="col-lg-2 text-center">
             <div class="btn-group" role="group">
-                <button type="button" class="btn btn-danger delete-row"><span class="glyphicon glyphicon-trash"></span></button>
-                <button type="button" class="btn btn-success save-row"><span class="glyphicon glyphicon-ok"></span></button>
+                <button type="button" class="btn btn-danger delete-row"><span class="fas fa-trash-alt"></span></button>
+                <button type="button" class="btn btn-success save-row"><span class="fas fa-check"></span></button>
             </div>
         </div>`;
     }
 
-    let template = `<div class="row sw-table-form" id="row-${record_id}">
-        <form id="form-${record_id}">
+    let template = `<div class="sw-table-form" id="row-${record_id}">
+        <form class="row" id="form-${record_id}">
             <input type="hidden" name="record_id" id="record_id-${record_id}" value="${record_id}">
             <div class="col-lg-3">
                 <input type="text" name="hostname" size="20" value="${hostname}" />
@@ -339,7 +339,7 @@ function populateDNSRow(record_id, domain, hostname, type, ttl, address, priorit
             <div class="col-lg-2">
                 <select name="type">${options}</select>
             </div>
-            <div class="col-lg-1 plf">
+            <div class="col-lg-1">
                 <input type="text" name="ttl" size="5" value="${ttl}" />
             </div>
             <div class="col-lg-1">
@@ -369,8 +369,8 @@ function populateURLRow(record_id, hostname, type, address) {
     }
 
     $('#urlforwards').append(`
-        <div class="row sw-table-form" id="urlrow-${record_id}">
-            <form id="urlform-${record_id}">
+        <div class="sw-table-form" id="urlrow-${record_id}">
+            <form class="row" id="urlform-${record_id}">
                 <input type="hidden" name="record_id" id="urlrecord_id-${record_id}" value="${record_id}">
                 <div class="col-lg-3">
                     <input type="text" name="hostname" size="20" value="${hostname}"/>
@@ -381,11 +381,10 @@ function populateURLRow(record_id, hostname, type, address) {
                 <div class="col-lg-3">
                     <select name="type">${options}</select>
                 </div>
-                <div class="col-lg-2"></div>
                 <div class="col-lg-2 text-center">
                     <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-danger delete-row"><span class="glyphicon glyphicon-trash"></span></button>
-                        <button type="button" class="btn btn-success save-row"><span class="glyphicon glyphicon-ok"></span></button>
+                        <button type="button" class="btn btn-danger delete-row"><span class="fas fa-trash-alt"></span></button>
+                        <button type="button" class="btn btn-success save-row"><span class="fas fa-check"></span></button>
                     </div>
                 </div>
             </form>
@@ -450,8 +449,8 @@ function EmailForwardPageReady(domain_id) {
 
         // Append the following html to the emailforwards div
         $('#emailforwards').append(`
-            <div class="row sw-table-form" id="emailrow-${row_count}">
-                <form id="emailform-${row_count}">
+            <div class="sw-table-form" id="emailrow-${row_count}">
+                <form class="row" id="emailform-${row_count}">
                     <input type="hidden" name="record_id" id="newemailrecord_id-${row_count}" value="${row_count}" />
                     <div class="col-lg-4">
                         <input type="text" name="prefix" size="30" placeholder="eg. info without the @domain" />
@@ -464,8 +463,8 @@ function EmailForwardPageReady(domain_id) {
                     </div>
                     <div class="col-lg-2 text-center">
                         <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-danger delete-row"><span class="glyphicon glyphicon-trash"></span></button>
-                            <button type="button" class="btn btn-success save-row"><span class="glyphicon glyphicon-ok"></span></button>
+                            <button type="button" class="btn btn-danger delete-row"><span class="fas fa-trash-alt"></span></button>
+                            <button type="button" class="btn btn-success save-row"><span class="fas fa-check"></span></button>
                         </div>
                     </div>
                 </form>
@@ -545,8 +544,8 @@ function DnsUrlPageReady(domain_id) {
                 row_count = $('#dnsrecords > div').length + 1;
                 // Append the following html to the dnsrecords div
                 $('#dnsrecords').append(`
-                    <div class="row sw-table-form" id="row-${row_count}">
-                        <form id="form-${row_count}">
+                    <div class="sw-table-form" id="row-${row_count}">
+                        <form class="row" id="form-${row_count}">
                             <input type="hidden" name="record_id" id="newrecord_id-${row_count}" value="${row_count}">
                             <div class="col-lg-3">
                                 <input type="text" name="hostname" />
@@ -565,7 +564,7 @@ function DnsUrlPageReady(domain_id) {
                                     <option value="NS">NS</option>
                                 </select>
                             </div>
-                            <div class="col-lg-1 plf">
+                            <div class="col-lg-1">
                                 <input type="text" name="ttl" size="5" />
                             </div>
                             <div class="col-lg-1">
@@ -573,8 +572,8 @@ function DnsUrlPageReady(domain_id) {
                             </div>
                             <div class="col-lg-2 text-center">
                                 <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-danger delete-row"><span class="glyphicon glyphicon-trash"></span></button>
-                                    <button type="button" class="btn btn-success save-row"><span class="glyphicon glyphicon-ok"></span></button>
+                                    <button type="button" class="btn btn-danger delete-row"><span class="fas fa-trash-alt"></span></button>
+                                    <button type="button" class="btn btn-success save-row"><span class="fas fa-check"></span></button>
                                 </div>
                             </div>
                         </form>
@@ -585,8 +584,8 @@ function DnsUrlPageReady(domain_id) {
                 row_count = $('#urlforwards > div').length + 1;
 
                 $('#urlforwards').append(`
-                    <div class="row sw-table-form" id="urlrow-${row_count}">
-                        <form id="urlform-${row_count}">
+                    <div class="sw-table-form" id="urlrow-${row_count}">
+                        <form class="row" id="urlform-${row_count}">
                             <input type="hidden" name="record_id" id="urlnewrecord_id-${row_count}" value="${row_count}">
                             <div class="col-lg-3">
                                 <input type="text" name="hostname" size="20" />
@@ -600,11 +599,10 @@ function DnsUrlPageReady(domain_id) {
                                     <option value="FRAME">URL Frame (Cloaking)</option>
                                 </select>
                             </div>
-                            <div class="col-lg-2"></div>
                             <div class="col-lg-2 text-center">
                                 <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-danger delete-row"><span class="glyphicon glyphicon-trash"></span></button>
-                                    <button type="button" class="btn btn-success save-row"><span class="glyphicon glyphicon-ok"></span></button>
+                                    <button type="button" class="btn btn-danger delete-row"><span class="fas fa-trash-alt"></span></button>
+                                    <button type="button" class="btn btn-success save-row"><span class="fas fa-check"></span></button>
                                 </div>
                             </div>
                         </form>
