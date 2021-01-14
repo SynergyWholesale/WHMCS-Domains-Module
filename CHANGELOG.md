@@ -15,6 +15,20 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.2.1 [Updated 14/01/2021]
+### Changed
+- Changed DNS and Email Forwarding management options to resepect TLD level options. Fixes [#37](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/37)
+
+## 2.2.0 [Updated 13/01/2021]
+
+### Fixed 
+- Fixed styling issues regarding the use of Font-Awesome icons
+- Fixed styling issues regarding to WHMCS 8.1 using Bootstrap 4 Fixes [#49](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/49)
+
+## 2.1.12 [Updated 03/12/2020]
+### Fixed
+- Fixed .uk domain transfers not providing contact set
+
 ## 2.1.11 [Updated 29/10/2020]
 ### Fixed
 - Fixed admin and billing contacts not being updatable. Fixes [#45](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/45)
