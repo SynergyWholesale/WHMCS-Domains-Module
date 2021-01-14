@@ -1214,7 +1214,7 @@ function synergywholesaledomains_domainOptions(array $params)
             case 'dnstype':
                 $request['nameServers'] = synergywholesaledomains_helper_getNameservers($info['nameServers']);
                 // Set nameservers to DNS hosting if selected.
-                if (1 == $vars['dnsConfigType']) {
+                if (1 == $_REQUEST['option']) {
                     $request['nameServers'] = [
                         'ns1.nameserver.net.au',
                         'ns2.nameserver.net.au',
