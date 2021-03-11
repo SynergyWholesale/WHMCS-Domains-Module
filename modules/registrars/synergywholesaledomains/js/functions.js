@@ -241,7 +241,7 @@ function deleteRecord(domain_id, record_id, formdata, recordType) {
 // Save DNS / URL Record
 function saveRecord(domain_id, record_id, formdata, recordType) {
 
-    if ('undefined' === typeof recordType) {
+    if ('undefined' !== typeof recordType) {
         recordType = 'dns';
     }
 
