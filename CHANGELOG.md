@@ -15,6 +15,11 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.2.2 [Updated 12/03/2021]
+
+### Fixed
+- Fixed DNS records being deleted after editing
+
 ## 2.2.1 [Updated 14/01/2021]
 ### Changed
 - Changed DNS and Email Forwarding management options to resepect TLD level options. Fixes [#37](https://github.com/SynergyWholesale/WHMCS-Domains-Module/issues/37)
