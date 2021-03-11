@@ -241,7 +241,7 @@ function deleteRecord(domain_id, record_id, formdata, recordType) {
 // Save DNS / URL Record
 function saveRecord(domain_id, record_id, formdata, recordType) {
 
-    if ('undefined' !== typeof recordType) {
+    if ('undefined' === typeof recordType) {
         recordType = 'dns';
     }
 
@@ -252,13 +252,13 @@ function saveRecord(domain_id, record_id, formdata, recordType) {
         // Execute the AJAX Call to delete record
         let promise = executeAJAXRequest('POST', url + 'deleteRecord', formdata).fail(errorHandler);
         promise.done(function(data) {
-            if ('undefined' === typeof data.error) {
+            if ('undefined' !== typeof data.error) {
                 return;
             }
 
             let promise = executeAJAXRequest('POST', url + 'addRecord', formdata).fail(errorHandler);
             promise.done(function(data) {
-                if ('undefined' === typeof data.error) {
+                if ('undefined' !== typeof data.error) {
                     return;
                 }
 
