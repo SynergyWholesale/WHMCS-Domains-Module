@@ -8,7 +8,7 @@ This repository contains the source code for the [Synergy Wholesale](https://syn
 
 ## Reporting Issues/Requesting Features
 ---
-If you would like to report a bug or request a new feature/improvement for our module, please have a read this [our guide here](https://synergywholesale.com/faq/category/api-whmcs-modules/bug-reporting-feature-requesting/) and submit a support request to our technical support team!
+If you would like to report a bug or request a new feature/improvement for our module, please have a read [our guide here](https://synergywholesale.com/faq/category/api-whmcs-modules/bug-reporting-feature-requesting/) and submit a support request to our technical support team!
 
 ## Features
 ---
