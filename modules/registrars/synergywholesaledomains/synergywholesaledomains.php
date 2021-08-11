@@ -284,11 +284,11 @@ function synergywholesaledomains_getConfigArray(array $params)
             'FriendlyName' => 'Default DNS Config',
             'Type' => 'dropdown',
             'Options' => [
-                0 => 'Nothing',
-                1 => 'Names Servers',
-                2 => 'FreeDNS with email forwarding',
-                3 => 'Parked',
-                4 => 'FreeDNS'
+                '0' => 'Nothing',
+                '1' => 'Nameservers',
+                '2' => 'FreeDNS with email forwarding',
+                '3' => 'Parked',
+                '4' => 'FreeDNS'
             ],
             'Description' => 'Which Default DNS Config will be applied to newly registered domains',
         ],
