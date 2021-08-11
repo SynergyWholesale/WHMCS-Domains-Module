@@ -284,7 +284,7 @@ function synergywholesaledomains_getConfigArray(array $params)
             'FriendlyName' => 'Default DNS Config',
             'Type' => 'dropdown',
             'Options' => ['Nothing', 'Names Servers', 'FreeDNS with email forwarding', 'Parked', 'FreeDNS'],
-            'Description' => 'Which Default DNS Config will be applied to renewal registered domains',
+            'Description' => 'Which Default DNS Config will be applied to newly registered domains',
         ],
         'Version' => [
             'Description' => 'This module version: ' . SW_MODULE_VERSION,
