@@ -15,6 +15,11 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.2.3 [Updated 11/08/2021]
+
+### Fixed
+- Fixed 'on sale' domain register pricing.
+
 ## 2.2.2 [Updated 12/03/2021]
 
 ### Fixed
