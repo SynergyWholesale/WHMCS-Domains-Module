@@ -283,7 +283,13 @@ function synergywholesaledomains_getConfigArray(array $params)
         'defaultDnsConfig' => [
             'FriendlyName' => 'Default DNS Config',
             'Type' => 'dropdown',
-            'Options' => ['Nothing', 'Names Servers', 'FreeDNS with email forwarding', 'Parked', 'FreeDNS'],
+            'Options' => [
+                0 => 'Nothing',
+                1 => 'Names Servers',
+                2 => 'FreeDNS with email forwarding',
+                3 => 'Parked',
+                4 => 'FreeDNS'
+            ],
             'Description' => 'Which Default DNS Config will be applied to newly registered domains',
         ],
         'Version' => [
@@ -617,6 +623,8 @@ function synergywholesaledomains_RegisterDomain(array $params)
         $request['eligibility'] = json_encode($eligibility);
     }
 
+
+
     // "premiumCost" is the price the API returned on "CheckAvailability"
     if (isset($params['premiumEnabled']) && $params['premiumEnabled'] && !empty($params['premiumCost'])) {
         $request['costPrice'] = $params['premiumCost'];
@@ -627,28 +635,28 @@ function synergywholesaledomains_RegisterDomain(array $params)
         synergywholesaledomains_apiRequest('domainRegister', $params, $request);
 
         // If defaultDnsConfig is set
-        if (!empty($params["defaultDnsConfig"])) {
+        if (!empty($params['defaultDnsConfig'])) {
             // If defaultDnsConfig is Parked, FreeDns or Forwarding
-            if (in_array($params["defaultDnsConfig"], ['2', '3', '4'])) {
+            if (in_array($params['defaultDnsConfig'], ['2', '3', '4'])) {
                 synergywholesaledomains_apiRequest('updateNameServers', $params, [
                     'domainName' => $params['domainName'],
-                    'dnsConfigType' => $params["defaultDnsConfig"],
+                    'dnsConfigType' => $params['defaultDnsConfig'],
                     'nameServers' => $dnsHostingNameservers,
                 ], false);
             }
 
             // If defaultDnsConfig is FreeDns or Forwarding
-            if (in_array($params["defaultDnsConfig"], ['2', '4'])) {
+            if (in_array($params['defaultDnsConfig'], ['2', '4'])) {
                 Capsule::table('tbldomains')
                     ->where('id', $params['domainid'])
                     ->update(['dnsmanagement' => 1]);
             }
 
             // If defaultDnsConfig is customNS
-            if ($params["defaultDnsConfig"] == '1') {
+            if ($params['defaultDnsConfig'] == '1') {
                 synergywholesaledomains_apiRequest('updateNameServers', $params, [
                     'domainName' => $params['domainName'],
-                    'dnsConfigType' => $params["defaultDnsConfig"],
+                    'dnsConfigType' => $params['defaultDnsConfig'],
                     'nameServers' => synergywholesaledomains_helper_getNameservers($params),
                 ], false);
             }
