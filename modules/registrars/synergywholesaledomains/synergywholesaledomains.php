@@ -280,6 +280,12 @@ function synergywholesaledomains_getConfigArray(array $params)
             'Type' => 'yesno',
             'Description' => 'Enable this option to force update the WHOIS.json data<br><b>NOTE:</b> This option will be disabled automatically again once you have clicked \'Save Changes\' and the update sequence is completed.',
         ],
+        'defaultDnsConfig' => [
+            'FriendlyName' => 'Default DNS Config',
+            'Type' => 'dropdown',
+            'Options' => ['Nothing', 'Names Servers', 'FreeDNS with email forwarding', 'Parked', 'FreeDNS'],
+            'Description' => 'Which Default DNS Config will be applied to renewal registered domains',
+        ],
         'Version' => [
             'Description' => 'This module version: ' . SW_MODULE_VERSION,
         ],
@@ -524,6 +530,12 @@ function synergywholesaledomains_ReleaseDomain(array $params)
  */
 function synergywholesaledomains_RegisterDomain(array $params)
 {
+    $dnsHostingNameservers = [
+        'ns1.nameserver.net.au',
+        'ns2.nameserver.net.au',
+        'ns3.nameserver.net.au',
+    ];
+
     $request = [
         'nameServers' => synergywholesaledomains_helper_getNameservers($params),
         'years' => $params['regperiod'],
@@ -610,9 +622,37 @@ function synergywholesaledomains_RegisterDomain(array $params)
         $request['costPrice'] = $params['premiumCost'];
         $request['premium'] = true;
     }
-    
+
     try {
         synergywholesaledomains_apiRequest('domainRegister', $params, $request);
+
+        // If defaultDnsConfig is set
+        if (!empty($params["defaultDnsConfig"])) {
+            // If defaultDnsConfig is Parked, FreeDns or Forwarding
+            if (in_array($params["defaultDnsConfig"], ['2', '3', '4'])) {
+                synergywholesaledomains_apiRequest('updateNameServers', $params, [
+                    'domainName' => $params['domainName'],
+                    'dnsConfigType' => $params["defaultDnsConfig"],
+                    'nameServers' => $dnsHostingNameservers,
+                ], false);
+            }
+
+            // If defaultDnsConfig is FreeDns or Forwarding
+            if (in_array($params["defaultDnsConfig"], ['2', '4'])) {
+                Capsule::table('tbldomains')
+                    ->where('id', $params['domainid'])
+                    ->update(['dnsmanagement' => 1]);
+            }
+
+            // If defaultDnsConfig is customNS
+            if ($params["defaultDnsConfig"] == '1') {
+                synergywholesaledomains_apiRequest('updateNameServers', $params, [
+                    'domainName' => $params['domainName'],
+                    'dnsConfigType' => $params["defaultDnsConfig"],
+                    'nameServers' => synergywholesaledomains_helper_getNameservers($params),
+                ], false);
+            }
+        }
         return [
             'success' => true,
         ];
