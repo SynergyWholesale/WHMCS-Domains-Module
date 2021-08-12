@@ -536,12 +536,6 @@ function synergywholesaledomains_ReleaseDomain(array $params)
  */
 function synergywholesaledomains_RegisterDomain(array $params)
 {
-    $dnsHostingNameservers = [
-        'ns1.nameserver.net.au',
-        'ns2.nameserver.net.au',
-        'ns3.nameserver.net.au',
-    ];
-
     $request = [
         'nameServers' => synergywholesaledomains_helper_getNameservers($params),
         'years' => $params['regperiod'],
@@ -623,8 +617,6 @@ function synergywholesaledomains_RegisterDomain(array $params)
         $request['eligibility'] = json_encode($eligibility);
     }
 
-
-
     // "premiumCost" is the price the API returned on "CheckAvailability"
     if (isset($params['premiumEnabled']) && $params['premiumEnabled'] && !empty($params['premiumCost'])) {
         $request['costPrice'] = $params['premiumCost'];
@@ -634,33 +626,6 @@ function synergywholesaledomains_RegisterDomain(array $params)
     try {
         synergywholesaledomains_apiRequest('domainRegister', $params, $request);
 
-        // If defaultDnsConfig is set
-        if (!empty($params['defaultDnsConfig'])) {
-            // If defaultDnsConfig is Parked, FreeDns or Forwarding
-            if (in_array($params['defaultDnsConfig'], ['2', '3', '4'])) {
-                synergywholesaledomains_apiRequest('updateNameServers', $params, [
-                    'domainName' => $params['domainName'],
-                    'dnsConfigType' => $params['defaultDnsConfig'],
-                    'nameServers' => $dnsHostingNameservers,
-                ], false);
-            }
-
-            // If defaultDnsConfig is FreeDns or Forwarding
-            if (in_array($params['defaultDnsConfig'], ['2', '4'])) {
-                Capsule::table('tbldomains')
-                    ->where('id', $params['domainid'])
-                    ->update(['dnsmanagement' => 1]);
-            }
-
-            // If defaultDnsConfig is customNS
-            if ($params['defaultDnsConfig'] == '1') {
-                synergywholesaledomains_apiRequest('updateNameServers', $params, [
-                    'domainName' => $params['domainName'],
-                    'dnsConfigType' => $params['defaultDnsConfig'],
-                    'nameServers' => synergywholesaledomains_helper_getNameservers($params),
-                ], false);
-            }
-        }
         return [
             'success' => true,
         ];
