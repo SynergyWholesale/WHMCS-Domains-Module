@@ -105,3 +105,10 @@ add_hook('ClientAreaPageDomainDetails', 1, function (array $vars) {
         return $vars;
     }
 });
+
+/*
+ * Sync the domain with what's on Synergy, This will fix issues with domains that get statuses like Pending Registration.
+ */
+add_hook('AfterRegistrarRegistration', 1, function ($vars) {
+    synergywholesaledomains_Sync($vars);
+});
