@@ -1004,7 +1004,6 @@ function synergywholesaledomains_TransferSync(array $params)
             break;
         case 'transfer_rejected':
         case 'transfer_cancelled':
-        case 'transfer_cancelled':
         case 'transfer_rejected_registry':
         case 'transfer_timeout':
             return [
@@ -1462,6 +1461,71 @@ function synergywholesaledomains_manageChildHosts(array $params)
         'templatefile' => 'domainchildhosts',
         'breadcrumb' => [
             $uri => 'Manage Child Host Records',
+        ],
+        'vars' => $vars,
+    ];
+}
+
+/**
+ * Controller for the "Initiate .au CoR" page.
+ *
+ * @param array $params
+ * @return array
+ */
+function synergywholesaledomains_initiateAuCorClient(array $params): array
+{
+    $errors = $vars = [];
+
+    $test =
+
+    echo '<pre>' . var_export($test, true) . '</pre>';
+    die();
+
+    if (isset($_REQUEST['sub'])) {
+        switch ($_REQUEST['sub']) {
+            case 'save':
+                try {
+                    $save = synergywholesaledomains_apiRequest('DNSSECAddDS', $params, [
+                        'algorithm' => $_REQUEST['algorithm'],
+                        'digestType' => $_REQUEST['digestType'],
+                        'digest' => $_REQUEST['digest'],
+                        'keyTag' => $_REQUEST['keyTag'],
+                    ]);
+
+                    $vars['info'] = 'DNSSEC Record added successfully';
+                } catch (Exception $e) {
+                    $errors[] = $e->getMessage();
+                }
+                break;
+            case 'delete':
+                try {
+                    $delete = synergywholesaledomains_apiRequest('DNSSECRemoveDS', $params, [
+                        'UUID' => $_REQUEST['uuid'],
+                    ]);
+
+                    $vars['info'] = 'DNSSEC Record deleted successfully';
+                } catch (Exception $e) {
+                    $errors[] = $e->getMessage();
+                }
+                break;
+        }
+    }
+
+    if (!empty($errors)) {
+        $vars['error'] = implode('<br>', $errors);
+    }
+
+    $uri = 'clientarea.php?' . http_build_query([
+            'action' => 'domaindetails',
+            'domainid' => $params['domainid'],
+            'modop' => 'custom',
+            'a' => 'initiateAuCorClient',
+        ]);
+
+    return [
+        'templatefile' => 'domaincor',
+        'breadcrumb'   => [
+            $uri => 'Initiate .au CoR',
         ],
         'vars' => $vars,
     ];
@@ -1978,12 +2042,12 @@ function synergywholesaledomains_push(array $params)
 }
 
 /**
- * Register our custom pages pages we want to display in the Client Area.
+ * Register our custom pages we want to display in the Client Area.
  *
  * @param array $params
- * @return mixed
+ * @return array
  */
-function synergywholesaledomains_ClientAreaCustomButtonArray(array $params)
+function synergywholesaledomains_ClientAreaCustomButtonArray(array $params): array
 {
     $pages = [
         'Manage Child Host Records' => 'manageChildHosts',
@@ -1991,7 +2055,9 @@ function synergywholesaledomains_ClientAreaCustomButtonArray(array $params)
         'Manage DNSSEC Records'     => 'manageDNSSEC',
     ];
 
-    // We have space here for conditional logic in case we require it.
+    if (substr($params['tld'], -3) == '.au') {
+        $pages = array_merge($pages, ['Initiate .au CoR' => 'initiateAuCorClient']);
+    }
 
     return $pages;
 }
@@ -2232,12 +2298,48 @@ function synergywholesaledomains_validateAUState($state)
     }
 }
 
-function synergywholesaledomains_AdminCustomButtonArray()
+function synergywholesaledomains_AdminCustomButtonArray(array $params)
 {
-    return [
+    $buttons =  [
         'Sync' => 'sync_adhoc',
         'Push' => 'push',
     ];
+
+    if (substr($params['tld'], -3) == '.au') {
+        $buttons = array_merge($buttons, ['Initiate .au CoR' => 'initiateAuCor']);
+    }
+
+    return $buttons;
+}
+
+function synergywholesaledomains_initiateAuCor(array $params)
+{
+    try {
+        $domainInfo = Capsule::table('tbldomains')
+            ->where('id', $params['domainid'])
+            ->first();
+    } catch (Exception $e) {
+        logModuleCall('synergywholesaledomains', 'initiateAuCor', 'Select DB', $e->getMessage());
+        return [
+            'error' => $e->getMessage(),
+        ];
+    }
+
+    if (substr($domainInfo->domain, -3) != '.au') {
+        return [
+            'error' => 'Selected domain is not .au',
+        ];
+    }
+
+    try {
+        $response = synergywholesaledomains_apiRequest('initiateAUCOR', $params, [
+            'years' => 1
+        ]);
+    } catch (Exception $e) {
+        return [
+            'error' => $e->getMessage(),
+        ];
+    }
 }
 
 function synergywholesaledomains_sync_adhoc(array $params)
