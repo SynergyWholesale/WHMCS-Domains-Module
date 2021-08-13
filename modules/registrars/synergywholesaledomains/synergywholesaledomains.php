@@ -1477,7 +1477,10 @@ function synergywholesaledomains_initiateAuCorClient(array $params): array
 {
     $errors = $vars = [];
 
+    // Get pricing for input field
     $vars['pricing'] = getTLDPriceList($params['tld'], false);
+
+    // Check for any current Cors
     $cor = Capsule::table('tbldomains_extra')
         ->where([
             ['domain_id', $params['domainid']],
@@ -1485,10 +1488,13 @@ function synergywholesaledomains_initiateAuCorClient(array $params): array
         ])
         ->first();
 
+    // If a Cor exists return invoice ID
     $vars['cor'] = !empty($cor) ? substr($cor->name, 4) : '';
 
+    // If renewal period and no Cors exists
     if (!empty($_REQUEST['renewalLength']) && empty($vars['cor'])) {
         $renewalLength = $_REQUEST['renewalLength'];
+        // If valid period create an invoice and add meta
         if (array_key_exists($renewalLength, $vars['pricing'])) {
             $invoiceData = [
                 'userid' => $params['userid'],
@@ -2322,6 +2328,7 @@ function synergywholesaledomains_AdminCustomButtonArray(array $params)
  */
 function synergywholesaledomains_initiateAuCor(array $params)
 {
+    // Get domain Info
     try {
         $domainInfo = Capsule::table('tbldomains')
             ->where('id', $params['domainid'])
@@ -2333,6 +2340,7 @@ function synergywholesaledomains_initiateAuCor(array $params)
         ];
     }
 
+    // Check if it's a .au domain
     if (substr($domainInfo->domain, -3) != '.au') {
         return [
             'error' => 'Selected domain is not .au',
@@ -2340,9 +2348,10 @@ function synergywholesaledomains_initiateAuCor(array $params)
     }
 
     try {
+        // If it is we can send the Cor Request
         synergywholesaledomains_apiRequest('initiateAUCOR', $params, [
-            'years' => $params['renewal'] ?? 1,
-            'domainName' => $params['domainName'] ?? '',
+            'years' => $params['renewal'] ?? 1, // Admin default is 1, client can provide input
+            'domainName' => $params['domainName'] ?? '', // needed for the hook
         ], true);
     } catch (Exception $e) {
         return [

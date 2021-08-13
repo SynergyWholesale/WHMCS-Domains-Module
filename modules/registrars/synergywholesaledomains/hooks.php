@@ -7,10 +7,9 @@
  * @license https://github.com/synergywholesale/whmcs-domains-module/LICENSE
  */
 
-// http://docs.whmcs.com/Editing_Client_Area_Menus
-use WHMCS\View\Menu\Item as MenuItem;
 use Illuminate\Database\Capsule\Manager as Capsule;
-use \WHMCS\Domain\Domain;
+use WHMCS\Domain\Domain;
+use WHMCS\View\Menu\Item as MenuItem; // http://docs.whmcs.com/Editing_Client_Area_Menus
 
 /**
  * We have our own custom ones, so remove the default;
