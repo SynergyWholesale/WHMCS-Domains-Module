@@ -9,6 +9,7 @@
 
 // http://docs.whmcs.com/Editing_Client_Area_Menus
 use WHMCS\View\Menu\Item as MenuItem;
+use Illuminate\Database\Capsule\Manager as Capsule;
 
 /**
  * We have our own custom ones, so remove the default;
@@ -103,5 +104,30 @@ add_hook('ClientAreaPageDomainDetails', 1, function (array $vars) {
         $vars['lockstatus'] = false;
 
         return $vars;
+    }
+});
+
+
+add_hook('InvoicePaid', 1, function($vars) {
+    try {
+        $cor = Capsule::table('tbldomains_extra')
+            ->where([
+                ['name', "cor_{$vars['invoiceid']}"],
+            ])
+            ->first();
+    } catch (\Exception $e) {
+        logModuleCall('synergywholesaledomains', 'initiateAuCor', 'Select DB', $e->getMessage());
+        return [
+            'error' => $e->getMessage(),
+        ];
+    }
+
+    if (!empty($cor)) {
+        require_once('synergywholesaledomains.php');
+        synergywholesaledomains_initiateAuCor([
+            'domainid' => $cor->domain_id,
+            'renewal' => $cor->value
+        ]);
+        $cor->delete();
     }
 });

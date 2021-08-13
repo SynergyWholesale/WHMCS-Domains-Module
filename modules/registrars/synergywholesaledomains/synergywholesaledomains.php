@@ -8,6 +8,7 @@
  */
 
 use Illuminate\Database\Capsule\Manager as Capsule;
+use Carbon\Carbon;
 
 define('API_ENDPOINT', 'https://{{API}}');
 define('WHOIS_URL', 'https://{{FRONTEND}}/home/whmcs-whois-json');
@@ -1467,7 +1468,7 @@ function synergywholesaledomains_manageChildHosts(array $params)
 }
 
 /**
- * Controller for the "Initiate .au CoR" page.
+ * Controller for the "Initiate CoR" page.
  *
  * @param array $params
  * @return array
@@ -1476,38 +1477,41 @@ function synergywholesaledomains_initiateAuCorClient(array $params): array
 {
     $errors = $vars = [];
 
-    $test =
+    $vars['pricing'] = getTLDPriceList($params['tld'], false);
+    $cor = Capsule::table('tbldomains_extra')
+        ->where([
+            ['domain_id', $params['domainid']],
+            ['name', 'like', 'cor_%'],
+        ])
+        ->first();
 
-    echo '<pre>' . var_export($test, true) . '</pre>';
-    die();
+    $vars['cor'] = !empty($cor) ? substr($cor->name, 4) : '';
 
-    if (isset($_REQUEST['sub'])) {
-        switch ($_REQUEST['sub']) {
-            case 'save':
-                try {
-                    $save = synergywholesaledomains_apiRequest('DNSSECAddDS', $params, [
-                        'algorithm' => $_REQUEST['algorithm'],
-                        'digestType' => $_REQUEST['digestType'],
-                        'digest' => $_REQUEST['digest'],
-                        'keyTag' => $_REQUEST['keyTag'],
-                    ]);
+    if (!empty($_REQUEST['renewalLength']) && empty($vars['cor'])) {
+        $renewalLength = $_REQUEST['renewalLength'];
+        if (array_key_exists($renewalLength, $vars['pricing'])) {
+            $invoiceData = [
+                'userid' => $params['userid'],
+                'itemdescription1' => "Initiate CoR for {$params['domain']}",
+                'itemamount1' => $vars['pricing'][$renewalLength]['register'],
+            ];
 
-                    $vars['info'] = 'DNSSEC Record added successfully';
-                } catch (Exception $e) {
-                    $errors[] = $e->getMessage();
-                }
-                break;
-            case 'delete':
-                try {
-                    $delete = synergywholesaledomains_apiRequest('DNSSECRemoveDS', $params, [
-                        'UUID' => $_REQUEST['uuid'],
-                    ]);
+            $invoice = localAPI('CreateInvoice', $invoiceData);
 
-                    $vars['info'] = 'DNSSEC Record deleted successfully';
-                } catch (Exception $e) {
-                    $errors[] = $e->getMessage();
-                }
-                break;
+            if ($invoice['result'] == 'success') {
+                // Add meta for domain extras with cor_invoiceId, value will be the renewal length
+                Capsule::table('tbldomains_extra')->create([
+                    'domain_id' => $params['domainid'],
+                    'name' => "cor_{$invoice['invoiceid']}",
+                    'value' => $renewalLength,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ]);
+            } else {
+                $errors[] = 'Failed to create invoice.';
+            }
+        } else {
+            $errors[] = 'Selected renewal length is invalid.';
         }
     }
 
@@ -1525,7 +1529,7 @@ function synergywholesaledomains_initiateAuCorClient(array $params): array
     return [
         'templatefile' => 'domaincor',
         'breadcrumb'   => [
-            $uri => 'Initiate .au CoR',
+            $uri => 'Initiate CoR',
         ],
         'vars' => $vars,
     ];
@@ -1563,7 +1567,7 @@ function synergywholesaledomains_DelURLForward(array $record, array $params)
 {
     return synergywholesaledomains_apiRequest('deleteSimpleURLForward', $params, [
         'recordID' => $record['record_id'],
-    ], $false);
+    ], false);
 }
 
 /**
@@ -2056,7 +2060,7 @@ function synergywholesaledomains_ClientAreaCustomButtonArray(array $params): arr
     ];
 
     if (substr($params['tld'], -3) == '.au') {
-        $pages = array_merge($pages, ['Initiate .au CoR' => 'initiateAuCorClient']);
+        $pages = array_merge($pages, ['Initiate CoR' => 'initiateAuCorClient']);
     }
 
     return $pages;
@@ -2312,6 +2316,10 @@ function synergywholesaledomains_AdminCustomButtonArray(array $params)
     return $buttons;
 }
 
+/**
+ * @param array $params
+ * @return array|string[]|void
+ */
 function synergywholesaledomains_initiateAuCor(array $params)
 {
     try {
@@ -2333,7 +2341,7 @@ function synergywholesaledomains_initiateAuCor(array $params)
 
     try {
         $response = synergywholesaledomains_apiRequest('initiateAUCOR', $params, [
-            'years' => 1
+            'years' => $params['renewal'] ?? 1
         ]);
     } catch (Exception $e) {
         return [
