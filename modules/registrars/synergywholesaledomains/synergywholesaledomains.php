@@ -2340,9 +2340,10 @@ function synergywholesaledomains_initiateAuCor(array $params)
     }
 
     try {
-        $response = synergywholesaledomains_apiRequest('initiateAUCOR', $params, [
-            'years' => $params['renewal'] ?? 1
-        ]);
+        synergywholesaledomains_apiRequest('initiateAUCOR', $params, [
+            'years' => $params['renewal'] ?? 1,
+            'domainName' => $params['domainName'] ?? '',
+        ], true);
     } catch (Exception $e) {
         return [
             'error' => $e->getMessage(),
