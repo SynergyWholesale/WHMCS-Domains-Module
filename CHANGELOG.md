@@ -15,6 +15,11 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.2.7 [Updated 12/03/2021]
+
+### Added
+- Added support for CoR for .au domains
+
 ## 2.2.2 [Updated 12/03/2021]
 
 ### Fixed
