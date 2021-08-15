@@ -108,35 +108,38 @@ add_hook('ClientAreaPageDomainDetails', 1, function (array $vars) {
 });
 
 add_hook('AfterRegistrarRegistration', 1, function ($vars) {
-    // If defaultDnsConfig is set
-    if (!empty($vars['params']['defaultDnsConfig'])) {
-        // If defaultDnsConfig is Parked, FreeDns or Forwarding
-        if (in_array($vars['params']['defaultDnsConfig'], ['2', '3', '4'])) {
-            synergywholesaledomains_apiRequest('updateNameServers', $vars['params'], [
-                'domainName' => $vars['params']['domainName'],
-                'dnsConfigType' => $vars['params']['defaultDnsConfig'],
-                'nameServers' => [
-                    'ns1.nameserver.net.au',
-                    'ns2.nameserver.net.au',
-                    'ns3.nameserver.net.au',
-                ]
-            ], false);
-        }
+    // Only fire for the SWS registrar module
+    if ($vars['params']['registrar'] == 'synergywholesaledomains') {
+        // If defaultDnsConfig is set
+        if (!empty($vars['params']['defaultDnsConfig'])) {
+            // If defaultDnsConfig is Parked, FreeDns or Forwarding
+            if (in_array($vars['params']['defaultDnsConfig'], ['2', '3', '4'])) {
+                synergywholesaledomains_apiRequest('updateNameServers', $vars['params'], [
+                    'domainName' => $vars['params']['domainName'],
+                    'dnsConfigType' => $vars['params']['defaultDnsConfig'],
+                    'nameServers' => [
+                        'ns1.nameserver.net.au',
+                        'ns2.nameserver.net.au',
+                        'ns3.nameserver.net.au',
+                    ]
+                ], false);
+            }
 
-        // If defaultDnsConfig is FreeDns or Forwarding
-        if (in_array($vars['params']['defaultDnsConfig'], ['2', '4'])) {
-            Capsule::table('tbldomains')
-                ->where('id', $vars['params']['domainid'])
-                ->update(['dnsmanagement' => 1]);
-        }
+            // If defaultDnsConfig is FreeDns or Forwarding
+            if (in_array($vars['params']['defaultDnsConfig'], ['2', '4'])) {
+                Capsule::table('tbldomains')
+                    ->where('id', $vars['params']['domainid'])
+                    ->update(['dnsmanagement' => 1]);
+            }
 
-        // If defaultDnsConfig is customNS
-        if ($vars['params']['defaultDnsConfig'] == '1') {
-            synergywholesaledomains_apiRequest('updateNameServers', $vars['params'], [
-                'domainName' => $vars['params']['domainName'],
-                'dnsConfigType' => $vars['params']['defaultDnsConfig'],
-                'nameServers' => synergywholesaledomains_helper_getNameservers($vars['params']),
-            ], false);
+            // If defaultDnsConfig is customNS
+            if ($vars['params']['defaultDnsConfig'] == '1') {
+                synergywholesaledomains_apiRequest('updateNameServers', $vars['params'], [
+                    'domainName' => $vars['params']['domainName'],
+                    'dnsConfigType' => $vars['params']['defaultDnsConfig'],
+                    'nameServers' => synergywholesaledomains_helper_getNameservers($vars['params']),
+                ], false);
+            }
         }
     }
 });
