@@ -17,7 +17,7 @@
 {else}
 
     {* Only display the DNS management section if the TLD can have DNS managed on it or the domain itself has the addon enabled already *}
-    {if ($tlddnsmanagement == 1 or $tldemailforwarding == 1) or ($dnsmanagement == 1 or $emailforwarding == 1)}
+    {if ($tlddnsmanagement == 1 or $tldemailforwarding == 1)}
         {if $dnsmanagement == 0 and $emailforwarding == 0}
             <h2>Set DNS Type</h2>
             <div class="alert alert-info textcenter">
@@ -51,6 +51,11 @@
                 <strong>WARNING: </strong>When an alternate DNS configuration type is selected any existing DNS records, including email or URL forwarding settings, will be deleted and the DNS zone will be reset. Unnecessary changes may have an undesirable outcome causing your website and emails to go offline.
             </div>
         {/if}
+    {else}
+        <h2>Set DNS Type</h2>
+        <div class="alert alert-error textcenter">
+            <strong>NOTICE:</strong> This TLD does not have DNS Management or Email Forwarding Management enabled.
+        </div>
     {/if}
 
     {if $tld eq "xxx"}
