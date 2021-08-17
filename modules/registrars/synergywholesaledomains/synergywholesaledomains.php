@@ -1684,6 +1684,10 @@ function synergywholesaledomains_manageDNSURLForwarding(array $params)
                     return synergywholesaledomains_ajaxResponse(['error' => 'Error adding DNS record: Cannot add NS on root domain.']);
                 }
 
+                if ($_REQUEST['type'] == 'SRV') {
+                    $_REQUEST['address'] = "{$_REQUEST['address1']} {$_REQUEST['address2']} {$_REQUEST['address3']}";
+                }
+
                 $record = [];
                 foreach (['type', 'address', 'priority', 'ttl'] as $key) {
                     if (!empty($_REQUEST[$key])) {
