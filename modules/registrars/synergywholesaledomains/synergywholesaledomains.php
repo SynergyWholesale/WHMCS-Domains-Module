@@ -1619,7 +1619,9 @@ function synergywholesaledomains_manageDNSURLForwarding(array $params)
                     return synergywholesaledomains_ajaxResponse(['info' => 'No records exist for this domain name.']);
                 }
 
-                return synergywholesaledomains_ajaxResponse($records);
+                $data['domain'] = $params['domain'];
+                $data['records'] = $records;
+                return synergywholesaledomains_ajaxResponse($data);
             case 'deleteRecord':
                 if (empty($_REQUEST['record_id'])) {
                     return synergywholesaledomains_ajaxResponse(['error' => 'Missing identifier for record delete request.']);

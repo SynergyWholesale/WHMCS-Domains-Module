@@ -26,12 +26,13 @@ function formSubmitDNS() {
 }
 
 function determineDNSType(type) {
-    if (type == 2) {
-        return "URL & Email Forwarding + DNS Hosting"
-    } else if(type == 3) {
-        return "Parked"
-    } else if(type == 4) {
-        return "DNS Hosting"
+    switch (type) {
+        case 2:
+            return "URL & Email Forwarding + DNS Hosting"
+        case 3:
+            return "Parked"
+        case 4:
+            return "DNS Hosting"
     }
 }
 // --------------------------------------------------
@@ -160,11 +161,11 @@ function listRecords(domain_id) {
         }
 
         $('.sw-loader').fadeOut('fast');
-        data.forEach(function(record) {
+        data.records.forEach(function(record) {
             if ('URL' === record.type || 'FRAME' === record.type) {
                 populateURLRow(record.record_id, record.hostname, record.type, record.address);
             } else {
-                populateDNSRow(record.record_id, record.domain, record.hostname, record.type, record.ttl, record.address, record.priority);
+                populateDNSRow(record.record_id, data.domain, record.hostname, record.type, record.ttl, record.address, record.priority);
             }
         });
         
@@ -318,7 +319,7 @@ function populateDNSRow(record_id, domain, hostname, type, ttl, address, priorit
         priority = 'N/A';
     }
 
-    if ('NS' !== type && hostname !== domain) {
+    if ('NS' !== type || ('NS' == type && hostname !== domain)) {
         controls = `<div class="col-lg-2 text-center">
             <div class="btn-group" role="group">
                 <button type="button" class="btn btn-danger delete-row"><span class="fas fa-trash-alt"></span></button>
