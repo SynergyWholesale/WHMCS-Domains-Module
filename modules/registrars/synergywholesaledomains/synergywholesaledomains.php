@@ -1479,6 +1479,8 @@ function synergywholesaledomains_initiateAuCorClient(array $params): array
 
     // Get pricing for input field
     $vars['pricing'] = getTLDPriceList($params['tld'], false);
+    // Remove 10 year renewal since it's not possible.
+    unset($vars['pricing']['10']);
 
     // Check for any current Cors
     $cor = Capsule::table('tbldomains_extra')
@@ -1499,7 +1501,7 @@ function synergywholesaledomains_initiateAuCorClient(array $params): array
             $invoiceData = [
                 'userid' => $params['userid'],
                 'itemdescription1' => "Initiate CoR for {$params['domain']}",
-                'itemamount1' => $vars['pricing'][$renewalLength]['register'],
+                'itemamount1' => $vars['pricing'][$renewalLength]['renew'],
             ];
 
             $invoice = localAPI('CreateInvoice', $invoiceData);

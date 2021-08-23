@@ -35,8 +35,8 @@
                 <select name="renewalLength" class="form-control" id="renewalLength" form="form">
                     <optgroup label="Renewal Length"></optgroup>
                     {foreach $pricing as $key => $value}
-                        {if $key eq "1"}<option value="{$key}">{$key} Year - {$value['register']}</option>{/if}
-                        {if $key gt "1"}<option value="{$key}">{$key} Years - {$value['register']}</option>{/if}
+                        {if $key eq "1"}<option value="{$key}">{$key} Year - {$value['renew']}</option>{/if}
+                        {if $key gt "1"}<option value="{$key}">{$key} Years - {$value['renew']}</option>{/if}
                     {/foreach}
                 </select>
             </div>
