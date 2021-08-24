@@ -288,7 +288,10 @@ function synergywholesaledomains_getConfigArray(array $params)
                 '1' => 'Nameservers',
                 '2' => 'FreeDNS with email forwarding',
                 '3' => 'Parked',
-                '4' => 'FreeDNS'
+                '4' => 'FreeDNS',
+                '5' => 'SWS Account Default',
+                '6' => 'Legacy Hosting',
+                '7' => 'Wholesale Hosting'
             ],
             'Description' => 'Which Default DNS Config will be applied to newly registered domains',
         ],

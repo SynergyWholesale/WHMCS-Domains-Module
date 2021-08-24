@@ -113,7 +113,7 @@ add_hook('AfterRegistrarRegistration', 1, function ($vars) {
         // If defaultDnsConfig is set
         if (!empty($vars['params']['defaultDnsConfig'])) {
             // If defaultDnsConfig is Parked, FreeDns or Forwarding
-            if (in_array($vars['params']['defaultDnsConfig'], ['2', '3', '4'])) {
+            if (in_array($vars['params']['defaultDnsConfig'], ['2', '3', '4', '5', '6', '7'])) {
                 synergywholesaledomains_apiRequest('updateNameServers', $vars['params'], [
                     'domainName' => $vars['params']['domainName'],
                     'dnsConfigType' => $vars['params']['defaultDnsConfig'],
