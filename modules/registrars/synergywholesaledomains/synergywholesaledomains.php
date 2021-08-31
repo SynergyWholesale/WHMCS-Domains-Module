@@ -2358,7 +2358,7 @@ function synergywholesaledomains_adhocTransferSync(array $params, $domainInfo)
         'message' => nl2br(
             empty($syncMessages) ?
             'Domain Sync successful.' :
-            'Updated;\n    - ' . implode('\n    - ', $syncMessages)
+            "Updated;\n    - " . implode("\n    - ", $syncMessages)
         )
     ];
 }
