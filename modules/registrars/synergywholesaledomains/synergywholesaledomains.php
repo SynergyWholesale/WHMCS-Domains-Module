@@ -938,6 +938,18 @@ function synergywholesaledomains_Sync(array $params)
                         'transferredAway' => true,
                     ];
                     break;
+                case 'register_manual':
+                    $returnData = [
+                        'active' => false,
+                        'cancelled' => false,
+                        'transferredAway' => false,
+                    ];
+                    Capsule::table('tbldomains')
+                        ->where('id', $params['domainid'])
+                        ->update([
+                            'status' => 'Pending Registration',
+                        ]);
+                    break;
                 default:
                     $returnData = [
                         'active' => true,
