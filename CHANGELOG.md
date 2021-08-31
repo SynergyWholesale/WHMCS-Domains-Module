@@ -15,9 +15,11 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
-## 2.2.6 [Updated 12/08/2021]
+## 2.2.5 [Updated 11/08/2021]
 
 ### Fixed
+- Fixed Typo with Newline not getting interpreted
+- Fixed 'on sale' domain register pricing.
 - Fixed domains sync with a Synergy status 'Pending Registration' getting set with wrong status within WHMCS
 
 ### Changed
