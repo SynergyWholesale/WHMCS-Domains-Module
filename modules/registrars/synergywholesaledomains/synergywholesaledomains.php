@@ -2639,15 +2639,21 @@ if (class_exists('\WHMCS\Domain\TopLevel\ImportItem') && class_exists('\WHMCS\Re
         foreach ($response['pricing'] as $extension) {
             $tld = '.' . $extension->tld;
             $transfer_price = $extension->transfer;
+            $register_price = $extension->register_1_year;
+
             if (preg_match('/\.au$/', $tld)) {
                 $transfer_price = 0.00;
+            }
+
+            if ($register_price < $extension->renew) {
+                $register_price = $extension->renew;
             }
 
             $results[] = (new WHMCS\Domain\TopLevel\ImportItem())
                 ->setExtension($tld)
                 ->setMinYears($extension->minPeriod)
                 ->setMaxYears($extension->maxPeriod)
-                ->setRegisterPrice($extension->register_1_year)
+                ->setRegisterPrice($register_price)
                 ->setRenewPrice($extension->renew)
                 ->setTransferPrice($transfer_price)
                 ->setRedemptionFeePrice($extension->redemption)
