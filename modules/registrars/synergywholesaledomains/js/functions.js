@@ -215,7 +215,7 @@ function addRecord(domain_id, temprecord_id, formdata, recordType) {
             $('#form-' + data.record_id + ' input[name=address]').val(data.recordContent);
             $('#form-' + data.record_id + ' input[name=ttl]').val(data.recordTTL);
 
-            if ('undefined' !== typeof data.recordPrio && 'MX' === data.recordType) {
+            if ('undefined' !== typeof data.recordPrio && ('MX' === data.recordType || 'SRV' === data.recordType)) {
                 $('#form-' + data.record_id + ' input[name=priority]').val(data.recordPrio);
             } else {
                 $('#form-' + data.record_id + ' input[name=priority]').val('N/A');
@@ -287,7 +287,7 @@ function saveRecord(domain_id, record_id, formdata, recordType) {
                 $('#form-' + data.record_id + ' input[name=hostname]').val(data.recordName);
                 $('#form-' + data.record_id + ' input[name=address]').val(data.recordContent);
                 $('#form-' + data.record_id + ' input[name=ttl]').val(data.recordTTL);
-                if (typeof data.recordPrio !== 'undefined' && data.recordType == 'MX') {
+                if (typeof data.recordPrio !== 'undefined' && (data.recordType == 'MX' || data.recordType == 'SRV')) {
                     $('#form-' + data.record_id + ' input[name=priority]').val(data.recordPrio);
                 } else {
                     $('#form-' + data.record_id + ' input[name=priority]').val('N/A');
