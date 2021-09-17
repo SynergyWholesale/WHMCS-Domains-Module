@@ -295,6 +295,18 @@ function synergywholesaledomains_getConfigArray(array $params)
             ],
             'Description' => 'Which Default DNS Config will be applied to newly registered domains',
         ],
+        'enableDnsManagement' => [
+            'FriendlyName' => 'Enable DNS Management',
+            'Type' => 'yesno',
+            'Size' => '1',
+            'Description' => 'Tick if you wish to enable DNS management on the domain, if Default DNS supports it.',
+        ],
+        'enableEmailFowarding' => [
+            'FriendlyName' => 'Enable Email Forwarding',
+            'Type' => 'yesno',
+            'Size' => '1',
+            'Description' => 'Tick if you wish to enable email forwarding on the domain, if Default DNS supports it.',
+        ],
         'Version' => [
             'Description' => 'This module version: ' . SW_MODULE_VERSION,
         ],
@@ -1515,7 +1527,7 @@ function synergywholesaledomains_DelURLForward(array $record, array $params)
 {
     return synergywholesaledomains_apiRequest('deleteSimpleURLForward', $params, [
         'recordID' => $record['record_id'],
-    ], $false);
+    ], false);
 }
 
 /**
