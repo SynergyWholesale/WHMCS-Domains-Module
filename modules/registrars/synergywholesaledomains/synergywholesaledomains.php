@@ -1482,19 +1482,40 @@ function synergywholesaledomains_initiateAuCorClient(array $params): array
     // Remove 10 year renewal since it's not possible.
     unset($vars['pricing']['10']);
 
+    try {
+        $response = synergywholesaledomains_apiRequest('domainInfo', $params);
+    } catch (\Exception $e) {
+        $vars['error'] = implode('<br>', $errors);
+    }
+
+    $vars['pending_cor'] = false;
+    if(strtolower($response['domain_status']) == 'ok_pending_cor') {
+        $vars['pending_cor'] = true;
+    }
+
     // Check for any current Cors
     $cor = Capsule::table('tbldomains_extra')
         ->where([
             ['domain_id', $params['domainid']],
             ['name', 'like', 'cor_%'],
         ])
+        ->orderByDesc('id')
+        ->first();
+
+    $invoiceId = !empty($cor) ? substr($cor->name, 4) : null;
+
+    $corInvoice = Capsule::table('tblinvoices')
+        ->where([
+            ['id',  $invoiceId],
+            ['status', 'Unpaid'],
+        ])
         ->first();
 
     // If a Cor exists return invoice ID
-    $vars['cor'] = !empty($cor) ? substr($cor->name, 4) : '';
+    $vars['cor'] = !empty($corInvoice) ? $corInvoice->id : '';
 
     // If renewal period and no Cors exists
-    if (!empty($_REQUEST['renewalLength']) && empty($vars['cor'])) {
+    if (!empty($_REQUEST['renewalLength']) && empty($vars['cor']) && !$vars['pending_cor']) {
         $renewalLength = $_REQUEST['renewalLength'];
         // If valid period create an invoice and add meta
         if (array_key_exists($renewalLength, $vars['pricing'])) {
