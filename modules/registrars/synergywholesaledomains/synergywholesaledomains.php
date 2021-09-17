@@ -301,7 +301,7 @@ function synergywholesaledomains_getConfigArray(array $params)
             'Size' => '1',
             'Description' => 'Tick if you wish to enable DNS management on the domain, if Default DNS supports it.',
         ],
-        'enableEmailFowarding' => [
+        'enableEmailForwarding' => [
             'FriendlyName' => 'Enable Email Forwarding',
             'Type' => 'yesno',
             'Size' => '1',

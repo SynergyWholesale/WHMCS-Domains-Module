@@ -112,7 +112,7 @@ add_hook('AfterRegistrarRegistration', 1, function ($vars) {
     if ($vars['params']['registrar'] == 'synergywholesaledomains') {
         // If defaultDnsConfig is set
         if (!empty($vars['params']['defaultDnsConfig'])) {
-            // If defaultDnsConfig is Parked, FreeDns or Forwarding
+            // If defaultDnsConfig is Parked, FreeDns or Forwarding, SWS Account Default, Legacy Hosting, Wholesale Hosting
             if (in_array($vars['params']['defaultDnsConfig'], ['2', '3', '4', '5', '6', '7'])) {
                 synergywholesaledomains_apiRequest('updateNameServers', $vars['params'], [
                     'domainName' => $vars['params']['domainName'],
@@ -127,12 +127,20 @@ add_hook('AfterRegistrarRegistration', 1, function ($vars) {
 
             // If defaultDnsConfig is FreeDns or Forwarding
             if (in_array($vars['params']['defaultDnsConfig'], ['2', '4'])) {
-                Capsule::table('tbldomains')
-                    ->where('id', $vars['params']['domainid'])
-                    ->update(['dnsmanagement' => 1]);
+                if ($vars['params']['enableDnsManagement']) {
+                    Capsule::table('tbldomains')
+                        ->where('id', $vars['params']['domainid'])
+                        ->update(['dnsmanagement' => 1]);
+                }
+
+                if ($vars['params']['enableEmailForwarding']) {
+                    Capsule::table('tbldomains')
+                        ->where('id', $vars['params']['domainid'])
+                        ->update(['emailforwarding' => 1]);
+                }
             }
 
-            // If defaultDnsConfig is customNS
+                // If defaultDnsConfig is customNS
             if ($vars['params']['defaultDnsConfig'] == '1') {
                 synergywholesaledomains_apiRequest('updateNameServers', $vars['params'], [
                     'domainName' => $vars['params']['domainName'],
