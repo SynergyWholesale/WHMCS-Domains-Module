@@ -2353,7 +2353,7 @@ function synergywholesaledomains_initiateAuCor(array $params)
         // If it is we can send the Cor Request
         synergywholesaledomains_apiRequest('initiateAUCOR', $params, [
             'years' => $params['renewal'] ?? 1, // Admin default is 1, client can provide input
-            'domainName' => $params['domainName'] ?? '', // needed for the hook
+            'domainName' => $domainInfo->domain ?? '',
         ], true);
     } catch (Exception $e) {
         return [
