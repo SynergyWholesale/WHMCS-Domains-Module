@@ -126,7 +126,15 @@ add_hook('AfterRegistrarRegistration', 1, function ($vars) {
             }
 
             // If defaultDnsConfig is FreeDns or Forwarding
-            if (in_array($vars['params']['defaultDnsConfig'], ['2', '4'])) {
+            if ($vars['params']['defaultDnsConfig'] == '4') {
+                if ($vars['params']['enableDnsManagement']) {
+                    Capsule::table('tbldomains')
+                        ->where('id', $vars['params']['domainid'])
+                        ->update(['dnsmanagement' => 1]);
+                }
+            }
+
+            if ($vars['params']['defaultDnsConfig'] == '2') {
                 if ($vars['params']['enableDnsManagement']) {
                     Capsule::table('tbldomains')
                         ->where('id', $vars['params']['domainid'])
