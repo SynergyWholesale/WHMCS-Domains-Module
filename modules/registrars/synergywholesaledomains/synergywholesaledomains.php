@@ -996,7 +996,19 @@ function synergywholesaledomains_TransferSync(array $params)
         ];
     }
 
+    // We can't JUST check domain_status, as it ONLY appears to exist on completed domains. 
+    // (Synergy API does NOT match their API Doc. Opened a support case asking for clarification, but was told 'A ticket has been created, but it has not had time allocated, we don't know when we will give you an answer on why they don't match.'   Yeah, thanks.
+    // We'll just have to modify this to handle what we ARE getting back.
     if (!isset($response['domain_status'])) {
+        if (isset($response['transfer_status']) && isset($response['status']) &&
+            in_array($response['status'], ['OK_TRANSFER_TIMEOUT', 'OK_TRANSFER_REJECTED', 'OK_TRANSFER_CANCELLED'])) {
+           // It  has timed out, was cancelled, or was rejected)
+           return [
+               'completed' => false,
+               'failed' => true,
+               'reason' => 'Transfer was either rejected, cancelled or timed out'
+            ];
+        }
         return [
             'completed' => false,
         ];
