@@ -15,6 +15,12 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+
+## 2.2.6 [Updated 11/08/2021]
+
+### Added
+- Added support for default DNS options for newly registered domains
+
 ## 2.2.5 [Updated 11/08/2021]
 
 ### Fixed
