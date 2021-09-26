@@ -1513,7 +1513,7 @@ function synergywholesaledomains_manageChildHosts(array $params)
  * @param array $params
  * @return array
  */
-function synergywholesaledomains_initiateAuCorClient(array $params): array
+function synergywholesaledomains_initiateAuCorClient(array $params)
 {
     $errors = $vars = [];
 
