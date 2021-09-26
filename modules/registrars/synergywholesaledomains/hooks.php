@@ -7,9 +7,12 @@
  * @license https://github.com/synergywholesale/whmcs-domains-module/LICENSE
  */
 
+
 use Illuminate\Database\Capsule\Manager as Capsule;
 use WHMCS\Domain\Domain;
 use WHMCS\View\Menu\Item as MenuItem; // http://docs.whmcs.com/Editing_Client_Area_Menus
+use Illuminate\Database\Capsule\Manager as Capsule;
+
 
 /**
  * We have our own custom ones, so remove the default;
@@ -107,7 +110,6 @@ add_hook('ClientAreaPageDomainDetails', 1, function (array $vars) {
     }
 });
 
-
 add_hook('InvoicePaid', 1, function($vars) {
     // Check if the invoice has any Cor
     try {
@@ -184,5 +186,69 @@ add_hook('InvoicePaid', 1, function($vars) {
                 'error' => $e->getMessage(),
             ];
         }
+    }
+});
+
+add_hook('AfterRegistrarRegistration', 1, function ($vars) {
+    // Only fire for the SWS registrar module
+    if ($vars['params']['registrar'] == 'synergywholesaledomains') {
+        // If defaultDnsConfig is set
+        if (!empty($vars['params']['defaultDnsConfig'])) {
+            // If defaultDnsConfig is Parked, FreeDns or Forwarding, SWS Account Default, Legacy Hosting, Wholesale Hosting
+            if (in_array($vars['params']['defaultDnsConfig'], ['2', '3', '4', '5', '6', '7'])) {
+                synergywholesaledomains_apiRequest('updateNameServers', $vars['params'], [
+                    'domainName' => $vars['params']['domainName'],
+                    'dnsConfigType' => $vars['params']['defaultDnsConfig'],
+                    'nameServers' => [
+                        'ns1.nameserver.net.au',
+                        'ns2.nameserver.net.au',
+                        'ns3.nameserver.net.au',
+                    ]
+                ], false);
+            }
+
+            // If defaultDnsConfig is FreeDns or Forwarding
+            if ($vars['params']['defaultDnsConfig'] == '4') {
+                if ($vars['params']['enableDnsManagement']) {
+                    Capsule::table('tbldomains')
+                        ->where('id', $vars['params']['domainid'])
+                        ->update(['dnsmanagement' => 1]);
+                }
+            }
+
+            if ($vars['params']['defaultDnsConfig'] == '2') {
+                if ($vars['params']['enableDnsManagement']) {
+                    Capsule::table('tbldomains')
+                        ->where('id', $vars['params']['domainid'])
+                        ->update(['dnsmanagement' => 1]);
+                }
+
+                if ($vars['params']['enableEmailForwarding']) {
+                    Capsule::table('tbldomains')
+                        ->where('id', $vars['params']['domainid'])
+                        ->update(['emailforwarding' => 1]);
+                }
+            }
+
+                // If defaultDnsConfig is customNS
+            if ($vars['params']['defaultDnsConfig'] == '1') {
+                synergywholesaledomains_apiRequest('updateNameServers', $vars['params'], [
+                    'domainName' => $vars['params']['domainName'],
+                    'dnsConfigType' => $vars['params']['defaultDnsConfig'],
+                    'nameServers' => synergywholesaledomains_helper_getNameservers($vars['params']),
+                ], false);
+            }
+        }
+    }
+});
+
+/*
+ * Sync the domain with what's on Synergy, This will fix issues with domains that get statuses like Pending Registration.
+ */
+add_hook('AfterRegistrarRegistration', 1, function ($vars) {
+    // Only fire for the SWS registrar module
+    if ($vars['params']['registrar'] == 'synergywholesaledomains') {
+        synergywholesaledomains_Sync($vars['params']);
+
     }
 });
