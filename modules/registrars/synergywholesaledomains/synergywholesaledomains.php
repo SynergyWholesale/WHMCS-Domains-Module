@@ -8,6 +8,7 @@
  */
 
 use Illuminate\Database\Capsule\Manager as Capsule;
+use Carbon\Carbon;
 
 define('API_ENDPOINT', 'https://{{API}}');
 define('WHOIS_URL', 'https://{{FRONTEND}}/home/whmcs-whois-json');
@@ -279,6 +280,33 @@ function synergywholesaledomains_getConfigArray(array $params)
             'FriendlyName' => 'Force update WHOIS.json',
             'Type' => 'yesno',
             'Description' => 'Enable this option to force update the WHOIS.json data<br><b>NOTE:</b> This option will be disabled automatically again once you have clicked \'Save Changes\' and the update sequence is completed.',
+        ],
+        'defaultDnsConfig' => [
+            'FriendlyName' => 'Default DNS Config',
+            'Type' => 'dropdown',
+            'Options' => [
+                '0' => 'Nothing',
+                '1' => 'Nameservers',
+                '2' => 'FreeDNS with email forwarding',
+                '3' => 'Parked',
+                '4' => 'FreeDNS',
+                '5' => 'SWS Account Default',
+                '6' => 'Legacy Hosting',
+                '7' => 'Wholesale Hosting'
+            ],
+            'Description' => 'Which Default DNS Config will be applied to newly registered domains',
+        ],
+        'enableDnsManagement' => [
+            'FriendlyName' => 'Enable DNS Management',
+            'Type' => 'yesno',
+            'Size' => '1',
+            'Description' => 'Tick if you wish to enable DNS management on the domain, if Default DNS supports it.',
+        ],
+        'enableEmailForwarding' => [
+            'FriendlyName' => 'Enable Email Forwarding',
+            'Type' => 'yesno',
+            'Size' => '1',
+            'Description' => 'Tick if you wish to enable email forwarding on the domain, if Default DNS supports it.',
         ],
         'Version' => [
             'Description' => 'This module version: ' . SW_MODULE_VERSION,
@@ -610,9 +638,10 @@ function synergywholesaledomains_RegisterDomain(array $params)
         $request['costPrice'] = $params['premiumCost'];
         $request['premium'] = true;
     }
-    
+
     try {
         synergywholesaledomains_apiRequest('domainRegister', $params, $request);
+
         return [
             'success' => true,
         ];
@@ -938,6 +967,18 @@ function synergywholesaledomains_Sync(array $params)
                         'transferredAway' => true,
                     ];
                     break;
+                case 'register_manual':
+                    $returnData = [
+                        'active' => false,
+                        'cancelled' => false,
+                        'transferredAway' => false,
+                    ];
+                    Capsule::table('tbldomains')
+                        ->where('id', $params['domainid'])
+                        ->update([
+                            'status' => 'Pending Registration',
+                        ]);
+                    break;
                 default:
                     $returnData = [
                         'active' => true,
@@ -1003,7 +1044,6 @@ function synergywholesaledomains_TransferSync(array $params)
             ];
             break;
         case 'transfer_rejected':
-        case 'transfer_cancelled':
         case 'transfer_cancelled':
         case 'transfer_rejected_registry':
         case 'transfer_timeout':
@@ -1468,6 +1508,103 @@ function synergywholesaledomains_manageChildHosts(array $params)
 }
 
 /**
+ * Controller for the "Initiate CoR" page.
+ *
+ * @param array $params
+ * @return array
+ */
+function synergywholesaledomains_initiateAuCorClient(array $params)
+{
+    $errors = $vars = [];
+
+    // Get pricing for input field
+    $vars['pricing'] = getTLDPriceList($params['tld'], false);
+    // Remove 10 year renewal since it's not possible.
+    unset($vars['pricing']['10']);
+
+    try {
+        $response = synergywholesaledomains_apiRequest('domainInfo', $params);
+    } catch (\Exception $e) {
+        $vars['error'] = implode('<br>', $errors);
+    }
+
+    $vars['pending_cor'] = false;
+    if(strtolower($response['domain_status']) == 'ok_pending_cor') {
+        $vars['pending_cor'] = true;
+    }
+
+    // Check for any current Cors
+    $cor = Capsule::table('tbldomains_extra')
+        ->where([
+            ['domain_id', $params['domainid']],
+            ['name', 'like', 'cor_%'],
+        ])
+        ->orderByDesc('id')
+        ->first();
+
+    $invoiceId = !empty($cor) ? substr($cor->name, 4) : null;
+
+    $corInvoice = Capsule::table('tblinvoices')
+        ->where([
+            ['id',  $invoiceId],
+            ['status', 'Unpaid'],
+        ])
+        ->first();
+
+    // If a Cor exists return invoice ID
+    $vars['cor'] = !empty($corInvoice) ? $corInvoice->id : '';
+
+    // If renewal period and no Cors exists
+    if (!empty($_REQUEST['renewalLength']) && empty($vars['cor']) && !$vars['pending_cor']) {
+        $renewalLength = $_REQUEST['renewalLength'];
+        // If valid period create an invoice and add meta
+        if (array_key_exists($renewalLength, $vars['pricing'])) {
+            $invoiceData = [
+                'userid' => $params['userid'],
+                'itemdescription1' => "Initiate CoR for {$params['domain']}",
+                'itemamount1' => $vars['pricing'][$renewalLength]['renew'],
+            ];
+
+            $invoice = localAPI('CreateInvoice', $invoiceData);
+
+            if ($invoice['result'] == 'success') {
+                // Add meta for domain extras with cor_invoiceId, value will be the renewal length
+                Capsule::table('tbldomains_extra')->create([
+                    'domain_id' => $params['domainid'],
+                    'name' => "cor_{$invoice['invoiceid']}",
+                    'value' => $renewalLength,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ]);
+            } else {
+                $errors[] = 'Failed to create invoice.';
+            }
+        } else {
+            $errors[] = 'Selected renewal length is invalid.';
+        }
+    }
+
+    if (!empty($errors)) {
+        $vars['error'] = implode('<br>', $errors);
+    }
+
+    $uri = 'clientarea.php?' . http_build_query([
+            'action' => 'domaindetails',
+            'domainid' => $params['domainid'],
+            'modop' => 'custom',
+            'a' => 'initiateAuCorClient',
+        ]);
+
+    return [
+        'templatefile' => 'domaincor',
+        'breadcrumb'   => [
+            $uri => 'Initiate CoR',
+        ],
+        'vars' => $vars,
+    ];
+}
+
+/**
  * Adds a URL Forwarder. This functionality is only available when
  * using the Synergy Wholesale "DNS Hosting" DNS/Nameserver configuration.
  *
@@ -1499,7 +1636,7 @@ function synergywholesaledomains_DelURLForward(array $record, array $params)
 {
     return synergywholesaledomains_apiRequest('deleteSimpleURLForward', $params, [
         'recordID' => $record['record_id'],
-    ], $false);
+    ], false);
 }
 
 /**
@@ -1978,10 +2115,10 @@ function synergywholesaledomains_push(array $params)
 }
 
 /**
- * Register our custom pages pages we want to display in the Client Area.
+ * Register our custom pages we want to display in the Client Area.
  *
  * @param array $params
- * @return mixed
+ * @return array
  */
 function synergywholesaledomains_ClientAreaCustomButtonArray(array $params)
 {
@@ -1991,7 +2128,9 @@ function synergywholesaledomains_ClientAreaCustomButtonArray(array $params)
         'Manage DNSSEC Records'     => 'manageDNSSEC',
     ];
 
-    // We have space here for conditional logic in case we require it.
+    if (substr($params['tld'], -3) == '.au') {
+        $pages = array_merge($pages, ['Initiate CoR' => 'initiateAuCorClient']);
+    }
 
     return $pages;
 }
@@ -2232,12 +2371,56 @@ function synergywholesaledomains_validateAUState($state)
     }
 }
 
-function synergywholesaledomains_AdminCustomButtonArray()
+function synergywholesaledomains_AdminCustomButtonArray(array $params)
 {
-    return [
+    $buttons =  [
         'Sync' => 'sync_adhoc',
         'Push' => 'push',
     ];
+
+    if (substr($params['tld'], -3) == '.au') {
+        $buttons = array_merge($buttons, ['Initiate .au CoR' => 'initiateAuCor']);
+    }
+
+    return $buttons;
+}
+
+/**
+ * @param array $params
+ * @return array|string[]|void
+ */
+function synergywholesaledomains_initiateAuCor(array $params)
+{
+    // Get domain Info
+    try {
+        $domainInfo = Capsule::table('tbldomains')
+            ->where('id', $params['domainid'])
+            ->first();
+    } catch (Exception $e) {
+        logModuleCall('synergywholesaledomains', 'initiateAuCor', 'Select DB', $e->getMessage());
+        return [
+            'error' => $e->getMessage(),
+        ];
+    }
+
+    // Check if it's a .au domain
+    if (substr($domainInfo->domain, -3) != '.au') {
+        return [
+            'error' => 'Selected domain is not .au',
+        ];
+    }
+
+    try {
+        // If it is we can send the Cor Request
+        synergywholesaledomains_apiRequest('initiateAUCOR', $params, [
+            'years' => $params['renewal'] ?? 1, // Admin default is 1, client can provide input
+            'domainName' => $domainInfo->domain ?? '',
+        ], true);
+    } catch (Exception $e) {
+        return [
+            'error' => $e->getMessage(),
+        ];
+    }
 }
 
 function synergywholesaledomains_sync_adhoc(array $params)
@@ -2358,7 +2541,7 @@ function synergywholesaledomains_adhocTransferSync(array $params, $domainInfo)
         'message' => nl2br(
             empty($syncMessages) ?
             'Domain Sync successful.' :
-            'Updated;\n    - ' . implode('\n    - ', $syncMessages)
+            "Updated;\n    - " . implode("\n    - ", $syncMessages)
         )
     ];
 }
@@ -2639,15 +2822,21 @@ if (class_exists('\WHMCS\Domain\TopLevel\ImportItem') && class_exists('\WHMCS\Re
         foreach ($response['pricing'] as $extension) {
             $tld = '.' . $extension->tld;
             $transfer_price = $extension->transfer;
+            $register_price = $extension->register_1_year;
+
             if (preg_match('/\.au$/', $tld)) {
                 $transfer_price = 0.00;
+            }
+
+            if ($register_price < $extension->renew) {
+                $register_price = $extension->renew;
             }
 
             $results[] = (new WHMCS\Domain\TopLevel\ImportItem())
                 ->setExtension($tld)
                 ->setMinYears($extension->minPeriod)
                 ->setMaxYears($extension->maxPeriod)
-                ->setRegisterPrice($extension->register_1_year)
+                ->setRegisterPrice($register_price)
                 ->setRenewPrice($extension->renew)
                 ->setTransferPrice($transfer_price)
                 ->setRedemptionFeePrice($extension->redemption)

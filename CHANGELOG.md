@@ -20,6 +20,28 @@ Synergy Wholesale WHMCS Domains Module
 ### Fixed
 - Fixed DNS Option showing blank if TLD and Domain had management disabled, will now display a error banner.
 
+## 2.2.7 [Updated 12/08/2021]
+
+### Added
+- Added support for CoR for .au domains
+
+
+## 2.2.6 [Updated 11/08/2021]
+
+### Added
+- Added support for default DNS options for newly registered domains
+
+## 2.2.5 [Updated 11/08/2021]
+
+### Fixed
+- Fixed Typo with Newline not getting interpreted
+- Fixed 'on sale' domain register pricing.
+- Fixed domains sync with a Synergy status 'Pending Registration' getting set with wrong status within WHMCS
+
+### Changed
+- Domains successfully registered will now automatically sync with Synergy
+
+
 ## 2.2.2 [Updated 12/03/2021]
 
 ### Fixed
