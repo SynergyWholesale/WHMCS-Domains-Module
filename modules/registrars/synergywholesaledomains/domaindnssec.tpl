@@ -4,19 +4,19 @@
 </div>
 {/if}
 {if $info}
-<div class="alert alert-info textcenter">
+<div class="alert alert-info text-center">
     {$info}
 </div>
 {/if}
 {if $external}
 <br /><br />
-<div class="textcenter">
+<div class="text-center">
     {$code}
 </div>
 <br /><br /><br /><br />
 {else}
     {if $records|@count eq 0}
-    <div class="alert alert-info textcenter">
+    <div class="alert alert-info text-center">
         There are no DNSSEC security records configured on the domain name.
     </div>
     {/if}

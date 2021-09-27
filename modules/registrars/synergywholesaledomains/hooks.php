@@ -7,9 +7,11 @@
  * @license https://github.com/synergywholesale/whmcs-domains-module/LICENSE
  */
 
-// http://docs.whmcs.com/Editing_Client_Area_Menus
-use WHMCS\View\Menu\Item as MenuItem;
+
+use WHMCS\Domain\Domain;
+use WHMCS\View\Menu\Item as MenuItem; // http://docs.whmcs.com/Editing_Client_Area_Menus
 use Illuminate\Database\Capsule\Manager as Capsule;
+
 
 /**
  * We have our own custom ones, so remove the default;
@@ -107,6 +109,84 @@ add_hook('ClientAreaPageDomainDetails', 1, function (array $vars) {
     }
 });
 
+add_hook('InvoicePaid', 1, function($vars) {
+    // Check if the invoice has any Cor
+    try {
+        $cor = Capsule::table('tbldomains_extra')
+            ->where([
+                ['name', "cor_{$vars['invoiceid']}"],
+            ])
+            ->first();
+
+        // Get Domains details from Cor
+        if (!empty($cor)) {
+            $domain = Domain::find($cor->domain_id);
+        }
+    } catch (\Exception $e) {
+        logModuleCall('synergywholesaledomains', 'initiateAuCor', 'Select DB', $e->getMessage());
+        return [
+            'error' => $e->getMessage(),
+        ];
+    }
+
+    // If a cor and domain was found, and it's registrar is synergy
+    if (!empty($cor) && !empty($domain) && $domain->registrar === 'synergywholesaledomains') {
+        try {
+            // Get reseller Id
+            $resellerId = Capsule::table('tblregistrars')
+                ->where([
+                    ['registrar', 'synergywholesaledomains'],
+                    ['setting', 'resellerID']
+                ])
+                ->first();
+
+            // Decrypt value so it's usable
+            $resellerIdDecrypt = localAPI('DecryptPassword', ['password2' => $resellerId->value]);
+
+            // Get Api Key
+            $apiKey = Capsule::table('tblregistrars')
+                ->where([
+                    ['registrar', 'synergywholesaledomains'],
+                    ['setting', 'apiKey']
+                ])
+                ->first();
+
+            // Decrypt value so it's usable
+            $apiKeyDecrypt = localAPI('DecryptPassword', ['password2' => $apiKey->value]);
+
+        } catch (\Exception $e) {
+                logModuleCall('synergywholesaledomains', 'initiateAuCor', 'Select DB', $e->getMessage());
+                return [
+                    'error' => $e->getMessage(),
+                ];
+            }
+
+
+        // Pass details to initiateAuCor function in the Synergy Module
+        require_once('synergywholesaledomains.php');
+        try {
+            synergywholesaledomains_initiateAuCor([
+                'resellerID' => $resellerIdDecrypt['password'],
+                'apiKey' => $apiKeyDecrypt['password'],
+                'domainid' => $cor->domain_id,
+                'renewal' => $cor->value,
+                'domainname' => $domain->domain
+            ]);
+
+            // Delete CoR meta
+            Capsule::table('tbldomains_extra')
+                ->where([
+                    ['name', "cor_{$vars['invoiceid']}"],
+                ])
+                ->delete();
+        } catch (\Exception $e) {
+            logModuleCall('synergywholesaledomains', 'initiateAuCorHook', 'Initiate CoR', $e->getMessage());
+            return [
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+});
 
 add_hook('AfterRegistrarRegistration', 1, function ($vars) {
     // Only fire for the SWS registrar module
