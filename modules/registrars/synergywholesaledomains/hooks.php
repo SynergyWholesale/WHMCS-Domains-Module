@@ -8,7 +8,6 @@
  */
 
 
-use Illuminate\Database\Capsule\Manager as Capsule;
 use WHMCS\Domain\Domain;
 use WHMCS\View\Menu\Item as MenuItem; // http://docs.whmcs.com/Editing_Client_Area_Menus
 use Illuminate\Database\Capsule\Manager as Capsule;
