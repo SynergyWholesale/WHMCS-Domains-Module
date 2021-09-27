@@ -12,6 +12,24 @@ if ('undefined' !== typeof toastr) {
     toastr.options.fadeIn = 500;
 }
 
+$(document).ready(function () {
+    $('#dnsrecords').delegate('select', 'change', function () {
+        var self = $(this);
+        var form = self.closest('form');
+        var addressCol = form.find("div:eq(1)");
+        
+        if (self.val() == 'SRV') {
+            addressCol.html('\
+                <input type="text" name="address1" placeholder="Weight" size="2" />\
+                <input type="text" name="address2" placeholder="Port" size="2" />\
+                <input type="text" name="address3" placeholder="Target" size="8" />\
+            ')
+        } else {
+            addressCol.html('<input type="text" name="address" size="20" />')
+        }
+    });
+});
+
 function Toast(type, css, msg) {
     toastr.options.positionClass = css;
     toastr[type](msg);
@@ -198,7 +216,7 @@ function addRecord(domain_id, temprecord_id, formdata, recordType) {
             $('#form-' + data.record_id + ' input[name=address]').val(data.recordContent);
             $('#form-' + data.record_id + ' input[name=ttl]').val(data.recordTTL);
 
-            if ('undefined' !== typeof data.recordPrio && 'MX' === data.recordType) {
+            if ('undefined' !== typeof data.recordPrio && ('MX' === data.recordType || 'SRV' === data.recordType)) {
                 $('#form-' + data.record_id + ' input[name=priority]').val(data.recordPrio);
             } else {
                 $('#form-' + data.record_id + ' input[name=priority]').val('N/A');
@@ -270,7 +288,7 @@ function saveRecord(domain_id, record_id, formdata, recordType) {
                 $('#form-' + data.record_id + ' input[name=hostname]').val(data.recordName);
                 $('#form-' + data.record_id + ' input[name=address]').val(data.recordContent);
                 $('#form-' + data.record_id + ' input[name=ttl]').val(data.recordTTL);
-                if (typeof data.recordPrio !== 'undefined' && data.recordType == 'MX') {
+                if (typeof data.recordPrio !== 'undefined' && (data.recordType == 'MX' || data.recordType == 'SRV')) {
                     $('#form-' + data.record_id + ' input[name=priority]').val(data.recordPrio);
                 } else {
                     $('#form-' + data.record_id + ' input[name=priority]').val('N/A');
@@ -328,7 +346,7 @@ function populateDNSRow(record_id, domain, hostname, type, ttl, address, priorit
         </div>`;
     }
 
-    let template = `<div class="sw-table-form" id="row-${record_id}">
+    var template = `<div class="sw-table-form" id="row-${record_id}">
         <form class="row" id="form-${record_id}">
             <input type="hidden" name="record_id" id="record_id-${record_id}" value="${record_id}">
             <div class="col-lg-3">
@@ -349,6 +367,33 @@ function populateDNSRow(record_id, domain, hostname, type, ttl, address, priorit
             ${controls}
         </form>
     </div>`;
+
+    if ('SRV' == type) {
+        var srvContent = address.split(" ");
+        var template = `<div class="sw-table-form" id="row-${record_id}">
+        <form class="row" id="form-${record_id}">
+            <input type="hidden" name="record_id" id="record_id-${record_id}" value="${record_id}">
+            <div class="col-lg-3">
+                <input type="text" name="hostname" value="${hostname}" />
+            </div>
+            <div class="col-lg-3">
+                <input type="text" name="address1" placeholder="Weight" size="2" value="${srvContent[0]}" />
+                <input type="text" name="address2" placeholder="Port" size="2" value="${srvContent[1]}" />
+                <input type="text" name="address3" placeholder="Target" size="8" value="${srvContent[2]}" />
+            </div>
+            <div class="col-lg-2">
+                <select name="type">${options}</select>
+            </div>
+            <div class="col-lg-1">
+                <input type="text" name="ttl" value="${ttl}" />
+            </div>
+            <div class="col-lg-1">
+                <input type="text" name="priority" value="${priority}" />
+            </div>
+            ${controls}
+        </form>
+    </div>`;
+    }
 
     $('#dnsrecords').append(template);
 }
