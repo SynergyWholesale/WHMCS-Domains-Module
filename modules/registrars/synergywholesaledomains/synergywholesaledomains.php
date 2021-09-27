@@ -2120,7 +2120,7 @@ function synergywholesaledomains_push(array $params)
  * @param array $params
  * @return array
  */
-function synergywholesaledomains_ClientAreaCustomButtonArray(array $params): array
+function synergywholesaledomains_ClientAreaCustomButtonArray(array $params)
 {
     $pages = [
         'Manage Child Host Records' => 'manageChildHosts',
