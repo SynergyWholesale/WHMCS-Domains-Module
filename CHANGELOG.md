@@ -15,7 +15,11 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
-## 2.2.8 [Updated 17/08/2021]
+## 2.2.9 [Updated 30/09/2021]
+### Fixed
+- Fixed an issue initiating Change of Registrant requests
+
+## 2.2.8 [Updated 27/09/2021]
 
 ### Fixed
 - Fixed DNS Option showing blank if TLD and Domain had management disabled, will now display a error banner.
