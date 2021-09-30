@@ -1569,7 +1569,7 @@ function synergywholesaledomains_initiateAuCorClient(array $params)
 
             if ($invoice['result'] == 'success') {
                 // Add meta for domain extras with cor_invoiceId, value will be the renewal length
-                Capsule::table('tbldomains_extra')->create([
+                Capsule::table('tbldomains_extra')->insert([
                     'domain_id' => $params['domainid'],
                     'name' => "cor_{$invoice['invoiceid']}",
                     'value' => $renewalLength,
