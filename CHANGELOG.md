@@ -15,6 +15,11 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.2.10 [Updated 20/10/2021]
+### Added
+- New Alert on the Change of Registrant page if domain is already pending COR
+- Submitting a COR as client will now return you to the invoice.
+
 ## 2.2.9 [Updated 30/09/2021]
 ### Fixed
 - Fixed an issue initiating Change of Registrant requests
