@@ -30,7 +30,7 @@
 
     {if $pending_cor}
         <div class="alert alert-danger text-center">
-            <p>A Change of Registrant already exists for this domain.</a></p>
+            <p>A Change of Registrant already exists for this domain, Please check your registrant email account.</a></p>
         </div>
     {/if}
 
