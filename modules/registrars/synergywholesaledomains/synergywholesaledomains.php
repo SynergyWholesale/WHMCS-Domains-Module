@@ -2411,7 +2411,9 @@ function synergywholesaledomains_initiateAuCor(array $params)
     }
 
     try {
-        $response = synergywholesaledomains_apiRequest('domainInfo', $params);
+        $response = synergywholesaledomains_apiRequest('domainInfo', $params, [
+            'domainName' => $domainInfo->domain ?? ''
+        ]);
     } catch (\Exception $e) {
         return [
             'error' => $e->getMessage(),

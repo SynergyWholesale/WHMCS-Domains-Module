@@ -170,7 +170,7 @@ add_hook('InvoicePaid', 1, function($vars) {
                 'apiKey' => $apiKeyDecrypt['password'],
                 'domainid' => $cor->domain_id,
                 'renewal' => $cor->value,
-                'domainname' => $domain->domain
+                'domainName' => $domain->domain
             ]);
 
             // Delete CoR meta
