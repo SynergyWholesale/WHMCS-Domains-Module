@@ -2411,6 +2411,46 @@ function synergywholesaledomains_initiateAuCor(array $params)
     }
 
     try {
+        $response = synergywholesaledomains_apiRequest('domainInfo', $params);
+    } catch (\Exception $e) {
+        return [
+            'error' => $e->getMessage(),
+        ];
+    }
+
+    $pendingCor = false;
+    if(strtolower($response['domain_status']) == 'ok_pending_cor') {
+        $pendingCor = true;
+    }
+
+    // Check for any current Cors
+    $cor = Capsule::table('tbldomains_extra')
+        ->where([
+            ['domain_id', $params['domainid']],
+            ['name', 'like', 'cor_%'],
+        ])
+        ->orderByDesc('id')
+        ->first();
+
+    $invoiceId = !empty($cor) ? substr($cor->name, 4) : null;
+
+    $corInvoice = Capsule::table('tblinvoices')
+        ->where([
+            ['id',  $invoiceId],
+            ['status', 'Unpaid'],
+        ])
+        ->first();
+
+    // If a Cor exists return invoice ID
+    $cor = !empty($corInvoice) ? $corInvoice->id : '';
+
+    if (!empty($cor) || $pendingCor) {
+        return [
+            'error' => 'Domain has a pending COR invoice or a COR is in progress.',
+        ];
+    }
+
+    try {
         // If it is we can send the Cor Request
         synergywholesaledomains_apiRequest('initiateAUCOR', $params, [
             'years' => $params['renewal'] ?? 1, // Admin default is 1, client can provide input
