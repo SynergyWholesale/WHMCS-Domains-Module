@@ -15,6 +15,10 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.2.10 [Updated 04/10/2021]
+### Fixed
+- Improved Domains Registrations page rendering time
+
 ## 2.2.9 [Updated 30/09/2021]
 ### Fixed
 - Fixed an issue initiating Change of Registrant requests
