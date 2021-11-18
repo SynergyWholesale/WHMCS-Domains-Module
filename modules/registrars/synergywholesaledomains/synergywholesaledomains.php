@@ -358,25 +358,18 @@ function synergywholesaledomains_getConfigArray(array $params)
             Production API Whitelisting: $message
             Production API Authentication: $apiAuth
         "));
-    }
 
-    // Check to see if we are configured to connect, then attempt to retrieve the latest version
-    if (!empty($params['apiKey']) && !empty($params['resellerID'])) {
         try {
-            $modules = synergywholesaledomains_apiRequest('getWHMCSModulesVersions', $params);
-            foreach ($modules as $module) {
-                if ('domains' !== $module->key) {
-                    continue;
-                }
-
-                if ($module->moduleVersion <= MODULE_VERSION) {
-                    // No need to display new version, we have the latest version
-                    $configuration['Version']['Description'] .= '<br>You are currently running the latest module version available';
-                } else {
-                    // Display new module data
-                    $configuration['Version']['Description'] .= '<br>Latest Available Version: ' . $module->moduleVersion . '<br>Download latest version from <a href="https://synergywholesale.com/faq/api-documentation-whmcs-modules" target="_blank">here</a>';
-                }
-            }
+            /**
+             * Finally turn off test_api_connection setting for the customer automatically so
+             * this doesn't keep creating log multiple entries in tblmoduleLog
+             */
+            Capsule::table('tblregistrars')->where([
+                'registrar' => 'synergywholesaledomains',
+                'setting' => 'test_api_connection',
+            ])->update([
+                'value' => '',
+            ]);
         } catch (\Exception $e) {
             /* Silence */
         }
