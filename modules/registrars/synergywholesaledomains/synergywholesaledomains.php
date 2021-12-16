@@ -375,39 +375,31 @@ function synergywholesaledomains_getConfigArray(array $params)
         }
     }
 
-    // If the conversion option is ticked, then we need to process the conversion
     if (isset($params['whoisUpdate']) && 'on' === $params['whoisUpdate']) {
         $jsonPath = realpath(join(DIRECTORY_SEPARATOR, [__DIR__, '..', '..', '..', 'resources', 'domains', 'whois.json']));
-        $whoisBackup = file_get_contents($jsonPath);
-        $whois = file_get_contents(WHOIS_URL);
-
         if (!file_exists($jsonPath)) {
             $configuration['whoisUpdate']['Description'] .= "<br><b>NOTICE:</b> WHOIS.json update unsuccessful. File path invalid. The file at $jsonPath does not exist.";
             return $configuration;
         }
 
+        $whoisBackup = file_get_contents($jsonPath);
+        $whois = file_get_contents(WHOIS_URL);
+
         if ($whois === $whoisBackup) {
             $configuration['whoisUpdate']['Description'] .= '<br><b>NOTICE:</b> WHOIS.json file is already up to date.';
-            return $configuration;
+        } else {
+            // Testing to see if retrieved data is valid
+            @json_decode($whois);
+            if (JSON_ERROR_NONE !== json_last_error()) {
+                $configuration['whoisUpdate']['Description'] .= '<br><b>NOTICE:</b> WHOIS.json update unsuccessful. Unable to pull file.';
+            } else if (!file_put_contents($jsonPath, $whois)) {
+                $configuration['whoisUpdate']['Description'] .= '<br><b>NOTICE:</b> <span style="color:red;">WHOIS.json update unsuccessful. Unable to update WHOIS.json file.</span>';
+                //Revert any changes made to backup file
+                file_put_contents($filePath, $whoisBackup);
+            } else {
+                $configuration['whoisUpdate']['Description'] .= '<br><b>NOTICE:</b> <span style="color:green;">WHOIS.json successfully updated.</span>';
+            }
         }
-
-        // Testing to see if retrieved data is valid
-        @json_decode($whois);
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            $configuration['whoisUpdate']['Description'] .= '<br><b>NOTICE:</b> WHOIS.json update unsuccessful. Unable to pull file.';
-            return $configuration;
-        }
-
-        if (!file_put_contents($jsonPath, $whois)) {
-            $configuration['whoisUpdate']['Description'] .= '<br><b>NOTICE:</b> <span style="color:red;">WHOIS.json update unsuccessful. Unable to update WHOIS.json file.</span>';
-
-            //Revert any changes made to backup file
-            file_put_contents($filePath, $whoisBackup);
-
-            return $configuration;
-        }
-
-        $configuration['whoisUpdate']['Description'] .= '<br><b>NOTICE:</b> <span style="color:green;">WHOIS.json successfully updated.</span>';
 
         try {
             /**
