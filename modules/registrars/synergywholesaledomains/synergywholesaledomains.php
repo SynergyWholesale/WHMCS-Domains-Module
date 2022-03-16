@@ -107,7 +107,8 @@ function synergywholesaledomains_apiRequest($command, array $params = [], array 
 
     try {
         $response = $client->{$command}($request);
-        logModuleCall(SW_MODULE_NAME, $command, $request, $response, $response, $auth);
+        $logResponse = is_string($response) ? $response : (array) $response;
+        logModuleCall(SW_MODULE_NAME, $command, $request, $logResponse, $logResponse, $auth);
     } catch (SoapFault $e) {
         logModuleCall(SW_MODULE_NAME, $command, $request, $e->getMessage(), $e->getMessage(), $auth);
 
