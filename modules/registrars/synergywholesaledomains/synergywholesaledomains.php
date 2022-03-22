@@ -2732,19 +2732,21 @@ if (
                     $status = WHMCS\Domains\DomainLookup\SearchResult::STATUS_REGISTERED;
                 }
 
-                // Check if showing single contested domains as available is enabled
-                if ('register' === $type && (!isset($params['auDirectShowSingleContestedAvailable']) || $params['auDirectShowSingleContestedAvailable'] !== 'on')
-                    && isset($domain->requiresMembership) && $domain->requiresMembership
-                    && isset($domain->requiresApplication) && !$domain->requiresApplication
-                ) {
-                    $status = WHMCS\Domains\DomainLookup\SearchResult::STATUS_RESERVED;
-                }
+                if ('au' === $tld) {
+                    // Check if showing single contested domains as available is enabled
+                    if ('register' === $type && (!isset($params['auDirectShowSingleContestedAvailable']) || $params['auDirectShowSingleContestedAvailable'] !== 'on')
+                        && isset($domain->requiresMembership) && $domain->requiresMembership
+                        && isset($domain->requiresApplication) && !$domain->requiresApplication
+                    ) {
+                        $status = WHMCS\Domains\DomainLookup\SearchResult::STATUS_RESERVED;
+                    }
 
-                // Check if showing multi contested domains as available is enabled
-                if ('register' === $type && (!isset($params['auDirectShowMultiContestedAvailable']) || $params['auDirectShowMultiContestedAvailable'] !== 'on')
-                    && isset($domain->requiresApplication) && $domain->requiresApplication
-                ) {
-                    $status = WHMCS\Domains\DomainLookup\SearchResult::STATUS_RESERVED;
+                    // Check if showing multi contested domains as available is enabled
+                    if ('register' === $type && (!isset($params['auDirectShowMultiContestedAvailable']) || $params['auDirectShowMultiContestedAvailable'] !== 'on')
+                        && isset($domain->requiresApplication) && $domain->requiresApplication
+                    ) {
+                        $status = WHMCS\Domains\DomainLookup\SearchResult::STATUS_RESERVED;
+                    }
                 }
 
                 if (
