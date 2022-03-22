@@ -15,6 +15,11 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.3.0 [Updated 22/03/2022]
+### Added
+- Direct .au support
+- additionalfields.php for .au and direct .au priority application data
+
 ## 2.2.10 [Updated 04/10/2021]
 ### Fixed
 - Improved Domains Registrations page rendering time
