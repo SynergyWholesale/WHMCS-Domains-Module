@@ -281,6 +281,18 @@ function synergywholesaledomains_getConfigArray(array $params)
             'Type' => 'yesno',
             'Description' => 'Enable this option to force update the WHOIS.json data<br><b>NOTE:</b> This option will be disabled automatically again once you have clicked \'Save Changes\' and the update sequence is completed.',
         ],
+        'auDirectShowSingleContestedAvailable' => [
+            'FriendlyName' => 'Ordering Form Support - Single Contested .AU Direct Domains',
+            'Type' => 'yesno',
+            'Size' => '1',
+            'Description' => 'Tick if you wish to support single contested .au direct domain names within your ordering forms (requires Synergy Wholesale to be set as your lookup provider). If unticked, single contested domains will show as unavailable upon lookup. <a href="https://synergywholesale.com/faq/article/the-direct-au-domain-name-im-looking-at-is-contested-what-does-this-mean/" target="_blank">Learn more.</a>',
+        ],
+        'auDirectShowMultiContestedAvailable' => [
+            'FriendlyName' => 'Ordering Form Support - Multi-Contested .AU Direct Domains ',
+            'Type' => 'yesno',
+            'Size' => '1',
+            'Description' => 'Tick if you wish to support multi-contested .au direct domain names within your ordering forms (requires Synergy Wholesale to be set as your lookup provider). If unticked, multi-contested domains will show as unavailable upon lookup. <a href="https://synergywholesale.com/faq/article/the-direct-au-domain-name-im-looking-at-is-contested-what-does-this-mean/" target="_blank">Learn more.</a>',
+        ],
         'defaultDnsConfig' => [
             'FriendlyName' => 'Default DNS Config',
             'Type' => 'dropdown',
@@ -312,7 +324,7 @@ function synergywholesaledomains_getConfigArray(array $params)
             'Description' => 'This module version: ' . SW_MODULE_VERSION,
         ],
         '' => [
-            'Description' => '<b>Having trouble?</b> Login to the Synergy Wholesale Management Console and <a style="text-decoration:underline;" target="_blank" href="https://{{FRONTEND}}/home/support/new">create a new support request.</a>',
+            'Description' => '<b>Having trouble?</b> Login to the Synergy Wholesale Management Console and <a style="text-decoration:underline;" target="_blank" href="https://manage.synergywholesale.com/home/support/new">create a new support request.</a>',
         ],
     ];
 
@@ -346,7 +358,7 @@ function synergywholesaledomains_getConfigArray(array $params)
                 $message = '<b style="color:#FF0000;">403 - Access Denied</b>';
                 break;
             default:
-                $message = '<b style="color:#FF0000;">Unable to connect: <i>Check firewall, or submit <a style="color:#FF0000;text-decoration:underline;" target="_blank" href="https://{{FRONTEND}}/home/support/new">Support Request</a></i></b>';
+                $message = '<b style="color:#FF0000;">Unable to connect: <i>Check firewall, or submit <a style="color:#FF0000;text-decoration:underline;" target="_blank" href="https://manage.synergywholesale.com/home/support/new">Support Request</a></i></b>';
                 break;
         }
 
@@ -354,7 +366,7 @@ function synergywholesaledomains_getConfigArray(array $params)
             Disable to hide connectivity status to the Synergy Wholesale API
             <i>This should be disabled unless configuring</i>\n
             This WHMCS installation's IP Address is <b>$ipAddress</b>
-            <i>You will need to whitelist this IP address for the API usage within <a style=\"text-decoration:underline;\" target=\"_blank\" href=\"https://{{FRONTEND}}/home/resellers/api\">Synergy Wholesale > API Information</a></i>\n
+            <i>You will need to whitelist this IP address for the API usage within <a style=\"text-decoration:underline;\" target=\"_blank\" href=\"https://manage.synergywholesale.com/home/resellers/api\">Synergy Wholesale > API Information</a></i>\n
             Production API Whitelisting: $message
             Production API Authentication: $apiAuth
         "));
@@ -581,6 +593,13 @@ function synergywholesaledomains_RegisterDomain(array $params)
         $eligibility['eligibilityIDType'] = strtoupper($brn);
         $eligibility['eligibilityID'] = $params['additionalfields']['Eligibility ID'];
         $eligibility['eligibilityName'] = $params['additionalfields']['Eligibility Name'];
+
+
+        // .AU Direct
+        if (!empty($params['additionalfields']['Priority contact ID']) && !empty($params['additionalfields']['Priority authInfo'])) {
+            $eligibility['associationID'] = $params['additionalfields']['Priority contact ID'];
+            $eligibility['associationAuthInfo'] = $params['additionalfields']['Priority authInfo'];
+        }
     }
 
     if (preg_match('/\.?uk$/', $params['tld'])) {
@@ -2711,6 +2730,23 @@ if (
 
                 if ('register' === $type && !$domain->available) {
                     $status = WHMCS\Domains\DomainLookup\SearchResult::STATUS_REGISTERED;
+                }
+
+                if ('au' === $tld) {
+                    // Check if showing single contested domains as available is enabled
+                    if ('register' === $type && (!isset($params['auDirectShowSingleContestedAvailable']) || $params['auDirectShowSingleContestedAvailable'] !== 'on')
+                        && isset($domain->requiresMembership) && $domain->requiresMembership
+                        && isset($domain->requiresApplication) && !$domain->requiresApplication
+                    ) {
+                        $status = WHMCS\Domains\DomainLookup\SearchResult::STATUS_RESERVED;
+                    }
+
+                    // Check if showing multi contested domains as available is enabled
+                    if ('register' === $type && (!isset($params['auDirectShowMultiContestedAvailable']) || $params['auDirectShowMultiContestedAvailable'] !== 'on')
+                        && isset($domain->requiresApplication) && $domain->requiresApplication
+                    ) {
+                        $status = WHMCS\Domains\DomainLookup\SearchResult::STATUS_RESERVED;
+                    }
                 }
 
                 if (
