@@ -2,7 +2,7 @@
 
 Synergy Wholesale WHMCS Domains Module
 
-## Unreleased Version [Updated xx/xx/2020]
+## Unreleased Version [Updated xx/xx/20xx]
 ### Added
 -
 
@@ -14,6 +14,10 @@ Synergy Wholesale WHMCS Domains Module
 
 ### Removed
 -
+
+## 2.3.1 [Updated 30/032022]
+### Fixed
+- Syncing .au domains that are currently pending application or pending identity verification
 
 ## 2.3.0 [Updated 22/03/2022]
 ### Added
