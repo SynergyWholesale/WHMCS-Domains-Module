@@ -785,10 +785,12 @@ function synergywholesaledomains_Sync(array $params)
 {
     // Run the sync command on the domain specified
     try {
-        // Required for .au domains, if not present we send through null instead
-        $params['associationID'] = $params['additionalfields']['Priority contact ID'] ?? null;
-
-        $response = synergywholesaledomains_apiRequest('domainInfo', $params, [], false);
+        $response = synergywholesaledomains_apiRequest(
+            'domainInfo',
+            $params, 
+            ['associationID' => $params['additionalfields']['Priority contact ID'] ?? null],
+            false
+        );
     } catch (\Exception $e) {
         return [
             'error' => $e->getMessage(),
