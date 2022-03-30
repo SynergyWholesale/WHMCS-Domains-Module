@@ -785,7 +785,17 @@ function synergywholesaledomains_Sync(array $params)
 {
     // Run the sync command on the domain specified
     try {
-         $response = synergywholesaledomains_apiRequest('domainInfo', $params, [], false);
+        $associationId = Capsule::table('tbldomainsadditionalfields')
+            ->where('domainid', $params['domainid'])
+            ->where('name', 'Priority contact ID')
+            ->first();
+        
+        $response = synergywholesaledomains_apiRequest(
+            'domainInfo',
+            $params, 
+            ['associationID' => $associationId->value ?? null],
+            false
+        );
     } catch (\Exception $e) {
         return [
             'error' => $e->getMessage(),
@@ -979,6 +989,12 @@ function synergywholesaledomains_Sync(array $params)
                         'transferredAway' => true,
                     ];
                     break;
+                case 'application_pending':
+                // Application Approved and Rejected are transitional statuses, meaning Approved will eventually turn into OK and Rejected will turn into Deleted
+                case 'application_approved':
+                case 'application_rejected':
+                case 'register_au_identity_verification':
+                case 'register_au_identity_verification_success_registration_failure':
                 case 'register_manual':
                     $returnData = [
                         'active' => false,
@@ -1007,7 +1023,7 @@ function synergywholesaledomains_Sync(array $params)
                 ->where('id', $params['domainid'])
                 ->update(
                     [
-                        'additionalnotes' => $selectInfo->additionalnotes . '\r\n' . date('d/m/Y') . ' - Sync Cron - ' . $note,
+                        'additionalnotes' => $selectInfo->additionalnotes . PHP_EOL . date('d/m/Y') . ' - Sync Cron - ' . $note,
                     ]
                 );
         }
