@@ -31,13 +31,14 @@ add_hook('ClientAreaPrimarySidebar', 1, function (MenuItem $primarySidebar) {
             $menu->removeChild('Manage Private Nameservers');
         }
 
-        if ($context->hasDnsManagement && !is_null($menu->getChild('Manage DNS Host Records'))) {
-            $menu->removeChild('Manage DNS Host Records');
-        }
-
-        if ($context->hasEmailForwarding && !is_null($menu->getChild('Manage Email Forwarding'))) {
-            $menu->removeChild('Manage Email Forwarding');
-        }
+// These options have been requested to add back on side bar
+//        if ($context->hasDnsManagement && !is_null($menu->getChild('Manage DNS Host Records'))) {
+//            $menu->removeChild('Manage DNS Host Records');
+//        }
+//
+//        if ($context->hasEmailForwarding && !is_null($menu->getChild('Manage Email Forwarding'))) {
+//            $menu->removeChild('Manage Email Forwarding');
+//        }
 
         if (preg_match('/\.au$/', $context->domain) && !is_null($menu->getChild('Registrar Lock Status'))) {
             $menu->removeChild('Registrar Lock Status');
