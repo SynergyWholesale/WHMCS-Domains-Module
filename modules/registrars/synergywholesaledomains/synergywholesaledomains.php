@@ -1054,6 +1054,16 @@ function synergywholesaledomains_TransferSync(array $params)
     }
 
     if (!isset($response['domain_status'])) {
+        if (isset($response['transfer_status'])
+            && isset($response['status'])
+            && in_array($response['status'], ['OK_TRANSFER_TIMEOUT', 'OK_TRANSFER_REJECTED', 'OK_TRANSFER_CANCELLED'])) {
+            // It has timed out, was cancelled, or was rejected
+            return [
+                'completed' => false,
+                'failed' => true,
+                'reason' => 'Transfer was either rejected, cancelled or timed out'
+            ];
+        }
         return [
             'completed' => false,
         ];

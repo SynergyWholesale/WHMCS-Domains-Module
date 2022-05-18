@@ -15,7 +15,11 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
-## 2.3.1 [Updated 30/032022]
+## 2.3.1 [Updated 18/05/2022]
+### Fixed
+- Syncing domain using transfer_status
+
+## 2.3.1 [Updated 30/03/2022]
 ### Fixed
 - Syncing .au domains that are currently pending application or pending identity verification
 
