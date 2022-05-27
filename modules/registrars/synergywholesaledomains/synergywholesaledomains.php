@@ -1048,6 +1048,14 @@ function synergywholesaledomains_TransferSync(array $params)
     try {
         $response = synergywholesaledomains_apiRequest('domainInfo', $params);
     } catch (\Exception $e) {
+        if ($e->getMessage() == 'Domain Info Failed - Unable to retrieve domain id') {
+            return [
+                'completed' => false,
+                'failed' => true,
+                'reason' => 'Domain has been marked as cancelled due to not being in your account'
+            ];
+        }
+
         return [
             'error' => $e->getMessage(),
         ];
