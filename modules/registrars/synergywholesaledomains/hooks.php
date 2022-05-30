@@ -31,14 +31,24 @@ add_hook('ClientAreaPrimarySidebar', 1, function (MenuItem $primarySidebar) {
             $menu->removeChild('Manage Private Nameservers');
         }
 
-        if ($context->hasDnsManagement && !is_null($menu->getChild('Manage DNS Host Records'))) {
+        $settings = $context->getRegistrarInterface()->getSettings();
+
+        $vars = [
+            'resellerID' => $settings['resellerID'],
+            'apiKey' => $settings['apiKey'],
+            'domainName' => $context->domain
+        ];
+
+        $info = synergywholesaledomains_apiRequest('domainInfo', [],$vars);
+
+        if ($context->hasDnsManagement && !in_array($info['dnsConfig'], [2, 4]) && !is_null($menu->getChild('Manage DNS Host Records'))) {
             $menu->removeChild('Manage DNS Host Records');
         }
 
-        if ($context->hasEmailForwarding && !is_null($menu->getChild('Manage Email Forwarding'))) {
+        if ($context->hasEmailForwarding && !in_array($info['dnsConfig'], [2]) && !is_null($menu->getChild('Manage Email Forwarding'))) {
             $menu->removeChild('Manage Email Forwarding');
         }
-
+        
         if (preg_match('/\.au$/', $context->domain) && !is_null($menu->getChild('Registrar Lock Status'))) {
             $menu->removeChild('Registrar Lock Status');
         }
