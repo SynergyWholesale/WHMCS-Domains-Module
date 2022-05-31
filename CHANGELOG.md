@@ -15,7 +15,11 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
-## 2.3.1 [Updated 30/032022]
+## 2.3.2 [Updated 09/05/2022]
+### Fixed
+- Add DNS Management or URL and Email forwarding Links to side menu
+
+## 2.3.1 [Updated 30/03/2022]
 ### Fixed
 - Syncing .au domains that are currently pending application or pending identity verification
 
