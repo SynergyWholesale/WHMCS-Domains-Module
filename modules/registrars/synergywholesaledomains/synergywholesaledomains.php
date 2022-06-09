@@ -1306,16 +1306,15 @@ function synergywholesaledomains_domainOptions(array $params)
         $errors[] = 'An error occured retrieving the domain information: ' . $e->getMessage();
     }
 
-    if (isset($_REQUEST['sub']) && 'save' === $_REQUEST['sub'] && isset($_REQUEST['opt'])) {
+    if (isset($_REQUEST['sub']) && $_REQUEST['sub'] === 'save' && isset($_REQUEST['opt']) && empty($errors)) {
         switch ($_REQUEST['opt']) {
             case 'dnstype':
                 $request['nameServers'] = synergywholesaledomains_helper_getNameservers($info['nameServers']);
                 // Set nameservers to DNS hosting if selected.
-                if (1 == $_REQUEST['option']) {
+                if ($_REQUEST['option'] == 1) {
                     $request['nameServers'] = [
                         'ns1.nameserver.net.au',
                         'ns2.nameserver.net.au',
-
                         'ns3.nameserver.net.au',
                     ];
                 }
