@@ -107,7 +107,8 @@ function synergywholesaledomains_apiRequest($command, array $params = [], array 
 
     try {
         $response = $client->{$command}($request);
-        logModuleCall(SW_MODULE_NAME, $command, $request, $response, $response, $auth);
+        $logResponse = is_string($response) ? $response : (array) $response;
+        logModuleCall(SW_MODULE_NAME, $command, $request, $logResponse, $logResponse, $auth);
     } catch (SoapFault $e) {
         logModuleCall(SW_MODULE_NAME, $command, $request, $e->getMessage(), $e->getMessage(), $auth);
 
@@ -1141,6 +1142,9 @@ function synergywholesaledomains_SaveContactDetails(array $params)
         $request["{$contactType}_suburb"] = $params['contactdetails'][$whmcs_contact]['City'];
         $request["{$contactType}_postcode"] = $params['contactdetails'][$whmcs_contact]['Postcode'];
 
+        if (!preg_match('/\.?uk$/', $params['tld'])) {
+            $request["{$contactType}_organisation"] = $params['contactdetails'][$whmcs_contact]['Organisation'];
+        }
         // Validate the country being specified
         if (!synergywholesaledomains_validateCountry($params['contactdetails'][$whmcs_contact]['Country'])) {
             return [
@@ -1214,6 +1218,7 @@ function synergywholesaledomains_GetContactDetails(array $params)
         'address1' => 'Address 1',
         'address2' => 'Address 2',
         'address3' => 'Address 3',
+        'organisation' => 'Organisation',
         'suburb' => 'City',
         'state' => 'State',
         'country' => 'Country',
@@ -1221,6 +1226,12 @@ function synergywholesaledomains_GetContactDetails(array $params)
         'phone' => 'Phone',
         'email' => 'Email',
     ];
+
+
+    if (preg_match('/\.?uk$/', $params['tld'])) {
+        unset($map['organisation']);
+    }
+
 
     $contactTypes = ['registrant'];
     foreach (['admin', 'billing', 'tech'] as $otherTypes) {
@@ -1304,6 +1315,7 @@ function synergywholesaledomains_domainOptions(array $params)
                     $request['nameServers'] = [
                         'ns1.nameserver.net.au',
                         'ns2.nameserver.net.au',
+
                         'ns3.nameserver.net.au',
                     ];
                 }
@@ -1330,7 +1342,7 @@ function synergywholesaledomains_domainOptions(array $params)
             case 'resendwhoisverif':
                 try {
                     $response = synergywholesaledomains_apiRequest('resendVerificationEmail', $params, $request);
-                    $vars['info'] = 'Resend WHOIS Verification Email successfull';
+                    $vars['info'] = 'Resend WHOIS Verification Email successful';
                 } catch (\Exception $e) {
                     $errors[] = 'Resend WHOIS Verification Email failed: ' . $e->getMessage();
                 }
