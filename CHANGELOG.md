@@ -15,6 +15,14 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.3.4 [Updated 31/05/2022]
+### Added
+- Added organisation field to Domain Contact form
+
+## 2.3.3 [Updated 30/05/2022]
+### Fixed
+- Fixed DNS management and URL and Email forwarding options to show on UI when enabled
+
 ## 2.3.2 [Updated 09/05/2022]
 ### Fixed
 - Add DNS Management or URL and Email forwarding Links to side menu

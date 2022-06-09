@@ -36,7 +36,7 @@ function Toast(type, css, msg) {
 }
 
 function formSubmitDNS() {
-    let type = determineDNSType(document.getElementById('option').value);
+    let type = determineDNSType(parseInt(document.getElementById('option').value));
     let text = `Are you sure you want to change the DNS Type to ${type} ?`;
     if (confirm(text)) {
         this.form.submit()
