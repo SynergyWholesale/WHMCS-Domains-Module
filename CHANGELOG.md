@@ -15,11 +15,15 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.3.4 [Updated 31/05/2022]
+### Added
+- Added organisation field to Domain Contact form
+
 ## 2.3.3 [Updated 30/05/2022]
 ### Fixed
 - Fixed DNS management and URL and Email forwarding options to show on UI when enabled
 
-## 2.3.1 [Updated 30/03/2022]
+## 2.3.1 [Updated 30/032022]
 ### Fixed
 - Syncing .au domains that are currently pending application or pending identity verification
 
