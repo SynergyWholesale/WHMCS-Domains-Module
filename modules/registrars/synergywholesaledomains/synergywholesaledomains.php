@@ -1296,6 +1296,7 @@ function synergywholesaledomains_domainOptions(array $params)
                     $request['nameServers'] = [
                         'ns1.nameserver.net.au',
                         'ns2.nameserver.net.au',
+
                         'ns3.nameserver.net.au',
                     ];
                 }
@@ -1322,7 +1323,7 @@ function synergywholesaledomains_domainOptions(array $params)
             case 'resendwhoisverif':
                 try {
                     $response = synergywholesaledomains_apiRequest('resendVerificationEmail', $params, $request);
-                    $vars['info'] = 'Resend WHOIS Verification Email successfull';
+                    $vars['info'] = 'Resend WHOIS Verification Email successful';
                 } catch (\Exception $e) {
                     $errors[] = 'Resend WHOIS Verification Email failed: ' . $e->getMessage();
                 }
