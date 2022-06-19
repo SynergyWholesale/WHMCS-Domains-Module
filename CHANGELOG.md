@@ -17,10 +17,9 @@ Synergy Wholesale WHMCS Domains Module
 
 ## 2.4.0 [Updated 09/05/2022]
 ### Fixed
-- Organisation field not displying on Domain Contact form
+- Organisation field not displaying on Domain Contact form
 - Domains not syncing their correct status when in a transfer state
-- Add DNS Management or URL and Email forwarding Links to side menu
-- Fixed DNS management and URL and Email forwarding options to show on UI when enabled
+- Issue where DNS and URL Forwarding would display on side menu despite not being enabled on Domain Name
 - Changing DNS configuration type would display "undefined" instead of the correct name
 - Fix potential issue with logging API requests
 
