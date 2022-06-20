@@ -107,7 +107,8 @@ function synergywholesaledomains_apiRequest($command, array $params = [], array 
 
     try {
         $response = $client->{$command}($request);
-        logModuleCall(SW_MODULE_NAME, $command, $request, $response, $response, $auth);
+        $logResponse = is_string($response) ? $response : (array) $response;
+        logModuleCall(SW_MODULE_NAME, $command, $request, $logResponse, $logResponse, $auth);
     } catch (SoapFault $e) {
         logModuleCall(SW_MODULE_NAME, $command, $request, $e->getMessage(), $e->getMessage(), $auth);
 
@@ -1048,12 +1049,30 @@ function synergywholesaledomains_TransferSync(array $params)
     try {
         $response = synergywholesaledomains_apiRequest('domainInfo', $params);
     } catch (\Exception $e) {
+        if ($e->getMessage() == 'Domain Info Failed - Unable to retrieve domain id') {
+            return [
+                'completed' => false,
+                'failed' => true,
+                'reason' => 'Domain has been marked as cancelled due to not being in your account'
+            ];
+        }
+
         return [
             'error' => $e->getMessage(),
         ];
     }
 
     if (!isset($response['domain_status'])) {
+        if (isset($response['transfer_status'])
+            && isset($response['status'])
+            && in_array($response['status'], ['OK_TRANSFER_TIMEOUT', 'OK_TRANSFER_REJECTED', 'OK_TRANSFER_CANCELLED'])) {
+            // It has timed out, was cancelled, or was rejected
+            return [
+                'completed' => false,
+                'failed' => true,
+                'reason' => 'Transfer was either rejected, cancelled or timed out'
+            ];
+        }
         return [
             'completed' => false,
         ];
@@ -1123,6 +1142,9 @@ function synergywholesaledomains_SaveContactDetails(array $params)
         $request["{$contactType}_suburb"] = $params['contactdetails'][$whmcs_contact]['City'];
         $request["{$contactType}_postcode"] = $params['contactdetails'][$whmcs_contact]['Postcode'];
 
+        if (!preg_match('/\.?uk$/', $params['tld'])) {
+            $request["{$contactType}_organisation"] = $params['contactdetails'][$whmcs_contact]['Organisation'];
+        }
         // Validate the country being specified
         if (!synergywholesaledomains_validateCountry($params['contactdetails'][$whmcs_contact]['Country'])) {
             return [
@@ -1196,6 +1218,7 @@ function synergywholesaledomains_GetContactDetails(array $params)
         'address1' => 'Address 1',
         'address2' => 'Address 2',
         'address3' => 'Address 3',
+        'organisation' => 'Organisation',
         'suburb' => 'City',
         'state' => 'State',
         'country' => 'Country',
@@ -1203,6 +1226,12 @@ function synergywholesaledomains_GetContactDetails(array $params)
         'phone' => 'Phone',
         'email' => 'Email',
     ];
+
+
+    if (preg_match('/\.?uk$/', $params['tld'])) {
+        unset($map['organisation']);
+    }
+
 
     $contactTypes = ['registrant'];
     foreach (['admin', 'billing', 'tech'] as $otherTypes) {
@@ -1277,12 +1306,12 @@ function synergywholesaledomains_domainOptions(array $params)
         $errors[] = 'An error occured retrieving the domain information: ' . $e->getMessage();
     }
 
-    if (isset($_REQUEST['sub']) && 'save' === $_REQUEST['sub'] && isset($_REQUEST['opt'])) {
+    if (isset($_REQUEST['sub']) && $_REQUEST['sub'] === 'save' && isset($_REQUEST['opt']) && empty($errors)) {
         switch ($_REQUEST['opt']) {
             case 'dnstype':
                 $request['nameServers'] = synergywholesaledomains_helper_getNameservers($info['nameServers']);
                 // Set nameservers to DNS hosting if selected.
-                if (1 == $_REQUEST['option']) {
+                if ($_REQUEST['option'] == 1) {
                     $request['nameServers'] = [
                         'ns1.nameserver.net.au',
                         'ns2.nameserver.net.au',
@@ -1312,7 +1341,7 @@ function synergywholesaledomains_domainOptions(array $params)
             case 'resendwhoisverif':
                 try {
                     $response = synergywholesaledomains_apiRequest('resendVerificationEmail', $params, $request);
-                    $vars['info'] = 'Resend WHOIS Verification Email successfull';
+                    $vars['info'] = 'Resend WHOIS Verification Email successful';
                 } catch (\Exception $e) {
                     $errors[] = 'Resend WHOIS Verification Email failed: ' . $e->getMessage();
                 }

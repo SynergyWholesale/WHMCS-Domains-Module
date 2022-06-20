@@ -15,7 +15,15 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
-## 2.3.1 [Updated 30/032022]
+## 2.4.0 [Updated 09/05/2022]
+### Fixed
+- Organisation field not displaying on Domain Contact form
+- Domains not syncing their correct status when in a transfer state
+- Issue where DNS and URL Forwarding would display on side menu despite not being enabled on Domain Name
+- Changing DNS configuration type would display "undefined" instead of the correct name
+- Fix potential issue with logging API requests
+
+## 2.3.1 [Updated 30/03/2022]
 ### Fixed
 - Syncing .au domains that are currently pending application or pending identity verification
 
