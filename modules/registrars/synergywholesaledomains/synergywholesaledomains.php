@@ -16,6 +16,25 @@ define('WHATS_MY_IP_URL', 'https://{{FRONTEND}}/ip');
 define('SW_MODULE_VERSION', '{{VERSION}}');
 define('SW_MODULE_NAME', 'synergywholesaledomains');
 
+define('SW_DNS_CONFIG_TYPES', [
+    0 => 'Inactive',
+    1 => 'Custom Nameservers',
+    2 => 'URL & Email Forwarding + DNS Hosting',
+    3 => 'Parked',
+    4 => 'DNS Hosting',
+    5 => 'Default Nameservers',
+    6 => 'Legacy Hosting Nameservers',
+    7 => 'Wholesale Hosting Nameservers',
+]);
+
+define('SW_USABLE_DNS_CONFIG_TYPES', [
+    1 => 'Custom Nameservers',
+    2 => 'URL & Email Forwarding + DNS Hosting',
+    3 => 'Parked',
+    4 => 'DNS Hosting',
+    5 => 'Default Nameservers',
+]);
+
 function synergywholesaledomains_webRequest($url, $method = 'GET', array $params = [])
 {
     $ch = curl_init();
@@ -1287,7 +1306,7 @@ function synergywholesaledomains_domainOptions(array $params)
         ->first();
 
     $tldInfo = Capsule::table("tbldomainpricing")
-        ->where("extension", "=", ".{$params['tld']}")
+        ->where("extension", ".{$params['tld']}")
         ->first();
 
     $vars = [
@@ -1296,11 +1315,30 @@ function synergywholesaledomains_domainOptions(array $params)
         'tlddnsmanagement' => $tldInfo->dnsmanagement,
         'tldemailforwarding' => $tldInfo->emailforwarding,
         'tld' => $params['tld'],
+        'allDnsConfigTypes' => SW_DNS_CONFIG_TYPES,
     ];
+
+    $availableDnsConfigTypes = [
+        1 => 'Custom Nameservers',
+        3 => 'Parked',
+        5 => 'Default Nameservers',
+    ];
+
+    if ($domainInfo->dnsmanagement == 1 || $tldInfo->dnsmanagement == 1) {
+        $availableDnsConfigTypes[4] = 'DNS Hosting';
+    }
+
+    if ($domainInfo->emailforwarding == 1 || $tldInfo->emailforwarding == 1) {
+        $availableDnsConfigTypes[2] = 'URL & Email Forwarding + DNS Hosting';
+    }
+
+    ksort($availableDnsConfigTypes);
+
+    $vars['availableDnsConfigTypes'] = $availableDnsConfigTypes;
 
     try {
         $info = synergywholesaledomains_apiRequest('domainInfo', $params);
-        $vars['dnsConfigType'] = $info['dnsConfig'];
+        $vars['currentDnsConfigType'] = $info['dnsConfig'];
         $vars['icannStatus'] = $info['icannStatus'];
     } catch (\Exception $e) {
         $errors[] = 'An error occured retrieving the domain information: ' . $e->getMessage();

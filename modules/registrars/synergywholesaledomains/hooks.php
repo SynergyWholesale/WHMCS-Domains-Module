@@ -42,6 +42,10 @@ add_hook('ClientAreaPrimarySidebar', 1, function (MenuItem $primarySidebar) {
     
             try {
                 $info = synergywholesaledomains_apiRequest('domainInfo', [], $vars);
+
+                if (!in_array($info['dnsConfig'], [1, 5]) && !is_null($menu->getChild('Nameservers'))) {
+                    $menu->removeChild('Nameservers');
+                }
     
                 if ($context->hasDnsManagement && !in_array($info['dnsConfig'], [2, 4]) && !is_null($menu->getChild('Manage DNS Host Records'))) {
                     $menu->removeChild('Manage DNS Host Records');
@@ -51,6 +55,10 @@ add_hook('ClientAreaPrimarySidebar', 1, function (MenuItem $primarySidebar) {
                     $menu->removeChild('Manage Email Forwarding');
                 }
             } catch (\Exception $e) {
+                if (!is_null($menu->getChild('Nameservers'))) {
+                    $menu->removeChild('Nameservers');
+                }
+
                 if (!is_null($menu->getChild('Manage DNS Host Records'))) {
                     $menu->removeChild('Manage DNS Host Records');
                 }
