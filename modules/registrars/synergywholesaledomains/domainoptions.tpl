@@ -29,7 +29,7 @@
     <form class="form-inline" id="form" role="form" method="post" action="clientarea.php?action=domaindetails&id={$domainid}&modop=custom&a=domainOptions">
         <input type="hidden" name="sub" value="save" />
         <input type="hidden" name="opt" value="dnstype"/>
-        <div class="form-group">
+        <div class="form-group" style="margin-bottom: 15px;">
             <label for="option">Your domain DNS configuration is currently set to use:</label>
             <span>&nbsp;</span>
             <select type="text" name="option" class="form-control" id="option" onchange="formSubmitDNS();">
@@ -43,6 +43,19 @@
                 {/foreach}
             </select>
         </div>
+
+        {if $currentDnsConfigType|in_array:[1, 5]}
+            <p>To manage your Namservers, please vist the <a href="clientarea.php?action=domaindetails&id={$domainid}#tabNamservers">Namservers menu</a>.</p>
+        {/if}
+
+        {if $currentDnsConfigType == 2}
+            <p>To manage your Mail forwarding records, please vist the <a href="clientarea.php?action=domaindetails&id={$domainid}&modop=custom&a=manageEmailForwarding">Email Forwarding menu</a>.</p>
+            <p>To manage your DNS records or URL forwarding records, please vist the <a href="clientarea.php?action=domaindetails&id={$domainid}&modop=custom&a=manageDNSURLForwarding">DNS Management menu</a>.</p>
+        {/if}
+
+        {if $currentDnsConfigType == 4}
+            <p>To manage your DNS records, please vist the <a href="clientarea.php?action=domaindetails&id={$domainid}&modop=custom&a=manageDNSURLForwarding">DNS Management menu</a>.</p>
+        {/if}
     </form>
     <br/>
     <div class="alert alert-info textcenter">

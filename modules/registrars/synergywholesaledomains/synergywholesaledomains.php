@@ -1348,6 +1348,7 @@ function synergywholesaledomains_domainOptions(array $params)
         switch ($_REQUEST['opt']) {
             case 'dnstype':
                 $request['nameServers'] = synergywholesaledomains_helper_getNameservers($info['nameServers']);
+
                 // Set nameservers to DNS hosting if selected.
                 if ($_REQUEST['option'] == 1) {
                     $request['nameServers'] = [
@@ -1358,7 +1359,7 @@ function synergywholesaledomains_domainOptions(array $params)
                 }
                 
                 // Set the new DNS Configuration Type.
-                $vars['dnsConfigType'] = $request['dnsConfigType'] = $_REQUEST['option'];
+                $vars['currentDnsConfigType'] = $request['dnsConfigType'] = $_REQUEST['option'];
                 
                 try {
                     $response = synergywholesaledomains_apiRequest('updateNameServers', $params, $request);
