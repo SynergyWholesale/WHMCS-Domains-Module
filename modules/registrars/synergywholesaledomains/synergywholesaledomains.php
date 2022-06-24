@@ -1835,7 +1835,17 @@ function synergywholesaledomains_manageDNSURLForwarding(array $params)
 
     $request = $records = [];
 
-    if (isset($_REQUEST['op'])) {
+    $errors = [];
+    $vars = [];
+
+    try {
+        $info = synergywholesaledomains_apiRequest('domainInfo', $params);
+        $vars['currentDnsConfigType'] = $info['dnsConfig'];
+    } catch (\Exception $e) {
+        $errors[] = 'An error occured retrieving the domain information: ' . $e->getMessage();
+    }
+
+    if (isset($_REQUEST['op']) && empty($errors)) {
         switch ($_REQUEST['op']) {
             case 'getRecords':
                 $records = synergywholesaledomains_custom_GetDNS($params);
@@ -1982,6 +1992,10 @@ function synergywholesaledomains_manageDNSURLForwarding(array $params)
         }
     }
 
+    if (!empty($errors)) {
+        $vars['error'] = implode('<br>', $errors);
+    }
+
     $uri = 'clientarea.php?' . http_build_query([
         'action' => 'domaindetails',
         'domainid' => $params['domainid'],
@@ -1995,6 +2009,7 @@ function synergywholesaledomains_manageDNSURLForwarding(array $params)
         'breadcrumb' => [
             $uri => 'DNS Hosting / URL Forwarding',
         ],
+        'vars' => $vars,
     ];
 }
 
