@@ -70,15 +70,19 @@ add_hook('ClientAreaPrimarySidebar', 1, function (MenuItem $primarySidebar) {
 
             // Overwrite Menu Item URL for DNS and Email Forwarding
             if (!is_null($menu->getChild('Manage DNS Host Records'))) {
-                $menu->getChild('Manage DNS Host Records')->setUri(
-                    "clientarea.php?action=domaindetails&id={$context->id}&modop=custom&a=manageDNSURLForwarding"
-                );
+                $dnsUrl = "clientarea.php?action=domaindetails&id={$context->id}&modop=custom&a=manageDNSURLForwarding";
+
+                $menu->getChild('Manage DNS Host Records')
+                    ->setUri($dnsUrl)
+                    ->setCurrent(synergywholesaledomains_getFullUrl($dnsUrl) === htmlspecialchars_decode($_SERVER['REQUEST_URI']));
             }
 
             if (!is_null($menu->getChild('Manage Email Forwarding'))) {
-                $menu->getChild('Manage Email Forwarding')->setUri(
-                    "clientarea.php?action=domaindetails&id={$context->id}&modop=custom&a=manageEmailForwarding"
-                );
+                $forwardingUrl = "clientarea.php?action=domaindetails&id={$context->id}&modop=custom&a=manageEmailForwarding";
+                
+                $menu->getChild('Manage Email Forwarding')
+                    ->setUri($forwardingUrl)
+                    ->setCurrent(synergywholesaledomains_getFullUrl($forwardingUrl) === htmlspecialchars_decode($_SERVER['REQUEST_URI']));
             }
         }
        
