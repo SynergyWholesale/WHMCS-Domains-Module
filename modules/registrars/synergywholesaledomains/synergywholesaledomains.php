@@ -1324,12 +1324,14 @@ function synergywholesaledomains_domainOptions(array $params)
         5 => 'Default Nameservers',
     ];
 
-    if ($domainInfo->dnsmanagement == 1 || $tldInfo->dnsmanagement == 1) {
-        $availableDnsConfigTypes[4] = 'DNS Hosting';
+    if ($domainInfo->emailforwarding == 1) {
+        $availableDnsConfigTypes[2] = $domainInfo->dnsmanagement == 1 
+            ? 'URL & Email Forwarding + DNS Hosting'
+            : 'Email Forwarding';
     }
 
-    if ($domainInfo->emailforwarding == 1 || $tldInfo->emailforwarding == 1) {
-        $availableDnsConfigTypes[2] = 'URL & Email Forwarding + DNS Hosting';
+    if ($domainInfo->dnsmanagement == 1) {
+        $availableDnsConfigTypes[4] = 'DNS Hosting';
     }
 
     ksort($availableDnsConfigTypes);

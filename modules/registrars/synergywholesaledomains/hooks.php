@@ -67,6 +67,19 @@ add_hook('ClientAreaPrimarySidebar', 1, function (MenuItem $primarySidebar) {
                     $menu->removeChild('Manage Email Forwarding');
                 }
             }
+
+            // Overwrite Menu Item URL for DNS and Email Forwarding
+            if (!is_null($menu->getChild('Manage DNS Host Records'))) {
+                $menu->getChild('Manage DNS Host Records')->setUri(
+                    "clientarea.php?action=domaindetails&id={$context->id}&modop=custom&a=manageDNSURLForwarding"
+                );
+            }
+
+            if (!is_null($menu->getChild('Manage Email Forwarding'))) {
+                $menu->getChild('Manage Email Forwarding')->setUri(
+                    "clientarea.php?action=domaindetails&id={$context->id}&modop=custom&a=manageEmailForwarding"
+                );
+            }
         }
        
         
@@ -89,7 +102,7 @@ add_hook('ClientAreaPageDomainDNSManagement', 1, function (array $vars) {
     }
 
     if ('synergywholesaledomains' === $registrarModuleName) {
-        header('Location: clientarea.php?action=domaindetails&id=' . $domain_id . '&modop=custom&a=manageDNSURLForwarding');
+        header("Location: clientarea.php?action=domaindetails&id={$domain_id}&modop=custom&a=manageDNSURLForwarding");
     }
 });
 
@@ -106,7 +119,7 @@ add_hook('ClientAreaPageDomainEmailForwarding', 1, function (array $vars) {
     }
 
     if ('synergywholesaledomains' === $registrarModuleName) {
-        header('Location: clientarea.php?action=domaindetails&id=' . $domain_id . '&modop=custom&a=manageEmailForwarding');
+        header("Location: clientarea.php?action=domaindetails&id={$domain_id}&modop=custom&a=manageEmailForwarding");
     }
 });
 
