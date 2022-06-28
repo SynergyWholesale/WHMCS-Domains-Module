@@ -45,18 +45,18 @@
         </div>
 
         {if $currentDnsConfigType|in_array:[1, 5]}
-            <p>To manage your Namservers, please vist the <a href="clientarea.php?action=domaindetails&id={$domainid}#tabNameservers">Namservers menu</a>.</p>
+            <p>To manage your Namservers, please visit the <a href="clientarea.php?action=domaindetails&id={$domainid}#tabNameservers">Namservers menu</a>.</p>
         {/if}
 
         {if $currentDnsConfigType == 2}
-            <p>To manage your Mail forwarding records, please vist the <a href="clientarea.php?action=domaindetails&id={$domainid}&modop=custom&a=manageEmailForwarding">Email Forwarding menu</a>.</p>
+            <p>To manage your Mail forwarding records, please visit the <a href="clientarea.php?action=domaindetails&id={$domainid}&modop=custom&a=manageEmailForwarding">Email Forwarding menu</a>.</p>
             {if $dnsmanagement == 1}
-                <p>To manage your DNS records or URL forwarding records, please vist the <a href="clientarea.php?action=domaindetails&id={$domainid}&modop=custom&a=manageDNSURLForwarding">DNS Management menu</a>.</p>
+                <p>To manage your DNS records or URL forwarding records, please visit the <a href="clientarea.php?action=domaindetails&id={$domainid}&modop=custom&a=manageDNSURLForwarding">DNS Management menu</a>.</p>
             {/if}
         {/if}
 
         {if $currentDnsConfigType == 4}
-            <p>To manage your DNS records, please vist the <a href="clientarea.php?action=domaindetails&id={$domainid}&modop=custom&a=manageDNSURLForwarding">DNS Management menu</a>.</p>
+            <p>To manage your DNS records, please visit the <a href="clientarea.php?action=domaindetails&id={$domainid}&modop=custom&a=manageDNSURLForwarding">DNS Management menu</a>.</p>
         {/if}
     </form>
     <br/>
