@@ -2108,7 +2108,9 @@ function synergywholesaledomains_manageEmailForwarding(array $params)
                     $request['source'] = strtolower($_REQUEST['prefix']);
                     $request['source'] = rtrim($_REQUEST['prefix'], '@');
 
-                    if (!preg_match("/$domain$/i")) {
+                    $safe = preg_quote($domain, '/');
+
+                    if (!preg_match("/{$safe}$/i", $request['source'])) {
                         $request['source'] = $request['source'] . '@' . $domain;
                     }
                 }
@@ -2121,7 +2123,7 @@ function synergywholesaledomains_manageEmailForwarding(array $params)
                     $add = synergywholesaledomains_apiRequest('addMailForward', $params, $request);
                     $response = [
                         'info' => 'Mail forwarder has been created',
-                        'recordID' => $add['recordID'],
+                        'record_id' => $add['recordID'] ?? $add['id'],
                     ];
                 } catch (\Exception $e) {
                     $response['error'] = 'Error adding mail forwarder: ' . $e->getMessage();
