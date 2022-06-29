@@ -46,7 +46,7 @@
         </div>
 
         {if $currentDnsConfigType|in_array:[1, 5]}
-            <p>To manage your Namservers, please visit the <a href="clientarea.php?action=domaindetails&id={$domainid}#tabNameservers">Namservers menu</a>.</p>
+            <p>To manage your Nameservers, please visit the <a href="clientarea.php?action=domaindetails&id={$domainid}#tabNameservers">Nameservers menu</a>.</p>
         {/if}
 
         {if $currentDnsConfigType == 2}
