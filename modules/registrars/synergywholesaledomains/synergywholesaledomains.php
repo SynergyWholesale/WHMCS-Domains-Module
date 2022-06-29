@@ -32,7 +32,6 @@ define('SW_USABLE_DNS_CONFIG_TYPES', [
     2 => 'URL & Email Forwarding + DNS Hosting',
     3 => 'Parked',
     4 => 'DNS Hosting',
-    5 => 'Default Nameservers',
 ]);
 
 function synergywholesaledomains_webRequest($url, $method = 'GET', array $params = [])
@@ -1321,7 +1320,6 @@ function synergywholesaledomains_domainOptions(array $params)
     $availableDnsConfigTypes = [
         1 => 'Custom Nameservers',
         3 => 'Parked',
-        5 => 'Default Nameservers',
     ];
 
     if ($domainInfo->emailforwarding == 1) {
@@ -1364,14 +1362,14 @@ function synergywholesaledomains_domainOptions(array $params)
                 $vars['currentDnsConfigType'] = $request['dnsConfigType'] = $_REQUEST['option'];
                 
                 try {
-                    $response = synergywholesaledomains_apiRequest('updateNameServers', $params, $request);
+                    synergywholesaledomains_apiRequest('updateNameServers', $params, $request);
                 } catch (\Exception $e) {
                     $errors[] = 'Update DNS type failed: ' . $e->getMessage();
                 }
                 break;
             case 'xxxmembership':
                 try {
-                    $response = synergywholesaledomains_apiRequest('updateXXXMembership', [
+                    synergywholesaledomains_apiRequest('updateXXXMembership', [
                         'membershipToken' => $_POST['xxxToken'],
                     ]);
                     $vars['info'] = 'Update XXX Membership successful.';
@@ -1381,7 +1379,7 @@ function synergywholesaledomains_domainOptions(array $params)
                 break;
             case 'resendwhoisverif':
                 try {
-                    $response = synergywholesaledomains_apiRequest('resendVerificationEmail', $params, $request);
+                    synergywholesaledomains_apiRequest('resendVerificationEmail', $params, $request);
                     $vars['info'] = 'Resend WHOIS Verification Email successful';
                 } catch (\Exception $e) {
                     $errors[] = 'Resend WHOIS Verification Email failed: ' . $e->getMessage();

@@ -24,7 +24,8 @@
             <strong>NOTICE:</strong> If you wish to utilise DNS Hosting, create email forwarders and use the URL forwarding options please visit the <a href="clientarea.php?action=domaindetails&id={$domainid}#tabAddons">addons menu</a> to activate the required addon first.
         </div>
     {/if}
-    <p>Set and manage your DNS configuration. You may choose from 'Parked', 'URL & Email Forwarding + DNS Hosting' or 'DNS Hosting'.</p>
+    <p>Set and manage your DNS configuration.</p> 
+    <p>You may choose from: {', '|implode:$availableDnsConfigTypes}</p>
     <br/>
     <form class="form-inline" id="form" role="form" method="post" action="clientarea.php?action=domaindetails&id={$domainid}&modop=custom&a=domainOptions">
         <input type="hidden" name="sub" value="save" />
