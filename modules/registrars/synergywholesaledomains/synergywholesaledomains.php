@@ -2121,7 +2121,7 @@ function synergywholesaledomains_custom_GetDNS(array $params)
                 $records[] = [
                     'address' => $record->destination,
                     'hostname' => $record->hostname,
-                    'record_id' => (int) $record->recordID,
+                    'record_id' => $record->recordID,
                     'type' => $type,
                 ];
             }
@@ -2139,7 +2139,8 @@ function synergywholesaledomains_custom_GetDNS(array $params)
              *
              * e.g. It will make "mail.mydomain.com.au" appear as "mail"
              */
-            $hostNameRegex = '/(?:\.' . synergywholesaledomains_helper_getDomain($params) . '\s*)$/m';
+            $safeHostname = preg_quote(synergywholesaledomains_helper_getDomain($params), '/');
+            $hostNameRegex = "/(?:\.{$safeHostname}\s*)$/m:";
             foreach ($dns['records'] as $record) {
                 if ('SOA' === $record->type) {
                     continue;
@@ -2147,7 +2148,7 @@ function synergywholesaledomains_custom_GetDNS(array $params)
                 $data = [
                     'address' => $record->content,
                     'hostname' => preg_replace($hostNameRegex, '', $record->hostName),
-                    'record_id' => (int) $record->id,
+                    'record_id' => $record->id,
                     'ttl' => (int) $record->ttl,
                     'type' => $record->type,
                 ];
