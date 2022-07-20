@@ -500,7 +500,7 @@ function synergywholesaledomains_SaveNameservers(array $params)
  */
 function synergywholesaledomains_GetRegistrarLock(array $params)
 {
-    if (!preg_match('/\.(au|uk)$/i', $params['tld'])) {
+    if (!preg_match('/\.?(au|uk)$/i', $params['tld'])) {
         try {
             $response = synergywholesaledomains_apiRequest('domainInfo', $params);
             $locked = 'clientTransferProhibited' === $response['domain_status'];
@@ -677,18 +677,20 @@ function synergywholesaledomains_TransferDomain(array $params)
      // This is a lazy way of getting the contact data in the format we need.
     $contact = synergywholesaledomains_helper_getContacts($params, ['' => '']);
 
-    if (preg_match('/\.uk$/', $params['tld'])) {
+    if (preg_match('/\.?uk$/', $params['tld'])) {
         return synergywholesaledomains_apiRequest('transferDomain', $params, $contact, false);
     }
 
     $request = [
         'authInfo' => $params['transfersecret'],
-        'doRenewal' => 1,
     ];
 
+    $canRenew = synergywholesaledomains_apiRequest('domainRenewRequired', $params, $request, false);
+
+    $request['doRenewal'] = $canRenew['status'] === 'OK_RENEWAL';
+
     if (preg_match('/\.au$/', $params['tld'])) {
-        $canRenew = synergywholesaledomains_apiRequest('domainRenewRequired', $params, $request, false);
-        $request['doRenewal'] = (int) ('on' === $params['doRenewal'] && 'OK_RENEWAL' === $canRenew['status']);
+        $request['doRenewal'] = (int) ('on' === $params['doRenewal']);
     }
 
     /**
@@ -889,7 +891,7 @@ function synergywholesaledomains_Sync(array $params)
     }
 
     $returnData = [];
-    if (preg_match('/\.au$/', $params['tld'])) {
+    if (preg_match('/\.?au$/', $params['tld'])) {
         $appMap = [
             'auRegistrantIDType' => 'Registrant ID Type',
             'auRegistrantID' => 'Registrant ID',
@@ -2904,7 +2906,7 @@ if (class_exists('\WHMCS\Domain\TopLevel\ImportItem') && class_exists('\WHMCS\Re
             $transfer_price = $extension->transfer;
             $register_price = $extension->register_1_year;
 
-            if (preg_match('/\.au$/', $tld)) {
+            if (preg_match('/\.?au$/', $tld)) {
                 $transfer_price = 0.00;
             }
 
@@ -2922,7 +2924,7 @@ if (class_exists('\WHMCS\Domain\TopLevel\ImportItem') && class_exists('\WHMCS\Re
                 ->setRedemptionFeePrice($extension->redemption)
                 ->setRedemptionFeeDays($extension->cannotRenewWithin)
                 ->setCurrency('AUD')
-                ->setEppRequired(!preg_match('/\.uk$/', $tld))
+                ->setEppRequired(!preg_match('/\.?uk$/', $tld))
                 ->setGraceFeeDays($extension->canRenewWithin)
                 ->setGraceFeePrice('0.00')
             ;
