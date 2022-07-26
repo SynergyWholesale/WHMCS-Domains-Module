@@ -31,14 +31,62 @@ add_hook('ClientAreaPrimarySidebar', 1, function (MenuItem $primarySidebar) {
             $menu->removeChild('Manage Private Nameservers');
         }
 
-        if ($context->hasDnsManagement && !is_null($menu->getChild('Manage DNS Host Records'))) {
-            $menu->removeChild('Manage DNS Host Records');
-        }
+        if ($context->status === 'Active') {
+            $settings = $context->getRegistrarInterface()->getSettings();
 
-        if ($context->hasEmailForwarding && !is_null($menu->getChild('Manage Email Forwarding'))) {
-            $menu->removeChild('Manage Email Forwarding');
-        }
+            $vars = [
+                'resellerID' => $settings['resellerID'],
+                'apiKey' => $settings['apiKey'],
+                'domainName' => $context->domain
+            ];
+    
+            try {
+                $info = synergywholesaledomains_apiRequest('domainInfo', [], $vars);
 
+                if (!in_array($info['dnsConfig'], [1, 5]) && !is_null($menu->getChild('Modify Nameservers'))) {
+                    $menu->removeChild('Modify Nameservers');
+                }
+    
+                if ($context->hasDnsManagement && !in_array($info['dnsConfig'], [2, 4]) && !is_null($menu->getChild('Manage DNS Host Records'))) {
+                    $menu->removeChild('Manage DNS Host Records');
+                }
+        
+                if ($context->hasEmailForwarding && !in_array($info['dnsConfig'], [2]) && !is_null($menu->getChild('Manage Email Forwarding'))) {
+                    $menu->removeChild('Manage Email Forwarding');
+                }
+            } catch (\Exception $e) {
+                if (!is_null($menu->getChild('Modify Nameservers'))) {
+                    $menu->removeChild('Modify Nameservers');
+                }
+
+                if (!is_null($menu->getChild('Manage DNS Host Records'))) {
+                    $menu->removeChild('Manage DNS Host Records');
+                }
+
+                if (!is_null($menu->getChild('Manage Email Forwarding'))) {
+                    $menu->removeChild('Manage Email Forwarding');
+                }
+            }
+
+            // Overwrite Menu Item URL for DNS and Email Forwarding
+            if (!is_null($menu->getChild('Manage DNS Host Records'))) {
+                $dnsUrl = "clientarea.php?action=domaindetails&id={$context->id}&modop=custom&a=manageDNSURLForwarding";
+
+                $menu->getChild('Manage DNS Host Records')
+                    ->setUri($dnsUrl)
+                    ->setCurrent(synergywholesaledomains_getFullUrl($dnsUrl) === htmlspecialchars_decode($_SERVER['REQUEST_URI']));
+            }
+
+            if (!is_null($menu->getChild('Manage Email Forwarding'))) {
+                $forwardingUrl = "clientarea.php?action=domaindetails&id={$context->id}&modop=custom&a=manageEmailForwarding";
+                
+                $menu->getChild('Manage Email Forwarding')
+                    ->setUri($forwardingUrl)
+                    ->setCurrent(synergywholesaledomains_getFullUrl($forwardingUrl) === htmlspecialchars_decode($_SERVER['REQUEST_URI']));
+            }
+        }
+       
+        
         if (preg_match('/\.au$/', $context->domain) && !is_null($menu->getChild('Registrar Lock Status'))) {
             $menu->removeChild('Registrar Lock Status');
         }
@@ -58,7 +106,7 @@ add_hook('ClientAreaPageDomainDNSManagement', 1, function (array $vars) {
     }
 
     if ('synergywholesaledomains' === $registrarModuleName) {
-        header('Location: clientarea.php?action=domaindetails&id=' . $domain_id . '&modop=custom&a=manageDNSURLForwarding');
+        header("Location: clientarea.php?action=domaindetails&id={$domain_id}&modop=custom&a=manageDNSURLForwarding");
     }
 });
 
@@ -75,7 +123,7 @@ add_hook('ClientAreaPageDomainEmailForwarding', 1, function (array $vars) {
     }
 
     if ('synergywholesaledomains' === $registrarModuleName) {
-        header('Location: clientarea.php?action=domaindetails&id=' . $domain_id . '&modop=custom&a=manageEmailForwarding');
+        header("Location: clientarea.php?action=domaindetails&id={$domain_id}&modop=custom&a=manageEmailForwarding");
     }
 });
 

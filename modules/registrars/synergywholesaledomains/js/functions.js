@@ -4,7 +4,7 @@
  * @copyright Copyright (c) Synergy Wholesale Pty Ltd 2020
  * @license https://github.com/synergywholesale/whmcs-domains-module/LICENSE
  */
-if ('undefined' !== typeof toastr) {
+ if ('undefined' !== typeof toastr) {
     toastr.options.positionClass = 'toast-top-full-width';
     toastr.options.extendedTimeOut = 0;
     toastr.options.timeOut = 1e4;
@@ -36,22 +36,26 @@ function Toast(type, css, msg) {
 }
 
 function formSubmitDNS() {
-    let type = determineDNSType(document.getElementById('option').value);
-    let text = `Are you sure you want to change the DNS Type to ${type} ?`;
+    let type = determineDNSType(parseInt(document.getElementById('option').value));
+    let text = `Are you sure you want to change the DNS Type to ${type}?`;
     if (confirm(text)) {
         this.form.submit()
     }
 }
 
 function determineDNSType(type) {
-    switch (type) {
-        case 2:
-            return "URL & Email Forwarding + DNS Hosting"
-        case 3:
-            return "Parked"
-        case 4:
-            return "DNS Hosting"
+    const dnsTypes = {
+        0: 'Inactive',
+        1: 'Custom Nameservers',
+        2: 'URL & Email Forwarding + DNS Hosting',
+        3: 'Parked',
+        4: 'DNS Hosting',
+        5: 'Default Nameservers',
+        6: 'Legacy Hosting Nameservers',
+        7: 'Wholesale Hosting Nameservers',
     }
+
+    return dnsTypes[type];
 }
 // --------------------------------------------------
 // Any Email Record related functionality starts here

@@ -16,6 +16,24 @@ define('WHATS_MY_IP_URL', 'https://{{FRONTEND}}/ip');
 define('SW_MODULE_VERSION', '{{VERSION}}');
 define('SW_MODULE_NAME', 'synergywholesaledomains');
 
+define('SW_DNS_CONFIG_TYPES', [
+    0 => 'Inactive',
+    1 => 'Custom Nameservers',
+    2 => 'URL & Email Forwarding + DNS Hosting',
+    3 => 'Parked',
+    4 => 'DNS Hosting',
+    5 => 'Default Nameservers',
+    6 => 'Legacy Hosting Nameservers',
+    7 => 'Wholesale Hosting Nameservers',
+]);
+
+define('SW_USABLE_DNS_CONFIG_TYPES', [
+    1 => 'Custom Nameservers',
+    2 => 'URL & Email Forwarding + DNS Hosting',
+    3 => 'Parked',
+    4 => 'DNS Hosting',
+]);
+
 function synergywholesaledomains_webRequest($url, $method = 'GET', array $params = [])
 {
     $ch = curl_init();
@@ -107,7 +125,8 @@ function synergywholesaledomains_apiRequest($command, array $params = [], array 
 
     try {
         $response = $client->{$command}($request);
-        logModuleCall(SW_MODULE_NAME, $command, $request, $response, $response, $auth);
+        $logResponse = is_string($response) ? $response : (array) $response;
+        logModuleCall(SW_MODULE_NAME, $command, $request, $logResponse, $logResponse, $auth);
     } catch (SoapFault $e) {
         logModuleCall(SW_MODULE_NAME, $command, $request, $e->getMessage(), $e->getMessage(), $auth);
 
@@ -281,6 +300,18 @@ function synergywholesaledomains_getConfigArray(array $params)
             'Type' => 'yesno',
             'Description' => 'Enable this option to force update the WHOIS.json data<br><b>NOTE:</b> This option will be disabled automatically again once you have clicked \'Save Changes\' and the update sequence is completed.',
         ],
+        'auDirectShowSingleContestedAvailable' => [
+            'FriendlyName' => 'Ordering Form Support - Single Contested .AU Direct Domains',
+            'Type' => 'yesno',
+            'Size' => '1',
+            'Description' => 'Tick if you wish to support single contested .au direct domain names within your ordering forms (requires Synergy Wholesale to be set as your lookup provider). If unticked, single contested domains will show as unavailable upon lookup. <a href="https://synergywholesale.com/faq/article/the-direct-au-domain-name-im-looking-at-is-contested-what-does-this-mean/" target="_blank">Learn more.</a>',
+        ],
+        'auDirectShowMultiContestedAvailable' => [
+            'FriendlyName' => 'Ordering Form Support - Multi-Contested .AU Direct Domains ',
+            'Type' => 'yesno',
+            'Size' => '1',
+            'Description' => 'Tick if you wish to support multi-contested .au direct domain names within your ordering forms (requires Synergy Wholesale to be set as your lookup provider). If unticked, multi-contested domains will show as unavailable upon lookup. <a href="https://synergywholesale.com/faq/article/the-direct-au-domain-name-im-looking-at-is-contested-what-does-this-mean/" target="_blank">Learn more.</a>',
+        ],
         'defaultDnsConfig' => [
             'FriendlyName' => 'Default DNS Config',
             'Type' => 'dropdown',
@@ -312,7 +343,7 @@ function synergywholesaledomains_getConfigArray(array $params)
             'Description' => 'This module version: ' . SW_MODULE_VERSION,
         ],
         '' => [
-            'Description' => '<b>Having trouble?</b> Login to the Synergy Wholesale Management Console and <a style="text-decoration:underline;" target="_blank" href="https://{{FRONTEND}}/home/support/new">create a new support request.</a>',
+            'Description' => '<b>Having trouble?</b> Login to the Synergy Wholesale Management Console and <a style="text-decoration:underline;" target="_blank" href="https://manage.synergywholesale.com/home/support/new">create a new support request.</a>',
         ],
     ];
 
@@ -346,7 +377,7 @@ function synergywholesaledomains_getConfigArray(array $params)
                 $message = '<b style="color:#FF0000;">403 - Access Denied</b>';
                 break;
             default:
-                $message = '<b style="color:#FF0000;">Unable to connect: <i>Check firewall, or submit <a style="color:#FF0000;text-decoration:underline;" target="_blank" href="https://{{FRONTEND}}/home/support/new">Support Request</a></i></b>';
+                $message = '<b style="color:#FF0000;">Unable to connect: <i>Check firewall, or submit <a style="color:#FF0000;text-decoration:underline;" target="_blank" href="https://manage.synergywholesale.com/home/support/new">Support Request</a></i></b>';
                 break;
         }
 
@@ -354,29 +385,22 @@ function synergywholesaledomains_getConfigArray(array $params)
             Disable to hide connectivity status to the Synergy Wholesale API
             <i>This should be disabled unless configuring</i>\n
             This WHMCS installation's IP Address is <b>$ipAddress</b>
-            <i>You will need to whitelist this IP address for the API usage within <a style=\"text-decoration:underline;\" target=\"_blank\" href=\"https://{{FRONTEND}}/home/resellers/api\">Synergy Wholesale > API Information</a></i>\n
+            <i>You will need to whitelist this IP address for the API usage within <a style=\"text-decoration:underline;\" target=\"_blank\" href=\"https://manage.synergywholesale.com/home/resellers/api\">Synergy Wholesale > API Information</a></i>\n
             Production API Whitelisting: $message
             Production API Authentication: $apiAuth
         "));
-    }
 
-    // Check to see if we are configured to connect, then attempt to retrieve the latest version
-    if (!empty($params['apiKey']) && !empty($params['resellerID'])) {
         try {
-            $modules = synergywholesaledomains_apiRequest('getWHMCSModulesVersions', $params);
-            foreach ($modules as $module) {
-                if ('domains' !== $module->key) {
-                    continue;
-                }
-
-                if ($module->moduleVersion <= MODULE_VERSION) {
-                    // No need to display new version, we have the latest version
-                    $configuration['Version']['Description'] .= '<br>You are currently running the latest module version available';
-                } else {
-                    // Display new module data
-                    $configuration['Version']['Description'] .= '<br>Latest Available Version: ' . $module->moduleVersion . '<br>Download latest version from <a href="https://synergywholesale.com/faq/api-documentation-whmcs-modules" target="_blank">here</a>';
-                }
-            }
+            /**
+             * Finally turn off test_api_connection setting for the customer automatically so
+             * this doesn't keep creating log multiple entries in tblmoduleLog
+             */
+            Capsule::table('tblregistrars')->where([
+                'registrar' => 'synergywholesaledomains',
+                'setting' => 'test_api_connection',
+            ])->update([
+                'value' => '',
+            ]);
         } catch (\Exception $e) {
             /* Silence */
         }
@@ -588,6 +612,13 @@ function synergywholesaledomains_RegisterDomain(array $params)
         $eligibility['eligibilityIDType'] = strtoupper($brn);
         $eligibility['eligibilityID'] = $params['additionalfields']['Eligibility ID'];
         $eligibility['eligibilityName'] = $params['additionalfields']['Eligibility Name'];
+
+
+        // .AU Direct
+        if (!empty($params['additionalfields']['Priority contact ID']) && !empty($params['additionalfields']['Priority authInfo'])) {
+            $eligibility['associationID'] = $params['additionalfields']['Priority contact ID'];
+            $eligibility['associationAuthInfo'] = $params['additionalfields']['Priority authInfo'];
+        }
     }
 
     if (preg_match('/\.?uk$/', $params['tld'])) {
@@ -773,7 +804,17 @@ function synergywholesaledomains_Sync(array $params)
 {
     // Run the sync command on the domain specified
     try {
-         $response = synergywholesaledomains_apiRequest('domainInfo', $params, [], false);
+        $associationId = Capsule::table('tbldomainsadditionalfields')
+            ->where('domainid', $params['domainid'])
+            ->where('name', 'Priority contact ID')
+            ->first();
+        
+        $response = synergywholesaledomains_apiRequest(
+            'domainInfo',
+            $params, 
+            ['associationID' => $associationId->value ?? null],
+            false
+        );
     } catch (\Exception $e) {
         return [
             'error' => $e->getMessage(),
@@ -967,6 +1008,12 @@ function synergywholesaledomains_Sync(array $params)
                         'transferredAway' => true,
                     ];
                     break;
+                case 'application_pending':
+                // Application Approved and Rejected are transitional statuses, meaning Approved will eventually turn into OK and Rejected will turn into Deleted
+                case 'application_approved':
+                case 'application_rejected':
+                case 'register_au_identity_verification':
+                case 'register_au_identity_verification_success_registration_failure':
                 case 'register_manual':
                     $returnData = [
                         'active' => false,
@@ -995,7 +1042,7 @@ function synergywholesaledomains_Sync(array $params)
                 ->where('id', $params['domainid'])
                 ->update(
                     [
-                        'additionalnotes' => $selectInfo->additionalnotes . '\r\n' . date('d/m/Y') . ' - Sync Cron - ' . $note,
+                        'additionalnotes' => $selectInfo->additionalnotes . PHP_EOL . date('d/m/Y') . ' - Sync Cron - ' . $note,
                     ]
                 );
         }
@@ -1020,12 +1067,30 @@ function synergywholesaledomains_TransferSync(array $params)
     try {
         $response = synergywholesaledomains_apiRequest('domainInfo', $params);
     } catch (\Exception $e) {
+        if ($e->getMessage() == 'Domain Info Failed - Unable to retrieve domain id') {
+            return [
+                'completed' => false,
+                'failed' => true,
+                'reason' => 'Domain has been marked as cancelled due to not being in your account'
+            ];
+        }
+
         return [
             'error' => $e->getMessage(),
         ];
     }
 
     if (!isset($response['domain_status'])) {
+        if (isset($response['transfer_status'])
+            && isset($response['status'])
+            && in_array($response['status'], ['OK_TRANSFER_TIMEOUT', 'OK_TRANSFER_REJECTED', 'OK_TRANSFER_CANCELLED'])) {
+            // It has timed out, was cancelled, or was rejected
+            return [
+                'completed' => false,
+                'failed' => true,
+                'reason' => 'Transfer was either rejected, cancelled or timed out'
+            ];
+        }
         return [
             'completed' => false,
         ];
@@ -1095,6 +1160,9 @@ function synergywholesaledomains_SaveContactDetails(array $params)
         $request["{$contactType}_suburb"] = $params['contactdetails'][$whmcs_contact]['City'];
         $request["{$contactType}_postcode"] = $params['contactdetails'][$whmcs_contact]['Postcode'];
 
+        if (!preg_match('/\.?uk$/', $params['tld'])) {
+            $request["{$contactType}_organisation"] = $params['contactdetails'][$whmcs_contact]['Organisation'];
+        }
         // Validate the country being specified
         if (!synergywholesaledomains_validateCountry($params['contactdetails'][$whmcs_contact]['Country'])) {
             return [
@@ -1168,6 +1236,7 @@ function synergywholesaledomains_GetContactDetails(array $params)
         'address1' => 'Address 1',
         'address2' => 'Address 2',
         'address3' => 'Address 3',
+        'organisation' => 'Organisation',
         'suburb' => 'City',
         'state' => 'State',
         'country' => 'Country',
@@ -1175,6 +1244,12 @@ function synergywholesaledomains_GetContactDetails(array $params)
         'phone' => 'Phone',
         'email' => 'Email',
     ];
+
+
+    if (preg_match('/\.?uk$/', $params['tld'])) {
+        unset($map['organisation']);
+    }
+
 
     $contactTypes = ['registrant'];
     foreach (['admin', 'billing', 'tech'] as $otherTypes) {
@@ -1230,7 +1305,7 @@ function synergywholesaledomains_domainOptions(array $params)
         ->first();
 
     $tldInfo = Capsule::table("tbldomainpricing")
-        ->where("extension", "=", ".{$params['tld']}")
+        ->where("extension", ".{$params['tld']}")
         ->first();
 
     $vars = [
@@ -1239,22 +1314,43 @@ function synergywholesaledomains_domainOptions(array $params)
         'tlddnsmanagement' => $tldInfo->dnsmanagement,
         'tldemailforwarding' => $tldInfo->emailforwarding,
         'tld' => $params['tld'],
+        'allDnsConfigTypes' => SW_DNS_CONFIG_TYPES,
     ];
+
+    $availableDnsConfigTypes = [
+        1 => 'Custom Nameservers',
+        3 => 'Parked',
+    ];
+
+    if ($domainInfo->emailforwarding == 1) {
+        $availableDnsConfigTypes[2] = $domainInfo->dnsmanagement == 1 
+            ? 'URL & Email Forwarding + DNS Hosting'
+            : 'Email Forwarding';
+    }
+
+    if ($domainInfo->dnsmanagement == 1) {
+        $availableDnsConfigTypes[4] = 'DNS Hosting';
+    }
+
+    ksort($availableDnsConfigTypes);
+
+    $vars['availableDnsConfigTypes'] = $availableDnsConfigTypes;
 
     try {
         $info = synergywholesaledomains_apiRequest('domainInfo', $params);
-        $vars['dnsConfigType'] = $info['dnsConfig'];
+        $vars['currentDnsConfigType'] = $info['dnsConfig'];
         $vars['icannStatus'] = $info['icannStatus'];
     } catch (\Exception $e) {
         $errors[] = 'An error occured retrieving the domain information: ' . $e->getMessage();
     }
 
-    if (isset($_REQUEST['sub']) && 'save' === $_REQUEST['sub'] && isset($_REQUEST['opt'])) {
+    if (isset($_REQUEST['sub']) && $_REQUEST['sub'] === 'save' && isset($_REQUEST['opt']) && empty($errors)) {
         switch ($_REQUEST['opt']) {
             case 'dnstype':
                 $request['nameServers'] = synergywholesaledomains_helper_getNameservers($info['nameServers']);
+
                 // Set nameservers to DNS hosting if selected.
-                if (1 == $_REQUEST['option']) {
+                if ($_REQUEST['option'] == 1) {
                     $request['nameServers'] = [
                         'ns1.nameserver.net.au',
                         'ns2.nameserver.net.au',
@@ -1263,17 +1359,17 @@ function synergywholesaledomains_domainOptions(array $params)
                 }
                 
                 // Set the new DNS Configuration Type.
-                $vars['dnsConfigType'] = $request['dnsConfigType'] = $_REQUEST['option'];
+                $vars['currentDnsConfigType'] = $request['dnsConfigType'] = $_REQUEST['option'];
                 
                 try {
-                    $response = synergywholesaledomains_apiRequest('updateNameServers', $params, $request);
+                    synergywholesaledomains_apiRequest('updateNameServers', $params, $request);
                 } catch (\Exception $e) {
                     $errors[] = 'Update DNS type failed: ' . $e->getMessage();
                 }
                 break;
             case 'xxxmembership':
                 try {
-                    $response = synergywholesaledomains_apiRequest('updateXXXMembership', [
+                    synergywholesaledomains_apiRequest('updateXXXMembership', [
                         'membershipToken' => $_POST['xxxToken'],
                     ]);
                     $vars['info'] = 'Update XXX Membership successful.';
@@ -1283,8 +1379,8 @@ function synergywholesaledomains_domainOptions(array $params)
                 break;
             case 'resendwhoisverif':
                 try {
-                    $response = synergywholesaledomains_apiRequest('resendVerificationEmail', $params, $request);
-                    $vars['info'] = 'Resend WHOIS Verification Email successfull';
+                    synergywholesaledomains_apiRequest('resendVerificationEmail', $params, $request);
+                    $vars['info'] = 'Resend WHOIS Verification Email successful';
                 } catch (\Exception $e) {
                     $errors[] = 'Resend WHOIS Verification Email failed: ' . $e->getMessage();
                 }
@@ -1744,7 +1840,17 @@ function synergywholesaledomains_manageDNSURLForwarding(array $params)
 
     $request = $records = [];
 
-    if (isset($_REQUEST['op'])) {
+    $errors = [];
+    $vars = [];
+
+    try {
+        $info = synergywholesaledomains_apiRequest('domainInfo', $params);
+        $vars['currentDnsConfigType'] = $info['dnsConfig'];
+    } catch (\Exception $e) {
+        $errors[] = 'An error occured retrieving the domain information: ' . $e->getMessage();
+    }
+
+    if (isset($_REQUEST['op']) && empty($errors)) {
         switch ($_REQUEST['op']) {
             case 'getRecords':
                 $records = synergywholesaledomains_custom_GetDNS($params);
@@ -1891,6 +1997,10 @@ function synergywholesaledomains_manageDNSURLForwarding(array $params)
         }
     }
 
+    if (!empty($errors)) {
+        $vars['error'] = implode('<br>', $errors);
+    }
+
     $uri = 'clientarea.php?' . http_build_query([
         'action' => 'domaindetails',
         'domainid' => $params['domainid'],
@@ -1904,6 +2014,7 @@ function synergywholesaledomains_manageDNSURLForwarding(array $params)
         'breadcrumb' => [
             $uri => 'DNS Hosting / URL Forwarding',
         ],
+        'vars' => $vars,
     ];
 }
 
@@ -2000,7 +2111,9 @@ function synergywholesaledomains_manageEmailForwarding(array $params)
                     $request['source'] = strtolower($_REQUEST['prefix']);
                     $request['source'] = rtrim($_REQUEST['prefix'], '@');
 
-                    if (!preg_match("/$domain$/i")) {
+                    $safe = preg_quote($domain, '/');
+
+                    if (!preg_match("/{$safe}$/i", $request['source'])) {
                         $request['source'] = $request['source'] . '@' . $domain;
                     }
                 }
@@ -2013,7 +2126,7 @@ function synergywholesaledomains_manageEmailForwarding(array $params)
                     $add = synergywholesaledomains_apiRequest('addMailForward', $params, $request);
                     $response = [
                         'info' => 'Mail forwarder has been created',
-                        'recordID' => $add['recordID'],
+                        'record_id' => $add['recordID'] ?? $add['id'],
                     ];
                 } catch (\Exception $e) {
                     $response['error'] = 'Error adding mail forwarder: ' . $e->getMessage();
@@ -2723,6 +2836,23 @@ if (
 
                 if ('register' === $type && !$domain->available) {
                     $status = WHMCS\Domains\DomainLookup\SearchResult::STATUS_REGISTERED;
+                }
+
+                if ('au' === $tld) {
+                    // Check if showing single contested domains as available is enabled
+                    if ('register' === $type && (!isset($params['auDirectShowSingleContestedAvailable']) || $params['auDirectShowSingleContestedAvailable'] !== 'on')
+                        && isset($domain->requiresMembership) && $domain->requiresMembership
+                        && isset($domain->requiresApplication) && !$domain->requiresApplication
+                    ) {
+                        $status = WHMCS\Domains\DomainLookup\SearchResult::STATUS_RESERVED;
+                    }
+
+                    // Check if showing multi contested domains as available is enabled
+                    if ('register' === $type && (!isset($params['auDirectShowMultiContestedAvailable']) || $params['auDirectShowMultiContestedAvailable'] !== 'on')
+                        && isset($domain->requiresApplication) && $domain->requiresApplication
+                    ) {
+                        $status = WHMCS\Domains\DomainLookup\SearchResult::STATUS_RESERVED;
+                    }
                 }
 
                 if (

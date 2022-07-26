@@ -2,7 +2,7 @@
 
 Synergy Wholesale WHMCS Domains Module
 
-## Unreleased Version [Updated xx/xx/2020]
+## Unreleased Version [Updated xx/xx/20xx]
 ### Added
 -
 
@@ -15,10 +15,26 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
-## 2.2.10 [Updated 20/10/2021]
+## 2.4.0 [Updated 09/05/2022]
+### Fixed
+- Organisation field not displaying on Domain Contact form
+- Domains not syncing their correct status when in a transfer state
+- Issue where DNS and URL Forwarding would display on side menu despite not being enabled on Domain Name
+- Changing DNS configuration type would display "undefined" instead of the correct name
+- Fix potential issue with logging API requests
+
+## 2.3.1 [Updated 30/03/2022]
+### Fixed
+- Syncing .au domains that are currently pending application or pending identity verification
+
+## 2.3.0 [Updated 22/03/2022]
 ### Added
-- New Alert on the Change of Registrant page if domain is already pending COR
-- Submitting a COR as client will now return you to the invoice.
+- Direct .au support
+- additionalfields.php for .au and direct .au priority application data
+
+## 2.2.10 [Updated 04/10/2021]
+### Fixed
+- Improved Domains Registrations page rendering time
 
 ## 2.2.9 [Updated 30/09/2021]
 ### Fixed
