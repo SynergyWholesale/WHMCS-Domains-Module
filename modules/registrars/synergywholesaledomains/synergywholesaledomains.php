@@ -2140,7 +2140,7 @@ function synergywholesaledomains_custom_GetDNS(array $params)
              * e.g. It will make "mail.mydomain.com.au" appear as "mail"
              */
             $safeHostname = preg_quote(synergywholesaledomains_helper_getDomain($params), '/');
-            $hostNameRegex = "/(?:\.{$safeHostname}\s*)$/m:";
+            $hostNameRegex = "/(?:\.{$safeHostname}\s*)$/m";
             foreach ($dns['records'] as $record) {
                 if ('SOA' === $record->type) {
                     continue;
