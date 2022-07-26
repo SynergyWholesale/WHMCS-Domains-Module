@@ -15,6 +15,18 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.4.1 [Updated 26/07/2022]
+### Changed
+- Certain options related to DNS and Nameservers are now hidden in the WHMCS client area depending upon the current DNS Config Type
+  - Previous restrictions on requring DNS management and Email Forwarding management addons be enabled on the domain still apply
+- When creating a change of registrant request the user is now redirected to the invoice
+
+### Fixed
+- When DNS Config Type set on domain doesn't exist in WHMCS module it would display incorrectly as "DNS Hosting"
+- URL forwarding displaying on DNS page when URL forwarding was not enabled
+- Editing or deleting newly added Email Forwarded not working until page was refereshed
+- Manage DNS Records and Manage Email Forwarding not displaying as the currently selected page in sidebar navigation
+
 ## 2.4.0 [Updated 09/05/2022]
 ### Fixed
 - Organisation field not displaying on Domain Contact form
