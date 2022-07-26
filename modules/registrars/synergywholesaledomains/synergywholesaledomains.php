@@ -16,6 +16,24 @@ define('WHATS_MY_IP_URL', 'https://{{FRONTEND}}/ip');
 define('SW_MODULE_VERSION', '{{VERSION}}');
 define('SW_MODULE_NAME', 'synergywholesaledomains');
 
+define('SW_DNS_CONFIG_TYPES', [
+    0 => 'Inactive',
+    1 => 'Custom Nameservers',
+    2 => 'URL & Email Forwarding + DNS Hosting',
+    3 => 'Parked',
+    4 => 'DNS Hosting',
+    5 => 'Default Nameservers',
+    6 => 'Legacy Hosting Nameservers',
+    7 => 'Wholesale Hosting Nameservers',
+]);
+
+define('SW_USABLE_DNS_CONFIG_TYPES', [
+    1 => 'Custom Nameservers',
+    2 => 'URL & Email Forwarding + DNS Hosting',
+    3 => 'Parked',
+    4 => 'DNS Hosting',
+]);
+
 function synergywholesaledomains_webRequest($url, $method = 'GET', array $params = [])
 {
     $ch = curl_init();
@@ -1287,7 +1305,7 @@ function synergywholesaledomains_domainOptions(array $params)
         ->first();
 
     $tldInfo = Capsule::table("tbldomainpricing")
-        ->where("extension", "=", ".{$params['tld']}")
+        ->where("extension", ".{$params['tld']}")
         ->first();
 
     $vars = [
@@ -1296,11 +1314,31 @@ function synergywholesaledomains_domainOptions(array $params)
         'tlddnsmanagement' => $tldInfo->dnsmanagement,
         'tldemailforwarding' => $tldInfo->emailforwarding,
         'tld' => $params['tld'],
+        'allDnsConfigTypes' => SW_DNS_CONFIG_TYPES,
     ];
+
+    $availableDnsConfigTypes = [
+        1 => 'Custom Nameservers',
+        3 => 'Parked',
+    ];
+
+    if ($domainInfo->emailforwarding == 1) {
+        $availableDnsConfigTypes[2] = $domainInfo->dnsmanagement == 1 
+            ? 'URL & Email Forwarding + DNS Hosting'
+            : 'Email Forwarding';
+    }
+
+    if ($domainInfo->dnsmanagement == 1) {
+        $availableDnsConfigTypes[4] = 'DNS Hosting';
+    }
+
+    ksort($availableDnsConfigTypes);
+
+    $vars['availableDnsConfigTypes'] = $availableDnsConfigTypes;
 
     try {
         $info = synergywholesaledomains_apiRequest('domainInfo', $params);
-        $vars['dnsConfigType'] = $info['dnsConfig'];
+        $vars['currentDnsConfigType'] = $info['dnsConfig'];
         $vars['icannStatus'] = $info['icannStatus'];
     } catch (\Exception $e) {
         $errors[] = 'An error occured retrieving the domain information: ' . $e->getMessage();
@@ -1310,6 +1348,7 @@ function synergywholesaledomains_domainOptions(array $params)
         switch ($_REQUEST['opt']) {
             case 'dnstype':
                 $request['nameServers'] = synergywholesaledomains_helper_getNameservers($info['nameServers']);
+
                 // Set nameservers to DNS hosting if selected.
                 if ($_REQUEST['option'] == 1) {
                     $request['nameServers'] = [
@@ -1320,17 +1359,17 @@ function synergywholesaledomains_domainOptions(array $params)
                 }
                 
                 // Set the new DNS Configuration Type.
-                $vars['dnsConfigType'] = $request['dnsConfigType'] = $_REQUEST['option'];
+                $vars['currentDnsConfigType'] = $request['dnsConfigType'] = $_REQUEST['option'];
                 
                 try {
-                    $response = synergywholesaledomains_apiRequest('updateNameServers', $params, $request);
+                    synergywholesaledomains_apiRequest('updateNameServers', $params, $request);
                 } catch (\Exception $e) {
                     $errors[] = 'Update DNS type failed: ' . $e->getMessage();
                 }
                 break;
             case 'xxxmembership':
                 try {
-                    $response = synergywholesaledomains_apiRequest('updateXXXMembership', [
+                    synergywholesaledomains_apiRequest('updateXXXMembership', [
                         'membershipToken' => $_POST['xxxToken'],
                     ]);
                     $vars['info'] = 'Update XXX Membership successful.';
@@ -1340,7 +1379,7 @@ function synergywholesaledomains_domainOptions(array $params)
                 break;
             case 'resendwhoisverif':
                 try {
-                    $response = synergywholesaledomains_apiRequest('resendVerificationEmail', $params, $request);
+                    synergywholesaledomains_apiRequest('resendVerificationEmail', $params, $request);
                     $vars['info'] = 'Resend WHOIS Verification Email successful';
                 } catch (\Exception $e) {
                     $errors[] = 'Resend WHOIS Verification Email failed: ' . $e->getMessage();
@@ -1796,7 +1835,17 @@ function synergywholesaledomains_manageDNSURLForwarding(array $params)
 
     $request = $records = [];
 
-    if (isset($_REQUEST['op'])) {
+    $errors = [];
+    $vars = [];
+
+    try {
+        $info = synergywholesaledomains_apiRequest('domainInfo', $params);
+        $vars['currentDnsConfigType'] = $info['dnsConfig'];
+    } catch (\Exception $e) {
+        $errors[] = 'An error occured retrieving the domain information: ' . $e->getMessage();
+    }
+
+    if (isset($_REQUEST['op']) && empty($errors)) {
         switch ($_REQUEST['op']) {
             case 'getRecords':
                 $records = synergywholesaledomains_custom_GetDNS($params);
@@ -1943,6 +1992,10 @@ function synergywholesaledomains_manageDNSURLForwarding(array $params)
         }
     }
 
+    if (!empty($errors)) {
+        $vars['error'] = implode('<br>', $errors);
+    }
+
     $uri = 'clientarea.php?' . http_build_query([
         'action' => 'domaindetails',
         'domainid' => $params['domainid'],
@@ -1956,6 +2009,7 @@ function synergywholesaledomains_manageDNSURLForwarding(array $params)
         'breadcrumb' => [
             $uri => 'DNS Hosting / URL Forwarding',
         ],
+        'vars' => $vars,
     ];
 }
 
@@ -2052,7 +2106,9 @@ function synergywholesaledomains_manageEmailForwarding(array $params)
                     $request['source'] = strtolower($_REQUEST['prefix']);
                     $request['source'] = rtrim($_REQUEST['prefix'], '@');
 
-                    if (!preg_match("/$domain$/i")) {
+                    $safe = preg_quote($domain, '/');
+
+                    if (!preg_match("/{$safe}$/i", $request['source'])) {
                         $request['source'] = $request['source'] . '@' . $domain;
                     }
                 }
@@ -2065,7 +2121,7 @@ function synergywholesaledomains_manageEmailForwarding(array $params)
                     $add = synergywholesaledomains_apiRequest('addMailForward', $params, $request);
                     $response = [
                         'info' => 'Mail forwarder has been created',
-                        'recordID' => $add['recordID'],
+                        'record_id' => $add['recordID'] ?? $add['id'],
                     ];
                 } catch (\Exception $e) {
                     $response['error'] = 'Error adding mail forwarder: ' . $e->getMessage();
