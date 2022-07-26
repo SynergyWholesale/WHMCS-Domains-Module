@@ -1620,13 +1620,13 @@ function synergywholesaledomains_initiateAuCorClient(array $params)
 
     try {
         $response = synergywholesaledomains_apiRequest('domainInfo', $params);
+
+        $vars['pending_cor'] = false;
+        if(strtolower($response['status']) == 'ok_pending_cor') {
+            $vars['pending_cor'] = true;
+        }
     } catch (\Exception $e) {
         $vars['error'] = implode('<br>', $errors);
-    }
-
-    $vars['pending_cor'] = false;
-    if(strtolower($response['domain_status']) == 'ok_pending_cor') {
-        $vars['pending_cor'] = true;
     }
 
     // Check for any current Cors
@@ -1678,6 +1678,11 @@ function synergywholesaledomains_initiateAuCorClient(array $params)
         } else {
             $errors[] = 'Selected renewal length is invalid.';
         }
+    }
+
+    if (empty($errors) && !empty($invoice)) {
+        header("Location: viewinvoice.php?id={$invoice['invoiceid']}");
+        exit;
     }
 
     if (!empty($errors)) {
