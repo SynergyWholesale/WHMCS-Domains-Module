@@ -2786,18 +2786,29 @@ function synergywholesaledomains_adhocSync(array $params, $domainInfo)
 }
 
 /**
- * Returns a full URL from a URL path
+ * Returns a full relative URL from a URL path
+ * This returns the URL _without_ the Base URL before it
+ * Example: clientarea.php -> /subwhmcs/clientarea.php or /clientarea.php depending upon the base URL
+ * Basically this is what WHMCS' menu items setUri function does to relative URLs
  * 
- * @param string $url 
+ * @param string $uri
  * @return string 
  */
-function synergywholesaledomains_getFullUrl(string $path)
+function synergywholesaledomains_getFullUrl(string $uri)
 {
-    $systemUrl = rtrim(\WHMCS\Config\Setting::getValue('SystemURL'), '/');
+    if (filter_var($uri, FILTER_VALIDATE_URL)) {
+        return $uri;
+    }
 
-    $path = ltrim($path, '/');
+    $base = \WHMCS\Utility\Environment\WebHelper::getBaseUrl();
 
-    return "{$systemUrl}/{$path}";
+    if (empty($base) || strpos($uri, $base) !== 0) {
+        $uri = "${base}/{$uri}";
+    }
+
+    $uri = preg_replace("/\\/+/", "/", $uri);
+
+    return $uri;
 }
 
 if (
