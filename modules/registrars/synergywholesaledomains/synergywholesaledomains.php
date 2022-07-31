@@ -2785,6 +2785,21 @@ function synergywholesaledomains_adhocSync(array $params, $domainInfo)
     ];
 }
 
+/**
+ * Returns a full URL from a URL path
+ * 
+ * @param string $url 
+ * @return string 
+ */
+function synergywholesaledomains_getFullUrl(string $path)
+{
+    $systemUrl = rtrim(\WHMCS\Config\Setting::getValue('SystemURL'), '/');
+
+    $path = ltrim($path, '/');
+
+    return "{$systemUrl}/{$path}";
+}
+
 if (
     class_exists('\WHMCS\Domains\DomainLookup\SearchResult') &&
     class_exists('\WHMCS\Domains\DomainLookup\ResultsList')
