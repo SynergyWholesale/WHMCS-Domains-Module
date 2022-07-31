@@ -15,6 +15,11 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+
+## 2.4.2 [Updated 01/08/2022]
+### Fixed
+- synergywholesaledomains_getFullUrl function not being defined error when accessing domain management pages.
+
 ## 2.4.1 [Updated 26/07/2022]
 ### Changed
 - Certain options related to DNS and Nameservers are now hidden in the WHMCS client area depending upon the current DNS Config Type
