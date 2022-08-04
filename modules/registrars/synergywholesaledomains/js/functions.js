@@ -20,8 +20,8 @@ $(document).ready(function () {
         
         if (self.val() == 'SRV') {
             addressCol.html('\
-                <input type="text" name="address1" placeholder="Weight" size="2" />\
-                <input type="text" name="address2" placeholder="Port" size="2" />\
+                <input type="number" min="0" max="65535" name="address1" placeholder="Weight" size="2" />\
+                <input type="number" min="0" max="65535" name="address2" placeholder="Port" size="2" />\
                 <input type="text" name="address3" placeholder="Target" size="8" />\
             ')
         } else {
@@ -366,7 +366,7 @@ function populateDNSRow(record_id, domain, hostname, type, ttl, address, priorit
                 <input type="text" name="ttl" size="5" value="${ttl}" />
             </div>
             <div class="col-lg-1">
-                <input type="text" name="priority" size="3" value="${priority}" />
+                <input type="number" min="0" max="65535" name="priority" size="3" value="${priority}" />
             </div>
             ${controls}
         </form>
@@ -381,8 +381,8 @@ function populateDNSRow(record_id, domain, hostname, type, ttl, address, priorit
                 <input type="text" name="hostname" value="${hostname}" />
             </div>
             <div class="col-lg-3">
-                <input type="text" name="address1" placeholder="Weight" size="2" value="${srvContent[0]}" />
-                <input type="text" name="address2" placeholder="Port" size="2" value="${srvContent[1]}" />
+                <input type="number" min="0" max="65535" name="address1" placeholder="Weight" size="2" value="${srvContent[0]}" />
+                <input type="number" min="0" max="65535" name="address2" placeholder="Port" size="2" value="${srvContent[1]}" />
                 <input type="text" name="address3" placeholder="Target" size="8" value="${srvContent[2]}" />
             </div>
             <div class="col-lg-2">
@@ -392,7 +392,7 @@ function populateDNSRow(record_id, domain, hostname, type, ttl, address, priorit
                 <input type="text" name="ttl" value="${ttl}" />
             </div>
             <div class="col-lg-1">
-                <input type="text" name="priority" value="${priority}" />
+                <input type="number" min="0" max="655355" name="priority" value="${priority}" />
             </div>
             ${controls}
         </form>
@@ -618,7 +618,7 @@ function DnsUrlPageReady(domain_id) {
                                 <input type="text" name="ttl" size="5" />
                             </div>
                             <div class="col-lg-1">
-                                <input type="text" name="priority" size="3" />
+                                <input type="number" min="0" max="65535" name="priority" size="3" />
                             </div>
                             <div class="col-lg-2 text-center">
                                 <div class="btn-group" role="group">
