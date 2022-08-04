@@ -1935,7 +1935,29 @@ function synergywholesaledomains_manageDNSURLForwarding(array $params)
                 }
 
                 if ($_REQUEST['type'] == 'SRV') {
+                    if (!is_numeric($_REQUEST['address1'])) {
+                        return synergywholesaledomains_ajaxResponse(['error' => 'Record Weight must be a numeric value between 0 and 65535']);
+                    }
+
+                    if (!is_numeric($_REQUEST['address2'])) {
+                        return synergywholesaledomains_ajaxResponse(['error' => 'Record Port must be a numeric value between 0 and 65535']);
+                    }
+
+                    if (!is_numeric($_REQUEST['address2'])) {
+                        return synergywholesaledomains_ajaxResponse(['error' => 'Record Port must be a numeric value between 0 and 65535']);
+                    }
+
+                    if (!filter_var($_REQUEST['address3'], FILTER_VALIDATE_DOMAIN)) {
+                        return synergywholesaledomains_ajaxResponse(['error' => 'Record Target must be a valid domain name']);
+                    }
+
                     $_REQUEST['address'] = "{$_REQUEST['address1']} {$_REQUEST['address2']} {$_REQUEST['address3']}";
+                }
+
+                if (in_array($_REQUEST['type'], ['MX', 'SRV'])) {
+                    if (!is_numeric($_REQUEST['priority'])) {
+                        return synergywholesaledomains_ajaxResponse(['error' => 'Record Priority must be a numeric value between 0 and 65535']);
+                    }
                 }
 
                 $record = [];

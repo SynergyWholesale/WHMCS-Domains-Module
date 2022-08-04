@@ -371,7 +371,7 @@ function populateDNSRow(record_id, domain, hostname, type, ttl, address, priorit
                 <select name="type">${options}</select>
             </div>
             <div class="col-lg-1">
-                <input type="text" name="ttl" size="5" value="${ttl}" />
+                <input type="number" min="300" max="99999" name="ttl" size="5" value="${ttl}" />
             </div>
             <div class="col-lg-1">
                 <input type="number" min="0" max="65535" name="priority" size="3" value="${priority}" ${!['MX', 'SRV'].includes(type) ? 'disabled' : ''} />
@@ -397,7 +397,7 @@ function populateDNSRow(record_id, domain, hostname, type, ttl, address, priorit
                 <select name="type">${options}</select>
             </div>
             <div class="col-lg-1">
-                <input type="text" name="ttl" value="${ttl}" />
+                <input type="number" min="300" max="99999" name="ttl" value="${ttl}" />
             </div>
             <div class="col-lg-1">
                 <input type="number" min="0" max="655355" name="priority" value="${priority}" />
@@ -623,7 +623,7 @@ function DnsUrlPageReady(domain_id) {
                                 </select>
                             </div>
                             <div class="col-lg-1">
-                                <input type="text" name="ttl" size="5" />
+                                <input type="number" min="300" max="99999" name="ttl" size="5" />
                             </div>
                             <div class="col-lg-1">
                                 <input type="number" min="0" max="65535" name="priority" size="3" />
