@@ -221,9 +221,13 @@ function addRecord(domain_id, temprecord_id, formdata, recordType) {
             $('#form-' + data.record_id + ' input[name=ttl]').val(data.recordTTL);
 
             if ('undefined' !== typeof data.recordPrio && ('MX' === data.recordType || 'SRV' === data.recordType)) {
-                $('#form-' + data.record_id + ' input[name=priority]').val(data.recordPrio);
+                $('#form-' + data.record_id + ' input[name=priority]')
+                    .prop('disabled', false)
+                    .val(data.recordPrio);
             } else {
-                $('#form-' + data.record_id + ' input[name=priority]').val('N/A');
+                $('#form-' + data.record_id + ' input[name=priority]')
+                    .prop('disabled', true)
+                    .val('');
             }
 
             Toast('success', 'toast-top-right', 'Successfully added DNS record');
@@ -293,9 +297,13 @@ function saveRecord(domain_id, record_id, formdata, recordType) {
                 $('#form-' + data.record_id + ' input[name=address]').val(data.recordContent);
                 $('#form-' + data.record_id + ' input[name=ttl]').val(data.recordTTL);
                 if (typeof data.recordPrio !== 'undefined' && (data.recordType == 'MX' || data.recordType == 'SRV')) {
-                    $('#form-' + data.record_id + ' input[name=priority]').val(data.recordPrio);
+                    $('#form-' + data.record_id + ' input[name=priority]')
+                        .prop('disabled', false)
+                        .val(data.recordPrio);
                 } else {
-                    $('#form-' + data.record_id + ' input[name=priority]').val('N/A');
+                    $('#form-' + data.record_id + ' input[name=priority]')
+                        .prop('disabled', true)
+                        .val('');
                 }
                 Toast('success', 'toast-top-right', 'Successfully updated dns record');
             });
@@ -338,7 +346,7 @@ function populateDNSRow(record_id, domain, hostname, type, ttl, address, priorit
     });
 
     if ('undefined' === typeof priority) {
-        priority = 'N/A';
+        priority = '';
     }
 
     if ('NS' !== type || ('NS' == type && hostname !== domain)) {
@@ -366,7 +374,7 @@ function populateDNSRow(record_id, domain, hostname, type, ttl, address, priorit
                 <input type="text" name="ttl" size="5" value="${ttl}" />
             </div>
             <div class="col-lg-1">
-                <input type="number" min="0" max="65535" name="priority" size="3" value="${priority}" />
+                <input type="number" min="0" max="65535" name="priority" size="3" value="${priority}" ${!['MX', 'SRV'].includes(type) ? 'disabled' : ''} />
             </div>
             ${controls}
         </form>
