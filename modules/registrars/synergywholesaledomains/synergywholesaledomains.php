@@ -1990,6 +1990,8 @@ function synergywholesaledomains_manageDNSURLForwarding(array $params)
                             return synergywholesaledomains_ajaxResponse(['error' => 'Error adding permanent URL forward: ' . $add['error']]);
                         }
                         $add['info'] = 'Permanent URL forward has been created';
+                        $add['hostname'] = $add['hostname'] ?? '';
+                        $add['url'] = $add['url'] ?? '';
                         break;
                     case 'FRAME':
                         $add = synergywholesaledomains_UrlForward('C', $record, $params);
@@ -1997,6 +1999,8 @@ function synergywholesaledomains_manageDNSURLForwarding(array $params)
                             return synergywholesaledomains_ajaxResponse(['error' => 'Error adding URL Cloak forward: ' . $add['error']]);
                         }
                         $add['info'] = 'URL Cloaking forward has been created';
+                        $add['hostname'] = $add['hostname'] ?? '';
+                        $add['url'] = $add['url'] ?? '';
                         break;
                     default:
                         $add = synergywholesaledomains_AddDNSRec($record, $params);

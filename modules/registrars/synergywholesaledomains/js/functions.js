@@ -231,7 +231,9 @@ function addRecord(domain_id, temprecord_id, formdata, recordType) {
             }
 
             Toast('success', 'toast-top-right', 'Successfully added DNS record');
-        } else if (recordType == 'url') {
+        }
+        
+        if (recordType == 'url') {
             $('#urlrow-' + temprecord_id).attr('id', 'urlrow-' + data.record_id);
             $('#urlform-' + temprecord_id).attr('id', 'urlform-' + data.record_id);
             $('#urlnewrecord_id-' + temprecord_id).attr('id', 'urlrecord_id-' + data.record_id);
