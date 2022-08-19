@@ -15,6 +15,10 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.4.3 [Updated 19/08/2022]
+
+### Fixed
+- When using Client's contact details to update domain contacts, the origanisation field would not be correctly sent.
 
 ## 2.4.2 [Updated 01/08/2022]
 ### Fixed
