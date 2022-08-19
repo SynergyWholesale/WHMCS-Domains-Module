@@ -1161,8 +1161,9 @@ function synergywholesaledomains_SaveContactDetails(array $params)
         $request["{$contactType}_postcode"] = $params['contactdetails'][$whmcs_contact]['Postcode'];
 
         if (!preg_match('/\.?uk$/', $params['tld'])) {
-            $request["{$contactType}_organisation"] = $params['contactdetails'][$whmcs_contact]['Organisation'];
+            $request["{$contactType}_organisation"] = $params['contactdetails'][$whmcs_contact]['Organisation'] ?? $params['contactdetails'][$whmcs_contact]['Organisation Name'] ?? $params['contactdetails'][$whmcs_contact]['Company Name'];
         }
+
         // Validate the country being specified
         if (!synergywholesaledomains_validateCountry($params['contactdetails'][$whmcs_contact]['Country'])) {
             return [
