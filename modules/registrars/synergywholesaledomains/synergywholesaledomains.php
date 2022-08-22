@@ -687,10 +687,15 @@ function synergywholesaledomains_TransferDomain(array $params)
 
     $canRenew = synergywholesaledomains_apiRequest('domainRenewRequired', $params, $request, false);
 
-    $request['doRenewal'] = $canRenew['status'] === 'OK_RENEWAL';
+    $forceAuRenewal = ('on' === $params['doRenewal']);
+    
+    $canRenewDomain = $canRenew['status'] === 'OK_RENEWAL';
 
-    if (preg_match('/\.au$/', $params['tld'])) {
-        $request['doRenewal'] = (int) ('on' === $params['doRenewal']);
+    $request['doRenewal'] = $canRenewDomain;
+
+    // If this is an AU domain and we have disabled forcing .au renewals, disable doRenewal on the request
+    if (preg_match('/\.?au$/', $params['tld']) && !$forceAuRenewal) {
+        $request['doRenewal'] = false;
     }
 
     /**
