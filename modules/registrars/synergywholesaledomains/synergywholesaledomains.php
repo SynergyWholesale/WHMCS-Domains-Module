@@ -2911,7 +2911,7 @@ if (class_exists('\WHMCS\Domain\TopLevel\ImportItem') && class_exists('\WHMCS\Re
             $transfer_price = $extension->transfer;
             $register_price = $extension->register_1_year;
 
-            if (preg_match('/\.?au$/', $tld)) {
+            if (preg_match('/\.au$/', $tld)) {
                 $transfer_price = 0.00;
             }
 
@@ -2929,7 +2929,7 @@ if (class_exists('\WHMCS\Domain\TopLevel\ImportItem') && class_exists('\WHMCS\Re
                 ->setRedemptionFeePrice($extension->redemption)
                 ->setRedemptionFeeDays($extension->cannotRenewWithin)
                 ->setCurrency('AUD')
-                ->setEppRequired(!preg_match('/\.?uk$/', $tld))
+                ->setEppRequired(!preg_match('/\.uk$/', $tld))
                 ->setGraceFeeDays($extension->canRenewWithin)
                 ->setGraceFeePrice('0.00')
             ;
