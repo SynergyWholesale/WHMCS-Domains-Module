@@ -17,16 +17,20 @@ $(document).ready(function () {
         var self = $(this);
         var form = self.closest('form');
         var addressCol = form.find("div:eq(1)");
+        var priorityInput = form.find('input[name="priority"]');
         
         if (self.val() == 'SRV') {
             addressCol.html('\
                 <input type="number" min="0" max="65535" name="address1" placeholder="Weight" size="2" />\
                 <input type="number" min="0" max="65535" name="address2" placeholder="Port" size="2" />\
                 <input type="text" name="address3" placeholder="Target" size="8" />\
-            ')
+            ');
         } else {
             addressCol.html('<input type="text" name="address" size="20" />')
         }
+
+        // Enable the input column if we change the type to to SRV or MX
+        priorityInput.prop('disabled', !['SRV', 'MX'].includes(self.val()))
     });
 });
 
