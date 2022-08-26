@@ -15,6 +15,13 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+
+## 2.4.4 [Updated 26/08/20xx]
+
+### Fixed
+- .au domains not correctly respecting the "force .au renewal" setting.
+- .au and .uk domains not being correctly respected as .au or .uk domains when importing TLD pricing and settings from Synergy Wholesale.
+
 ## 2.4.3 [Updated 19/08/2022]
 
 ### Fixed
