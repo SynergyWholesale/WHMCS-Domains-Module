@@ -518,7 +518,7 @@ function synergywholesaledomains_SaveNameservers(array $params)
  */
 function synergywholesaledomains_GetRegistrarLock(array $params)
 {
-    if (!preg_match('/\.(au|uk)$/i', $params['tld'])) {
+    if (!preg_match('/\.?(au|uk)$/i', $params['tld'])) {
         try {
             $response = synergywholesaledomains_apiRequest('domainInfo', $params);
             $locked = 'clientTransferProhibited' === $response['domain_status'];
@@ -695,18 +695,25 @@ function synergywholesaledomains_TransferDomain(array $params)
      // This is a lazy way of getting the contact data in the format we need.
     $contact = synergywholesaledomains_helper_getContacts($params, ['' => '']);
 
-    if (preg_match('/\.uk$/', $params['tld'])) {
+    if (preg_match('/\.?uk$/', $params['tld'])) {
         return synergywholesaledomains_apiRequest('transferDomain', $params, $contact, false);
     }
 
     $request = [
         'authInfo' => $params['transfersecret'],
-        'doRenewal' => 1,
     ];
 
-    if (preg_match('/\.au$/', $params['tld'])) {
-        $canRenew = synergywholesaledomains_apiRequest('domainRenewRequired', $params, $request, false);
-        $request['doRenewal'] = (int) ('on' === $params['doRenewal'] && 'OK_RENEWAL' === $canRenew['status']);
+    $canRenew = synergywholesaledomains_apiRequest('domainRenewRequired', $params, $request, false);
+
+    $forceAuRenewal = ('on' === $params['doRenewal']);
+    
+    $canRenewDomain = $canRenew['status'] === 'OK_RENEWAL';
+
+    $request['doRenewal'] = $canRenewDomain;
+
+    // If this is an AU domain and we have disabled forcing .au renewals, disable doRenewal on the request
+    if (preg_match('/\.?au$/', $params['tld']) && !$forceAuRenewal) {
+        $request['doRenewal'] = false;
     }
 
     /**
@@ -907,7 +914,7 @@ function synergywholesaledomains_Sync(array $params)
     }
 
     $returnData = [];
-    if (preg_match('/\.au$/', $params['tld'])) {
+    if (preg_match('/\.?au$/', $params['tld'])) {
         $appMap = [
             'auRegistrantIDType' => 'Registrant ID Type',
             'auRegistrantID' => 'Registrant ID',
