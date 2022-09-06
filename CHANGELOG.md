@@ -16,7 +16,22 @@ Synergy Wholesale WHMCS Domains Module
 -
 
 
-## 2.4.4 [Updated 26/08/20xx]
+
+## Unreleased Version [Updated 06/09/2022]
+### Added
+- Additional validation has been added for the majority of fields
+
+### Changed
+- Improve compatibility with future versions of Synergy Wholesale API
+- SRV Weight and Port Fields are now Number fields that ensure the value is valid
+- MX and SRV Priority fields are now Number fields that ensure the value is valid
+- The Priority field is now disabled when the record type is not MX or SRV
+- All record type's TTL field is now a Number field that ensure the valid is valid
+
+### Fixed
+- Issue when adding URL forwarder the input fields would all become blank
+
+## 2.4.4 [Updated 26/08/2022]
 
 ### Fixed
 - .au domains not correctly respecting the "force .au renewal" setting.
