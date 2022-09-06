@@ -1943,7 +1943,29 @@ function synergywholesaledomains_manageDNSURLForwarding(array $params)
                 }
 
                 if ($_REQUEST['type'] == 'SRV') {
+                    if (!is_numeric($_REQUEST['address1'])) {
+                        return synergywholesaledomains_ajaxResponse(['error' => 'Record Weight must be a numeric value between 0 and 65535']);
+                    }
+
+                    if (!is_numeric($_REQUEST['address2'])) {
+                        return synergywholesaledomains_ajaxResponse(['error' => 'Record Port must be a numeric value between 0 and 65535']);
+                    }
+
+                    if (!is_numeric($_REQUEST['address2'])) {
+                        return synergywholesaledomains_ajaxResponse(['error' => 'Record Port must be a numeric value between 0 and 65535']);
+                    }
+
+                    if (!filter_var($_REQUEST['address3'], FILTER_VALIDATE_DOMAIN)) {
+                        return synergywholesaledomains_ajaxResponse(['error' => 'Record Target must be a valid domain name']);
+                    }
+
                     $_REQUEST['address'] = "{$_REQUEST['address1']} {$_REQUEST['address2']} {$_REQUEST['address3']}";
+                }
+
+                if (in_array($_REQUEST['type'], ['MX', 'SRV'])) {
+                    if (!is_numeric($_REQUEST['priority'])) {
+                        return synergywholesaledomains_ajaxResponse(['error' => 'Record Priority must be a numeric value between 0 and 65535']);
+                    }
                 }
 
                 $record = [];
@@ -1976,6 +1998,8 @@ function synergywholesaledomains_manageDNSURLForwarding(array $params)
                             return synergywholesaledomains_ajaxResponse(['error' => 'Error adding permanent URL forward: ' . $add['error']]);
                         }
                         $add['info'] = 'Permanent URL forward has been created';
+                        $add['hostname'] = $add['hostname'] ?? '';
+                        $add['url'] = $add['url'] ?? '';
                         break;
                     case 'FRAME':
                         $add = synergywholesaledomains_UrlForward('C', $record, $params);
@@ -1983,6 +2007,8 @@ function synergywholesaledomains_manageDNSURLForwarding(array $params)
                             return synergywholesaledomains_ajaxResponse(['error' => 'Error adding URL Cloak forward: ' . $add['error']]);
                         }
                         $add['info'] = 'URL Cloaking forward has been created';
+                        $add['hostname'] = $add['hostname'] ?? '';
+                        $add['url'] = $add['url'] ?? '';
                         break;
                     default:
                         $add = synergywholesaledomains_AddDNSRec($record, $params);
@@ -2190,7 +2216,7 @@ function synergywholesaledomains_custom_GetDNS(array $params)
                 $records[] = [
                     'address' => $record->destination,
                     'hostname' => $record->hostname,
-                    'record_id' => (int) $record->recordID,
+                    'record_id' => $record->recordID,
                     'type' => $type,
                 ];
             }
@@ -2208,7 +2234,8 @@ function synergywholesaledomains_custom_GetDNS(array $params)
              *
              * e.g. It will make "mail.mydomain.com.au" appear as "mail"
              */
-            $hostNameRegex = '/(?:\.' . synergywholesaledomains_helper_getDomain($params) . '\s*)$/m';
+            $safeHostname = preg_quote(synergywholesaledomains_helper_getDomain($params), '/');
+            $hostNameRegex = "/(?:\.{$safeHostname}\s*)$/m";
             foreach ($dns['records'] as $record) {
                 if ('SOA' === $record->type) {
                     continue;
@@ -2216,7 +2243,7 @@ function synergywholesaledomains_custom_GetDNS(array $params)
                 $data = [
                     'address' => $record->content,
                     'hostname' => preg_replace($hostNameRegex, '', $record->hostName),
-                    'record_id' => (int) $record->id,
+                    'record_id' => $record->id,
                     'ttl' => (int) $record->ttl,
                     'type' => $record->type,
                 ];
