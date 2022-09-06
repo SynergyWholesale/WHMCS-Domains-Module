@@ -16,8 +16,8 @@ Synergy Wholesale WHMCS Domains Module
 -
 
 
+## 2.4.5 [Updated 06/09/2022]
 
-## Unreleased Version [Updated 06/09/2022]
 ### Added
 - Additional validation has been added for the majority of fields
 
@@ -30,6 +30,7 @@ Synergy Wholesale WHMCS Domains Module
 
 ### Fixed
 - Issue when adding URL forwarder the input fields would all become blank
+- Potentional regex injection entrypoint
 
 ## 2.4.4 [Updated 26/08/2022]
 
