@@ -49,7 +49,7 @@ jobs:
         php-version: ${{ matrix.php-versions }}
         coverage: none
         extensions: soap
-        tools: composer, phpcs, phpunit
+        tools: composer, phpcs, phpunit:8.5.29
    
     - name: Check style/syntax
       run: phpcs
