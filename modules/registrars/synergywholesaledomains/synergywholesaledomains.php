@@ -2544,6 +2544,26 @@ function synergywholesaledomains_AdminCustomButtonArray(array $params)
     return $buttons;
 }
 
+function synergywholesaledomains_AdditionalDomainFields(array $params)
+{
+    $additionalDomainFields = [];
+
+    switch ($params['tld']) {
+        case 'au':
+            if (!defined('ADMINAREA') || !ADMINAREA) {
+                break;
+            }
+
+            $additionalDomainFields[] = ["Name" => "Priority contact ID", "LangVar" => "auprioritytoken", "Type" => "text", "Size" => "20", "Default" => "", "Required" => false];
+            $additionalDomainFields[] = ["Name" => "Priority authInfo", "LangVar" => "auprioritytokenpassword", "Type" => "text", "Size" => "20", "Default" => "", "Required" => false];
+            break;
+    }
+
+    return [
+        'fields' => $additionalDomainFields
+    ];
+}
+
 /**
  * @param array $params
  * @return array|string[]|void
