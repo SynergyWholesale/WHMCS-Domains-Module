@@ -15,6 +15,10 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.4.6 [Updated 06/09/2022]
+
+### Changed
+- additionalfields.php has been updated to remove direct .au priority contact information, this will now only be displayed in your WHMCS admin area.
 
 ## 2.4.5 [Updated 06/09/2022]
 
