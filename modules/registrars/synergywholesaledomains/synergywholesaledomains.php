@@ -9,6 +9,7 @@
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 define('API_ENDPOINT', 'https://{{API}}');
 define('WHOIS_URL', 'https://{{FRONTEND}}/home/whmcs-whois-json');
@@ -2287,7 +2288,7 @@ function synergywholesaledomains_ClientAreaCustomButtonArray(array $params)
         'Manage DNSSEC Records'     => 'manageDNSSEC',
     ];
 
-    if (substr($params['tld'], -3) == '.au') {
+    if (Str::endsWith($params['tld'], '.au')) {
         $pages = array_merge($pages, ['Initiate CoR' => 'initiateAuCorClient']);
     }
 
@@ -2537,7 +2538,7 @@ function synergywholesaledomains_AdminCustomButtonArray(array $params)
         'Push' => 'push',
     ];
 
-    if (substr($params['tld'], -3) == '.au') {
+    if (Str::endsWith($params['tld'], '.au')) {
         $buttons = array_merge($buttons, ['Initiate .au CoR' => 'initiateAuCor']);
     }
 
@@ -3046,7 +3047,7 @@ if (class_exists('\WHMCS\Domain\TopLevel\ImportItem') && class_exists('\WHMCS\Re
             $transfer_price = $extension->transfer;
             $register_price = $extension->register_1_year;
 
-            if (preg_match('/\.au$/', $tld)) {
+            if (preg_match('/\.?au$/', $tld)) {
                 $transfer_price = 0.00;
             }
 
