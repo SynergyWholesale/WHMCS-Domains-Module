@@ -2288,7 +2288,7 @@ function synergywholesaledomains_ClientAreaCustomButtonArray(array $params)
         'Manage DNSSEC Records'     => 'manageDNSSEC',
     ];
 
-    if (Str::endsWith($params['tld'], '.au')) {
+    if (Str::endsWith($params['tld'], 'au')) {
         $pages = array_merge($pages, ['Initiate CoR' => 'initiateAuCorClient']);
     }
 
@@ -2538,7 +2538,7 @@ function synergywholesaledomains_AdminCustomButtonArray(array $params)
         'Push' => 'push',
     ];
 
-    if (Str::endsWith($params['tld'], '.au')) {
+    if (Str::endsWith($params['tld'], 'au')) {
         $buttons = array_merge($buttons, ['Initiate .au CoR' => 'initiateAuCor']);
     }
 
