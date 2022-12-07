@@ -15,6 +15,12 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.4.7 [Updated 07/12/2022]
+
+### Fixed
+- .au not having the option to initiate a Change of Registrant request
+- .au not having its transfer price set to $0.00 when syncing the TLD pricing from Syerngy Wholesale.
+
 ## 2.4.6 [Updated 30/09/2022]
 
 ### Changed
