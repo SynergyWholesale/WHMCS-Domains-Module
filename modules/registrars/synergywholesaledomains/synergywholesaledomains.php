@@ -1075,7 +1075,7 @@ function synergywholesaledomains_TransferSync(array $params)
     try {
         $response = synergywholesaledomains_apiRequest('domainInfo', $params);
     } catch (\Exception $e) {
-        if ($e->getMessage() == 'Domain Info Failed - Domain Does Not Exist') {
+        if (in_array($e->getMessage(), ['Domain Info Failed - Unable to retrieve domain id', 'Domain Info Failed - Domain Does Not Exist'])) {
             return [
                 'completed' => false,
                 'failed' => true,
