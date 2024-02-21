@@ -15,6 +15,11 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.4.8 [Updated 22/02/2024]
+
+### Changed
+- Updated error handling to detect multiple different error messages from upcoming API releases
+
 ## 2.4.7 [Updated 07/12/2022]
 
 ### Fixed
