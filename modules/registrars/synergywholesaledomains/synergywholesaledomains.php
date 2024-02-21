@@ -960,7 +960,7 @@ function synergywholesaledomains_Sync(array $params)
             ->first();
         // If the domain used to exist in this whmcs installation it's safe to say if we get these errors then
         // it has been transferred away to another reseller
-        if ('Domain Info Failed - Unable to retrieve domain id' === $response['error']) {
+        if (in_array($response['error'], ['Domain Info Failed - Unable to retrieve domain id', 'Domain Info Failed - Domain Does Not Exist'])) {
             // If now is after the domains expiry date mark it as cancelled
             if (time() >= strtotime($selectInfo->expirydate)) {
                 $note = 'Domain has been marked as cancelled due to not being in your account and, the current date is past the expiry date';
@@ -1075,7 +1075,7 @@ function synergywholesaledomains_TransferSync(array $params)
     try {
         $response = synergywholesaledomains_apiRequest('domainInfo', $params);
     } catch (\Exception $e) {
-        if ($e->getMessage() == 'Domain Info Failed - Unable to retrieve domain id') {
+        if (in_array($e->getMessage(), ['Domain Info Failed - Unable to retrieve domain id', 'Domain Info Failed - Domain Does Not Exist'])) {
             return [
                 'completed' => false,
                 'failed' => true,
