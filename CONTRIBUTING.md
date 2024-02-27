@@ -19,11 +19,6 @@ Please ensure you have cloned the repository and have the [required tools](#requ
 ### Building the CSS/JS assets
 To build the CSS and JS assets, please run `make build-assets`
 
-### Updating `whois.json`
-To pull down the latest `whois.json`, please run `make update-whois`.
-
-**Please note:** your IP Address must be whitelisted in our management console. [See here](https://synergywholesale.com/faq/article/does-synergy-wholesale-have-a-whois-domain-availability-checker-i-can-integrate-to-my-whmcs/) for more information
-
 ### Running tests
 Before running the tests please ensure you've 
 

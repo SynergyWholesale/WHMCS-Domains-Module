@@ -32,7 +32,6 @@ If you would like to report a bug or request a new feature/improvement for our m
 	- Includes retrospective premium domain identification
 	- Manual sync button in the admin area
 - API Connectivity Tester
-- WHOIS.json updater
 
 # Installation
 ---
