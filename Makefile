@@ -19,9 +19,6 @@ VERSION := $(firstword $(subst -, ,${VERSION}))
 build-assets:
 	npm run-script build
 
-update-whois:
-	curl -s "https://$(SW_FRONTEND_HOSTNAME)/home/whmcs-whois-json" > "resources/domains/whois.json"
-
 replace:
 	sed -i${SED_PARAM} "s/{{VERSION}}/${VERSION}/g" "README.txt"
 	sed -i${SED_PARAM} "s/{{VERSION}}/${VERSION}/g" "modules/registrars/synergywholesaledomains/whmcs.json"
@@ -51,7 +48,6 @@ package:
 build:
 	test -s node_modules/.bin/minify || npm install
 	make build-assets
-	make update-whois
 	make replace
 	make package
 	make revert

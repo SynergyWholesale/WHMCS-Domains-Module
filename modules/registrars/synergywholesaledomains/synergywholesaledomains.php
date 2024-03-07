@@ -12,7 +12,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 
 define('API_ENDPOINT', 'https://{{API}}');
-define('WHOIS_URL', 'https://{{FRONTEND}}/home/whmcs-whois-json');
 define('WHATS_MY_IP_URL', 'https://{{FRONTEND}}/ip');
 define('SW_MODULE_VERSION', '{{VERSION}}');
 define('SW_MODULE_NAME', 'synergywholesaledomains');
@@ -296,11 +295,6 @@ function synergywholesaledomains_getConfigArray(array $params)
             'Type' => 'yesno',
             'Description' => 'Enable to see connectivity status to the Synergy Wholesale API',
         ],
-        'whoisUpdate' => [
-            'FriendlyName' => 'Force update WHOIS.json',
-            'Type' => 'yesno',
-            'Description' => 'Enable this option to force update the WHOIS.json data<br><b>NOTE:</b> This option will be disabled automatically again once you have clicked \'Save Changes\' and the update sequence is completed.',
-        ],
         'auDirectShowSingleContestedAvailable' => [
             'FriendlyName' => 'Ordering Form Support - Single Contested .AU Direct Domains',
             'Type' => 'yesno',
@@ -404,56 +398,6 @@ function synergywholesaledomains_getConfigArray(array $params)
             ]);
         } catch (\Exception $e) {
             /* Silence */
-        }
-    }
-
-    // If the conversion option is ticked, then we need to process the conversion
-    if (isset($params['whoisUpdate']) && 'on' === $params['whoisUpdate']) {
-        $jsonPath = realpath(join(DIRECTORY_SEPARATOR, [__DIR__, '..', '..', '..', 'resources', 'domains', 'whois.json']));
-        $whoisBackup = file_get_contents($jsonPath);
-        $whois = file_get_contents(WHOIS_URL);
-
-        if (!file_exists($jsonPath)) {
-            $configuration['whoisUpdate']['Description'] .= "<br><b>NOTICE:</b> WHOIS.json update unsuccessful. File path invalid. The file at $jsonPath does not exist.";
-            return $configuration;
-        }
-
-        if ($whois === $whoisBackup) {
-            $configuration['whoisUpdate']['Description'] .= '<br><b>NOTICE:</b> WHOIS.json file is already up to date.';
-            return $configuration;
-        }
-
-        // Testing to see if retrieved data is valid
-        @json_decode($whois);
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            $configuration['whoisUpdate']['Description'] .= '<br><b>NOTICE:</b> WHOIS.json update unsuccessful. Unable to pull file.';
-            return $configuration;
-        }
-
-        if (!file_put_contents($jsonPath, $whois)) {
-            $configuration['whoisUpdate']['Description'] .= '<br><b>NOTICE:</b> <span style="color:red;">WHOIS.json update unsuccessful. Unable to update WHOIS.json file.</span>';
-
-            //Revert any changes made to backup file
-            file_put_contents($filePath, $whoisBackup);
-
-            return $configuration;
-        }
-
-        $configuration['whoisUpdate']['Description'] .= '<br><b>NOTICE:</b> <span style="color:green;">WHOIS.json successfully updated.</span>';
-
-        try {
-            /**
-             * Finally disable the setting for the customer automatically so
-             * they don't have them needing to turn if off manually
-             */
-            Capsule::table('tblregistrars')->where([
-                'registrar' => 'synergywholesaledomains',
-                'setting' => 'whoisUpdate',
-            ])->update([
-                'value' => 'off',
-            ]);
-        } catch (\Exception $e) {
-            $configuration['whoisUpdate']['Description'] .= '<br><b>NOTICE:</b> WHOIS.json successfully updated however we were unable to disable this option automatically for you. Please untick the option yourself manually and click \'Save Changes\' again.';
         }
     }
 
