@@ -9,6 +9,12 @@ $additionaldomainfields[".au"][] = array("Name" => "Eligibility ID Type", "LangV
 $additionaldomainfields[".au"][] = array("Name" => "Eligibility Type", "LangVar" => "autldeligtype", "Type" => "dropdown", "Options" => "Charity,Citizen/Resident,Club,Commercial Statutory Body,Company,Incorporated Association,Industry Body,Non-profit Organisation,Other,Partnership,Pending TM Owner  ,Political Party,Registered Business,Religious/Church Group,Sole Trader,Trade Union,Trademark Owner,Child Care Centre,Government School,Higher Education Institution,National Body,Non-Government School,Pre-school,Research Organisation,Training Organisation", "Default" => "Company",);
 $additionaldomainfields[".au"][] = array("Name" => "Eligibility Reason", "LangVar" => "autldeligreason", "Type" => "radio", "Options" => "Domain name is an Exact Match Abbreviation or Acronym of your Entity or Trading Name.,Close and substantial connection between the domain name and the operations of your Entity.", "Default" => "Domain name is an Exact Match Abbreviation or Acronym of your Entity or Trading Name.",);
 
+// Exclude fields that are not relevant to id.au
 $additionaldomainfields[".id.au"][] = array("Name" => "Registrant Name", "LangVar" => "autldregname", "Type" => "text", "Size" => "20", "Default" => "", "Required" => true,);
 $additionaldomainfields[".id.au"][] = array("Name" => "Eligibility Type", "LangVar" => "autldeligtype", "Type" => "dropdown", "Options" => ",Citizen/Resident", "Required" => true,);
-$additionaldomainfields[".id.au"][] = array("Name" => "Registrant ID", "LangVar" => "autldregid", "Type" => "text", "Size" => "20", "Default" => "", "Required" => false,);
+$additionaldomainfields[".id.au"][] = array("Name" => "Registrant ID", "Remove" => true);
+$additionaldomainfields[".id.au"][] = array("Name" => "Registrant ID Type", "Remove" => true,);
+$additionaldomainfields[".id.au"][] = array("Name" => "Eligibility Name", "Remove" => true);
+$additionaldomainfields[".id.au"][] = array("Name" => "Eligibility ID", "Remove" => true);
+$additionaldomainfields[".id.au"][] = array("Name" => "Eligibility ID Type", "Remove" => true);
+$additionaldomainfields[".id.au"][] = array("Name" => "Eligibility Reason", "Remove" => true);
