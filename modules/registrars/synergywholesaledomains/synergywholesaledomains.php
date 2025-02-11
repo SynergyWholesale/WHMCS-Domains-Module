@@ -2549,7 +2549,7 @@ function synergywholesaledomains_initiateAuCor(array $params)
             $params['domainid'],   // serviceId
             'synergywholesaledomains', // module
             'initiateAuCor', // moduleAction
-            'Initiate CoR Failed - ' . $e->getMessage() // lastAttemptError
+            $e->getMessage() // lastAttemptError
         );
         // Time to fail politely now
         return [
