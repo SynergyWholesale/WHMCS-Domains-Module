@@ -10,6 +10,7 @@
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use WHMCS\Module\Queue;
 
 define('API_ENDPOINT', 'https://{{API}}');
 define('WHATS_MY_IP_URL', 'https://{{FRONTEND}}/ip');
@@ -2542,13 +2543,13 @@ function synergywholesaledomains_initiateAuCor(array $params)
             'domainName' => $domainInfo->domain ?? '',
         ], true);
     } catch (Exception $e) {
-        // Create item in Module Queue and then fail gracefully (as well)
-        WHMCS\Module\Queue::add(
+        // Create item in Module Queue
+        Queue::add(
             'domain',  // serviceType
             $params['domainid'],   // serviceId
             'synergywholesaledomains', // module
             'initiateAuCor', // moduleAction
-            'Initiate CoR Failed - ' . $e->getMessage(), // lastAttemptError
+            'Initiate CoR Failed - ' . $e->getMessage() // lastAttemptError
         );
         // Time to fail politely now
         return [
