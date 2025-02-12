@@ -16,6 +16,12 @@ Synergy Wholesale WHMCS Domains Module
 -
 
 
+## 2.5.2 [Updated xx/xx/20xx]
+
+### Fixed
+- Importing domains not setting eligibility values if the equivalent database entry does not exist.
+
+
 ## 2.5.1 [Updated 12/02/2025]
 
 ### Changed
