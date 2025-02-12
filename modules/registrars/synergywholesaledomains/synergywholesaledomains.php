@@ -3,13 +3,14 @@
 /**
  * Synergy Wholesale Registrar Module
  *
- * @copyright Copyright (c) Synergy Wholesale Pty Ltd 2020
+ * @copyright Copyright (c) Synergy Wholesale Pty Ltd
  * @license https://github.com/synergywholesale/whmcs-domains-module/LICENSE
  */
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use WHMCS\Module\Queue;
 
 define('API_ENDPOINT', 'https://{{API}}');
 define('WHATS_MY_IP_URL', 'https://{{FRONTEND}}/ip');
@@ -1610,8 +1611,9 @@ function synergywholesaledomains_initiateAuCorClient(array $params)
         if (array_key_exists($renewalLength, $vars['pricing'])) {
             $invoiceData = [
                 'userid' => $params['userid'],
-                'itemdescription1' => "Initiate CoR for {$params['domain']}",
+                'itemdescription1' => "Initiate CoR for {$params['domain']} - {$renewalLength} Year/s",
                 'itemamount1' => $vars['pricing'][$renewalLength]['renew'],
+                'itemtaxed1' => '1',
             ];
 
             $invoice = localAPI('CreateInvoice', $invoiceData);
@@ -1626,10 +1628,10 @@ function synergywholesaledomains_initiateAuCorClient(array $params)
                     'updated_at' => Carbon::now(),
                 ]);
             } else {
-                $errors[] = 'Failed to create invoice.';
+                $errors[] = 'Failed to create CoR Invoice.';
             }
         } else {
-            $errors[] = 'Selected renewal length is invalid.';
+            $errors[] = 'Selected registration length for CoR is invalid.';
         }
     }
 
@@ -2541,6 +2543,15 @@ function synergywholesaledomains_initiateAuCor(array $params)
             'domainName' => $domainInfo->domain ?? '',
         ], true);
     } catch (Exception $e) {
+        // Create item in Module Queue
+        Queue::add(
+            'domain',  // serviceType
+            $params['domainid'],   // serviceId
+            'synergywholesaledomains', // module
+            'initiateAuCor', // moduleAction
+            $e->getMessage() // lastAttemptError
+        );
+        // Time to fail politely now
         return [
             'error' => $e->getMessage(),
         ];
