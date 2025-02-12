@@ -2,8 +2,8 @@
   "name": "@synergywholesale/whmcs-domains-module",
   "description": "This repository contains the source code for the [Synergy Wholsale](https://synergywholesale.com/) WHMCS domains module.",
   "dependencies": {
-    "minify": "^5.0.0",
-    "uglify-es": "^3.3.9"
+    "minify": "^6.0.0",
+    "uglify-js": "^3.13.0"
   },
   "scripts": {
     "build-css": "minify modules/registrars/synergywholesaledomains/css/synergywholesaledomains.css > modules/registrars/synergywholesaledomains/css/synergywholesaledomains.min.css",

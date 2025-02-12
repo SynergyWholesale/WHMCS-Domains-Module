@@ -339,7 +339,7 @@ function synergywholesaledomains_getConfigArray(array $params)
             'Description' => 'This module version: ' . SW_MODULE_VERSION,
         ],
         '' => [
-            'Description' => '<b>Having trouble?</b> Login to the Synergy Wholesale Management Console and <a style="text-decoration:underline;" target="_blank" href="https://manage.synergywholesale.com/home/support/new">create a new support request.</a>',
+            'Description' => '<b>Having trouble?</b> Login to the Synergy Wholesale Management Console and <a style="text-decoration:underline;" target="_blank" href="https://{{FRONTEND}}/home/support/new">create a new support request.</a>',
         ],
     ];
 
@@ -373,7 +373,7 @@ function synergywholesaledomains_getConfigArray(array $params)
                 $message = '<b style="color:#FF0000;">403 - Access Denied</b>';
                 break;
             default:
-                $message = '<b style="color:#FF0000;">Unable to connect: <i>Check firewall, or submit <a style="color:#FF0000;text-decoration:underline;" target="_blank" href="https://manage.synergywholesale.com/home/support/new">Support Request</a></i></b>';
+                $message = '<b style="color:#FF0000;">Unable to connect: <i>Check firewall, or submit <a style="color:#FF0000;text-decoration:underline;" target="_blank" href="https://{{FRONTEND}}/home/support/new">Support Request</a></i></b>';
                 break;
         }
 
@@ -381,7 +381,7 @@ function synergywholesaledomains_getConfigArray(array $params)
             Disable to hide connectivity status to the Synergy Wholesale API
             <i>This should be disabled unless configuring</i>\n
             This WHMCS installation's IP Address is <b>$ipAddress</b>
-            <i>You will need to whitelist this IP address for the API usage within <a style=\"text-decoration:underline;\" target=\"_blank\" href=\"https://manage.synergywholesale.com/home/resellers/api\">Synergy Wholesale > API Information</a></i>\n
+            <i>You will need to whitelist this IP address for the API usage within <a style=\"text-decoration:underline;\" target=\"_blank\" href=\"https://{{FRONTEND}}/home/resellers/api\">Synergy Wholesale > API Information</a></i>\n
             Production API Whitelisting: $message
             Production API Authentication: $apiAuth
         "));
