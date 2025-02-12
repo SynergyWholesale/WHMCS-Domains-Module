@@ -1,5 +1,5 @@
 {
-  "name": "synergy-wholesale-whmcs-domains-module",
+  "name": "@synergywholesale/whmcs-domains-module",
   "description": "This repository contains the source code for the [Synergy Wholsale](https://synergywholesale.com/) WHMCS domains module.",
   "dependencies": {
     "minify": "^5.0.0",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@development.ventraip.com.au:7999/ws/whmcs-domain-module.git"
+    "url": "ssh://git@github.com:SynergyWholesale/WHMCS-Domains-Module.git"
   },
   "license": "GPL-3.0"
 }

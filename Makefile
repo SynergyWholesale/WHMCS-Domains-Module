@@ -8,10 +8,10 @@ ifeq ($(shell uname -s),Darwin)
 	SED_PARAM += ''
 endif
 
-# In case the version tag isn't annoated, let's have a fallback
-VERSION := $(shell git describe --abbrev=0)
+# In case the version tag isn't annotated, let's have a fallback
+VERSION := $(shell git describe --abbrev=0 2> /dev/null)
 ifneq ($(.SHELLSTATUS), 0)
-	VERSION := $(shell git describe --tags)
+	VERSION := $(shell git describe --tags 2> /dev/null)
 endif
 
 VERSION := $(firstword $(subst -, ,${VERSION}))
