@@ -15,6 +15,21 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+
+## 2.5.1 [Updated 12/02/2025]
+
+### Changed
+- When a Change of Registrant request fails a module queue entry will be made about it.
+- Display the number of years the Change of Registrant has been requested for on the invoice line item.
+
+### Fixed
+- Various issues sorrounding WHMCS's implemention of AU eligibility.
+
+## 2.5.0 [Updated 08/03/2024]
+
+### Removed
+- No longer provide `whois.json` file as this method of performing domain lookups has been deprecated and removed from Synergy Wholesale's offerings.
+
 ## 2.4.8 [Updated 22/02/2024]
 
 ### Changed
