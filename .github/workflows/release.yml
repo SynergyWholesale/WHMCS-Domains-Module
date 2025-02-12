@@ -1,40 +1,31 @@
-on:
-  push:
-    # Sequence of patterns matched against refs/tags
-    tags:
-    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
-
 name: Release
+
+permissions:
+  contents: write
+  packages: write
+
+on:
+  release:
+    types: [ released ]
 
 jobs:
   build:
     name: Upload Release Asset
     runs-on: ubuntu-latest
+    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Build project
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+        
+      - name: Build
         run: make build
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1.0.0
+        
+      - name: Attach Build to Release
+        uses: softprops/action-gh-release@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
-      - name: Get the version
-        id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-      - name: Upload Release Asset
-        id: upload-release-asset 
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./synergy-wholesale-domains-${{ steps.get_version.outputs.VERSION }}.zip
-          asset_name: synergy-wholesale-domains-${{ steps.get_version.outputs.VERSION }}.zip
-          asset_content_type: application/zip
+          files: ./synergy-wholesale-domains-{{ github.ref_name }}.zip
