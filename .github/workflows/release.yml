@@ -28,4 +28,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          files: ./synergy-wholesale-domains-{{ github.ref_name }}.zip
+          files: ./synergy-wholesale-domains-${{ github.ref_name }}.zip
