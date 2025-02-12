@@ -887,11 +887,13 @@ function synergywholesaledomains_Sync(array $params)
                     }
                 }
                 Capsule::table('tbldomainsadditionalfields')
-                    ->where('domainid', $params['domainid'])
-                    ->where('name', $whmcsName)
-                    ->update([
-                        'value' => $response[$apiName],
-                    ]);
+                    ->updateOrInsert(
+                        [
+                            'domainid' => $params['domainid'],
+                            'name' => $whmcsName
+                        ],
+                        ['value' => $response[$apiName]]
+                    );
             }
         } catch (\Exception $e) {
             logModuleCall('synergywholesaledomains', 'sync_process', 'Update DB', $e->getMessage());
