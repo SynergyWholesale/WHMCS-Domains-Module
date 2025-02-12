@@ -4,6 +4,7 @@
     "description": "Synergy Wholesale Registrar Module for WHMCS Billing Automation Platform",
     "license": "GPL-3.0",
     "require-dev": {
+        "php": ">=7.2 <8.3",
         "squizlabs/php_codesniffer": "^3.11.3",
         "phpunit/phpunit": "^8.5.41"
     },
@@ -14,5 +15,6 @@
         "allow-plugins": {}
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "prefer-lowest": true
 }
