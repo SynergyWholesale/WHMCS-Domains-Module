@@ -2999,25 +2999,41 @@ if (class_exists('\WHMCS\Domain\TopLevel\ImportItem') && class_exists('\WHMCS\Re
 
         foreach ($response['pricing'] as $extension) {
             $tld = '.' . $extension->tld;
-            $transfer_price = $extension->transfer;
-            $register_price = $extension->register_1_year;
 
-            if (preg_match('/\.?au$/', $tld)) {
-                $transfer_price = 0.00;
+            $minYears = $extension->minPeriod;
+            $maxYears = $extension->maxPeriod;
+
+            $registerPrice = $extension->{"register_{$minYears}_year"};
+
+            // These prices are always returned as 1 year prices, regardless of
+            // the minimum number of years required by the extension for these actions.
+            $renewPrice = $extension->renew * $minYears;
+            $transferPrice = $extension->transfer * $minYears;
+            $redemptionPrice = $extension->redemption * $minYears;
+
+            // .ai domains cannot be transfered for 3 year periods, but can for 4 years onwards
+            // WHMCS does not really support doing this so we just make all .ai domains do this
+            if (preg_match('/\.?ai$/', $tld)) {
+                $maxYears = 2;
             }
 
-            if ($register_price < $extension->renew) {
-                $register_price = $extension->renew;
+            // .au domains have delayed transfer payments upon user confirmation
+            if (preg_match('/\.?au$/', $tld)) {
+                $transferPrice = 0.00;
+            }
+
+            if ($registerPrice < $renewPrice) {
+                $registerPrice = $renewPrice;
             }
 
             $results[] = (new WHMCS\Domain\TopLevel\ImportItem())
                 ->setExtension($tld)
-                ->setMinYears($extension->minPeriod)
-                ->setMaxYears($extension->maxPeriod)
-                ->setRegisterPrice($register_price)
-                ->setRenewPrice($extension->renew)
-                ->setTransferPrice($transfer_price)
-                ->setRedemptionFeePrice($extension->redemption)
+                ->setMinYears($minYears)
+                ->setMaxYears($maxYears)
+                ->setRegisterPrice($registerPrice)
+                ->setRenewPrice($renewPrice)
+                ->setTransferPrice($transferPrice)
+                ->setRedemptionFeePrice($redemptionPrice)
                 ->setRedemptionFeeDays($extension->cannotRenewWithin)
                 ->setCurrency('AUD')
                 ->setEppRequired(!preg_match('/\.uk$/', $tld))
