@@ -465,6 +465,17 @@ function executeAJAXRequest(type, url, data, timeout) {
     if (type == undefined) {
         type = 'GET';
     }
+
+    if (type === 'POST') {
+        if (data === undefined) {
+            data = {
+                "token": csrfToken
+            };
+        } else {
+            data.token = csrfToken;
+        }
+    }
+
     // Make the AJAX request
     return $.ajax({
         type: type,
