@@ -471,8 +471,14 @@ function executeAJAXRequest(type, url, data, timeout) {
             data = {
                 "token": csrfToken
             };
-        } else {
+        } else if (typeof data === 'string') {
+            data = data + `&token=${csrfToken}`;
+        } else if (typeof data === 'object') {
             data.token = csrfToken;
+        } else {
+            Toast('error', 'toast-top-right', 'Failed to send request!');
+
+            return;
         }
     }
 
