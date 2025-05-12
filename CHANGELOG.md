@@ -15,12 +15,20 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.5.4 [Updated 12/05/2025]
 
-## 2.5.2 [Updated xx/xx/20xx]
+### Fixed
+- CSRF working when using query params
+
+## 2.5.3 [Updated 09/05/2025]
+
+### Fixed
+- CSRF not getting passed through when using the Client pages
+
+## 2.5.2 [Updated 13/02/2025]
 
 ### Fixed
 - Importing domains not setting eligibility values if the equivalent database entry does not exist.
-
 
 ## 2.5.1 [Updated 12/02/2025]
 
