@@ -15,6 +15,11 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.5.6 [Updated 24/07/2025]
+
+### Fixed
+- DNS Management Menu
+
 ## 2.5.5 [Updated 18/06/2025]
 
 ### Fixed
