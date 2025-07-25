@@ -123,7 +123,7 @@ add_hook('ClientAreaPageDomainEmailForwarding', 1, function (array $vars) {
     }
 
     if ('synergywholesaledomains' === $registrarModuleName) {
-        header("Location: clientarea.php?action=domaindetails&id={$domain_id}&modop=custom&a=manageEmailForwarding");
+        header("Location: clientarea.php?action=domaindetails&id={$domain_id}&modop=custom&a=manageEmailForwarding&token={$vars['token']}");
     }
 });
 
