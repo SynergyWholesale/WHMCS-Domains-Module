@@ -50,14 +50,14 @@
         {/if}
 
         {if $currentDnsConfigType == 2}
-            <p>To manage your Mail forwarding records, please visit the <a href="clientarea.php?action=domaindetails&id={$domainid}&modop=custom&a=manageEmailForwarding">Email Forwarding menu</a>.</p>
+            <p>To manage your Mail forwarding records, please visit the <a href="clientarea.php?action=domaindetails&id={$domainid}&modop=custom&a=manageEmailForwarding&token={$token}">Email Forwarding menu</a>.</p>
             {if $dnsmanagement == 1}
-                <p>To manage your DNS records or URL forwarding records, please visit the <a href="clientarea.php?action=domaindetails&id={$domainid}&modop=custom&a=manageDNSURLForwarding">DNS Management menu</a>.</p>
+                <p>To manage your DNS records or URL forwarding records, please visit the <a href="clientarea.php?action=domaindetails&id={$domainid}&modop=custom&a=manageDNSURLForwarding&token={$token}">DNS Management menu</a>.</p>
             {/if}
         {/if}
 
         {if $currentDnsConfigType == 4}
-            <p>To manage your DNS records, please visit the <a href="clientarea.php?action=domaindetails&id={$domainid}&modop=custom&a=manageDNSURLForwarding">DNS Management menu</a>.</p>
+            <p>To manage your DNS records, please visit the <a href="clientarea.php?action=domaindetails&id={$domainid}&modop=custom&a=manageDNSURLForwarding&token={$token}">DNS Management menu</a>.</p>
         {/if}
     </form>
     <br/>
