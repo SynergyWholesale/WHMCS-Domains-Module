@@ -2481,13 +2481,28 @@ function synergywholesaledomains_validateAUState($state)
 
 function synergywholesaledomains_AdminCustomButtonArray(array $params)
 {
-    $buttons =  [
+    $buttons = [
         'Sync' => 'sync_adhoc',
         'Push' => 'push',
     ];
 
+    // If the Domain is AU, then add CoR button to the Admin Area
     if (Str::endsWith($params['tld'], 'au')) {
         $buttons = array_merge($buttons, ['Initiate .au CoR' => 'initiateAuCor']);
+    }
+
+    // Add "Resend Approval Email" if domain status is "Pending Transfer"
+    try {
+        $domain = Capsule::table('tbldomains')
+            ->where('id', $params['domainid'])
+            ->first();
+
+        if ($domain && $domain->status === 'Pending Transfer') {
+            $buttons['Resend Approval Email'] = 'resendTransferApprovalEmail';
+        }
+    } catch (Exception $e) {
+        // Do not add the button if DB check fails, just log the failure
+        logModuleCall('synergywholesaledomains', 'AdminCustomButtonArray', 'DB Lookup Failed for Domain Status = Pending Transfer', $e->getMessage());
     }
 
     return $buttons;
@@ -2558,6 +2573,25 @@ function synergywholesaledomains_initiateAuCor(array $params)
             'error' => $e->getMessage(),
         ];
     }
+}
+
+function synergywholesaledomains_resendTransferApprovalEmail(array $params)
+{
+    try {
+        synergywholesaledomains_apiRequest('resendTransferEmail', $params, [
+            'domainName' => synergywholesaledomains_helper_getDomain($params),
+        ]);
+    } catch (\Exception $e) {
+        logModuleCall('synergywholesaledomains', 'resendTransferApprovalEmail', $params, $e->getMessage());
+
+        return [
+            'error' => 'Request Failed with error: ' . $e->getMessage(),
+        ];
+    }
+
+    return [
+        'success' => 'Transfer Approval email resent successfully.',
+    ];
 }
 
 function synergywholesaledomains_sync_adhoc(array $params)
