@@ -15,7 +15,7 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
-## 2.5.7 [Updated 28/07/2025]
+## 2.6.0 [Updated 28/07/2025]
 
 ### Fixed
 - CSRF missing from more ajax drop down menu's
