@@ -20,6 +20,9 @@ Synergy Wholesale WHMCS Domains Module
 ### Fixed
 - CSRF missing from more ajax drop down menu's
 
+### Added
+- Resend approval email button on the admin service page
+
 ## 2.5.6 [Updated 24/07/2025]
 
 ### Fixed
