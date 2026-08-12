@@ -16,6 +16,11 @@ define('API_ENDPOINT', 'https://{{API}}');
 define('WHATS_MY_IP_URL', 'https://{{FRONTEND}}/ip');
 define('SW_MODULE_VERSION', '{{VERSION}}');
 define('SW_MODULE_NAME', 'synergywholesaledomains');
+define('SW_TLDSYNC_SETTING_KEYS', [
+    'marginType' => 'SynergyWholesaleTldSyncMarginType',
+    'profitMargin' => 'SynergyWholesaleTldSyncProfitMargin',
+    'rounding' => 'SynergyWholesaleTldSyncRounding',
+]);
 
 define('SW_DNS_CONFIG_TYPES', [
     0 => 'Inactive',
@@ -75,6 +80,102 @@ function synergywholesaledomains_helper_getNameservers(array $params)
     }
 
     return $nameservers;
+}
+
+/**
+ * Apply a minimum TLD sync price while retaining disabled and free pricing.
+ *
+ * @param float|int|string $price
+ * @param float|int|string $minimum
+ * @return float|int|string
+ */
+function synergywholesaledomains_helper_applyMinimumPrice($price, $minimum)
+{
+    if ($price <= 0 || $price >= $minimum) {
+        return $price;
+    }
+
+    return (string) $minimum;
+}
+
+function synergywholesaledomains_helper_applyTldSyncMinimums($register, $renew, $transfer, $minimumRenew, $minimumTransfer)
+{
+    // Preserve the upstream registration rule before applying renew-only settings.
+    $register = $register < $renew ? $renew : $register;
+
+    return [
+        $register,
+        synergywholesaledomains_helper_applyMinimumPrice($renew, $minimumRenew),
+        synergywholesaledomains_helper_applyMinimumPrice($transfer, $minimumTransfer),
+    ];
+}
+
+function synergywholesaledomains_isTldSyncPage()
+{
+    $path = isset($_SERVER['REQUEST_URI']) ? parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) : '';
+
+    return (bool) preg_match('#/utilities/tools/tldsync/import/?$#', $path);
+}
+
+function synergywholesaledomains_getTldSyncSettings()
+{
+    $stored = Capsule::table('tblconfiguration')
+        ->whereIn('setting', array_values(SW_TLDSYNC_SETTING_KEYS))
+        ->pluck('value', 'setting');
+    $settings = [];
+
+    foreach (SW_TLDSYNC_SETTING_KEYS as $name => $key) {
+        $settings[$name] = isset($stored[$key]) ? $stored[$key] : null;
+    }
+
+    return array_merge($settings, synergywholesaledomains_getMinimumPrices());
+}
+
+function synergywholesaledomains_getMinimumPrices()
+{
+    $stored = Capsule::table('tblregistrars')
+        ->where('registrar', SW_MODULE_NAME)
+        ->whereIn('setting', ['minimumRenewPrice', 'minimumTransferPrice'])
+        ->pluck('value', 'setting');
+
+    $prices = [];
+    foreach (['minimumRenewPrice', 'minimumTransferPrice'] as $setting) {
+        $value = isset($stored[$setting]) ? localAPI('DecryptPassword', ['password2' => $stored[$setting]])['password'] : 0;
+        $prices[$setting] = is_numeric($value) && $value >= 0 ? (string) $value : '0';
+    }
+
+    return $prices;
+}
+
+function synergywholesaledomains_saveTldSyncSettings(array $settings)
+{
+    foreach (SW_TLDSYNC_SETTING_KEYS as $name => $key) {
+        Capsule::table('tblconfiguration')->updateOrInsert(
+            ['setting' => $key],
+            ['value' => $settings[$name]]
+        );
+    }
+}
+
+function synergywholesaledomains_validateTldSyncSettings(array $input)
+{
+    $marginType = isset($input['margin_type']) ? $input['margin_type'] : '';
+    $profitMargin = isset($input['margin']) ? $input['margin'] : '';
+    $rounding = isset($input['rounding_value']) ? $input['rounding_value'] : '';
+    if (
+        !in_array($marginType, ['fixed', 'percentage'], true)
+        || !is_numeric($profitMargin)
+        || $profitMargin < 0
+        || (!in_array($rounding, ['', 'none'], true) && (!is_numeric($rounding) || $rounding < 0 || $rounding > 1))
+    ) {
+        return null;
+    }
+
+    return [
+        'marginType' => $marginType,
+        'profitMargin' => (string) $profitMargin,
+        'rounding' => (string) $rounding,
+    ];
 }
 
 /**
@@ -290,6 +391,20 @@ function synergywholesaledomains_getConfigArray(array $params)
             'Type' => 'yesno',
             'Size' => '1',
             'Description' => 'Tick if you wish to perform a renewal on any .au domains submitted for transfer that are within 90 days of expiry.',
+        ],
+        'minimumRenewPrice' => [
+            'FriendlyName' => 'Minimum TLD Sync Renew Price',
+            'Type' => 'text',
+            'Size' => '10',
+            'Default' => '0',
+            'Description' => 'AUD. Supports sub-cent values. Applied to the fetched cost before margin and rounding; prices of zero are unchanged.',
+        ],
+        'minimumTransferPrice' => [
+            'FriendlyName' => 'Minimum TLD Sync Transfer Price',
+            'Type' => 'text',
+            'Size' => '10',
+            'Default' => '0',
+            'Description' => 'AUD. Supports sub-cent values. Applied to the fetched cost before margin and rounding; prices of zero are unchanged.',
         ],
         'test_api_connection' => [
             'FriendlyName' => 'Check API Connectivity',
@@ -3032,6 +3147,10 @@ if (class_exists('\WHMCS\Domain\TopLevel\ImportItem') && class_exists('\WHMCS\Re
         }
 
         $results = new WHMCS\Results\ResultsList();
+        $syncSettings = synergywholesaledomains_validateTldSyncSettings($_POST);
+        if (null !== $syncSettings) {
+            synergywholesaledomains_saveTldSyncSettings($syncSettings);
+        }
 
         foreach ($response['pricing'] as $extension) {
             $tld = '.' . $extension->tld;
@@ -3058,9 +3177,13 @@ if (class_exists('\WHMCS\Domain\TopLevel\ImportItem') && class_exists('\WHMCS\Re
                 $transferPrice = 0.00;
             }
 
-            if ($registerPrice < $renewPrice) {
-                $registerPrice = $renewPrice;
-            }
+            list($registerPrice, $renewPrice, $transferPrice) = synergywholesaledomains_helper_applyTldSyncMinimums(
+                $registerPrice,
+                $renewPrice,
+                $transferPrice,
+                isset($params['minimumRenewPrice']) ? $params['minimumRenewPrice'] : 0,
+                isset($params['minimumTransferPrice']) ? $params['minimumTransferPrice'] : 0
+            );
 
             $results[] = (new WHMCS\Domain\TopLevel\ImportItem())
                 ->setExtension($tld)

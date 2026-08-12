@@ -7,10 +7,111 @@
  * @license https://github.com/synergywholesale/whmcs-domains-module/LICENSE
  */
 
-
 use WHMCS\Domain\Domain;
 use WHMCS\View\Menu\Item as MenuItem; // http://docs.whmcs.com/Editing_Client_Area_Menus
 use Illuminate\Database\Capsule\Manager as Capsule;
+
+require_once __DIR__ . '/synergywholesaledomains.php';
+
+add_hook('AdminAreaFooterOutput', 1, function (array $vars) {
+    if (!synergywholesaledomains_isTldSyncPage()) {
+        return '';
+    }
+
+    try {
+        $settings = synergywholesaledomains_getTldSyncSettings();
+    } catch (\Exception $e) {
+        logModuleCall(SW_MODULE_NAME, 'tldSyncSettings', 'Update DB', $e->getMessage());
+        return '';
+    }
+
+    $settingsJson = json_encode($settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+    return <<<HTML
+<script>
+(function () {
+    'use strict';
+
+    var saved = {$settingsJson};
+
+    function restore(control, value) {
+        if (!control || value === null) {
+            return;
+        }
+        if (control.tagName === 'SELECT' && !Array.prototype.some.call(control.options, function (option) {
+            return option.value === value;
+        })) {
+            return;
+        }
+        control.value = value;
+        control.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    function minimumField(label, id, value) {
+        var row = document.createElement('div');
+        row.className = 'form-group sw-tldsync-setting';
+        row.innerHTML = '<label class="col-md-4 col-sm-6 control-label"><span></span><br><small></small></label>'
+            + '<div class="col-md-4 col-sm-6"><div class="input-group">'
+            + '<span class="input-group-addon hidden-sm">$</span>'
+            + '<input type="number" min="0" step="any" class="form-control input-75">'
+            + '<span class="input-group-addon hidden-sm"> AUD</span></div></div>';
+        row.querySelector('label').htmlFor = id;
+        row.querySelector('label span').textContent = label;
+        row.querySelector('label small').textContent = 'Configured in the Synergy Wholesale registrar settings. Applied before margin and rounding; zero prices are unchanged.';
+        row.querySelector('input').id = id;
+        row.querySelector('input').disabled = true;
+        row.querySelector('input').value = value || '';
+        return row;
+    }
+
+    function enhance() {
+        if (document.querySelector('.sw-tldsync-setting')) {
+            return;
+        }
+
+        var marginType = document.getElementById('inputMarginType');
+        var profitPercent = document.getElementById('inputMarginPercent');
+        var profitFixed = document.getElementById('inputMarginFixed') || profitPercent;
+        var rounding = document.getElementById('inputRoundingValue');
+        var importButton = document.getElementById('doTldImport');
+        if (!marginType || !profitPercent || !rounding || !importButton) {
+            return;
+        }
+
+        restore(marginType, saved.marginType);
+        restore(profitPercent, saved.profitMargin);
+        restore(profitFixed, saved.profitMargin);
+        restore(rounding, saved.rounding);
+
+        document.querySelector('.tld-import-percentage-margin').classList.toggle(
+            'hidden',
+            marginType.value !== 'percentage'
+        );
+        document.querySelector('.tld-import-fixed-margin').classList.toggle(
+            'hidden',
+            marginType.value !== 'fixed'
+        );
+
+        var anchor = rounding.closest('.form-group') || rounding.parentNode;
+        var renew = minimumField(
+            'Minimum Renew Price',
+            'inputMinimumRenewPrice',
+            saved.minimumRenewPrice
+        );
+        var transfer = minimumField(
+            'Minimum Transfer Price',
+            'inputMinimumTransferPrice',
+            saved.minimumTransferPrice
+        );
+        anchor.parentNode.insertBefore(renew, anchor.nextSibling);
+        anchor.parentNode.insertBefore(transfer, renew.nextSibling);
+    }
+
+    new MutationObserver(enhance).observe(document.body, { childList: true, subtree: true });
+    enhance();
+}());
+</script>
+HTML;
+});
 
 
 /**
