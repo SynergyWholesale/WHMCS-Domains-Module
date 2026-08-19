@@ -1,31 +1,41 @@
-name: Release
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - "v*" # Push events to matching v*, i.e. v1.0, v20.15.10
 
 permissions:
   contents: write
   packages: write
 
-on:
-  release:
-    types: [ released ]
+name: Release
 
 jobs:
   build:
-    name: Upload Release Asset
+    name: Create Release
     runs-on: ubuntu-latest
-    
     steps:
-      - uses: actions/checkout@v4
-      
-      - uses: actions/setup-node@v4
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # 7.0.0
         with:
-          node-version: 'lts/*'
-        
-      - name: Build
+          node-version: "lts/*"
+
+      - name: Build project
         run: make build
-        
-      - name: Attach Build to Release
-        uses: softprops/action-gh-release@v2
+
+      - id: get_version
+        run: echo "version=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # 3.0.2
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: ./synergy-wholesale-domains-${{ github.ref_name }}.zip
+          tag_name: ${{ github.ref }}
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          files: synergy-wholesale-domains-${{ steps.get_version.outputs.version }}.zip
