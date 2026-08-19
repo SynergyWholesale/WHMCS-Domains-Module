@@ -1,67 +1,65 @@
-name: Continuous Integration
-
-on: 
-  workflow_dispatch:
+on:
   push:
-    branches: [ master, main ]
-    paths:
-      - '**.php'
-      - '**.js'
-      - '**.ts'
-      - '**.json'
-      - '**.lock'
+    branches: [master, main]
+    tags-ignore:
+      - "v*"
+    paths-ignore:
+      - "**.css"
+      - "**.tpl"
+      - "**.txt"
+      - "**.md"
   pull_request:
-    branches: [ master, main ]
-    paths:
-      - '**.php'
-      - '**.js'
-      - '**.ts'
-      - '**.json'
-      - '**.lock'
+    branches: [master, main]
+    paths-ignore:
+      - "**.css"
+      - "**.tpl"
+      - "**.md"
+      - "**.txt"
+      - "**.yml"
 
 jobs:
   frontend:
     name: Frontend Tests
     runs-on: ubuntu-latest
-    
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # 7.0.0
         with:
-          node-version: 'lts/*'
-      
+          node-version: "lts/*"
+
       - name: Install JavaScript Dependencies
         run: npm install
-      
+
       - name: Run Tests
         run: npm run-script check-syntax
 
-  php:
-    name: PHP ${{ matrix.php-versions }} Test
+  php_tests:
     runs-on: ubuntu-latest
-    
     strategy:
       matrix:
-        php-versions: ['7.2', '7.3', '7.4', '8.1', '8.2', '8.3']
-    
+        php-versions: ["7.2", "7.3", "7.4", "8.1", "8.2", "8.3", "8.4", "8.5"]
+    name: PHP ${{ matrix.php-versions }} Test
     steps:
-      - uses: actions/checkout@v4
-  
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # 7.0.0
+        with:
+          node-version: "lts/*"
+
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
           php-version: ${{ matrix.php-versions }}
+          coverage: none
           extensions: soap
           tools: composer, phpcs, phpunit:8.5.29
-          coverage: pcov
 
-      - name: Install PHP Dependencies
-        uses: ramsey/composer-install@v3
-     
-      - name: Check Style
+      - name: Check Style/Syntax
         run: phpcs
-  
+
       - name: Run Tests
         run: phpunit
