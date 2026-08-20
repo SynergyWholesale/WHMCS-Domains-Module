@@ -4,7 +4,8 @@ Synergy Wholesale WHMCS Domains Module
 
 ## Unreleased Version [Updated xx/xx/20xx]
 ### Added
--
+- Persistent margin and rounding settings for Synergy Wholesale TLD pricing sync.
+- Configurable minimum renew and transfer costs with sub-cent precision, applied before the TLD sync margin and rounding. Zero prices remain unchanged.
 
 ### Changed
 -
