@@ -41,6 +41,7 @@ function synergywholesaledomains_webRequest($url, $method = 'GET', array $params
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_TIMEOUT, 5);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Synergy-Wholesale-WHMCS-Domain-Module/' . SW_MODULE_VERSION);
 
     if ('POST' === $method) {
         curl_setopt($ch, CURLOPT_POST, true);
