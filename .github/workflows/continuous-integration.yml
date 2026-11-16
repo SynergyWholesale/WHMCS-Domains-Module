@@ -17,6 +17,8 @@ on:
       - "**.txt"
       - "**.yml"
 
+name: Tests
+
 jobs:
   frontend:
     name: Frontend Tests
