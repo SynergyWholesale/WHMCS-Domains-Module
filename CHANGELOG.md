@@ -15,6 +15,11 @@ Synergy Wholesale WHMCS Domains Module
 ### Removed
 -
 
+## 2.6.1 [Updated 16/11/2026]
+
+### Fixed
+- Added default User Agent header to HTTP requests
+
 ## 2.6.0 [Updated 28/07/2025]
 
 ### Fixed
